@@ -1,0 +1,59 @@
+import type { Metadata } from "next"
+import { Link } from "~/components/common/link"
+import { Prose } from "~/components/common/prose"
+import { Intro, IntroDescription, IntroTitle } from "~/components/web/ui/intro"
+import { config } from "~/config"
+import { metadataConfig } from "~/config/metadata"
+
+export const metadata: Metadata = {
+  title: "About Us",
+  description: `${config.site.name} is a community driven list of open source alternatives to proprietary software and applications.`,
+  openGraph: { ...metadataConfig.openGraph, url: "/about" },
+  alternates: { ...metadataConfig.alternates, canonical: "/about" },
+}
+
+export default function AboutPage() {
+  return (
+    <>
+      <Intro>
+        <IntroTitle>{`${metadata.title}`}</IntroTitle>
+        <IntroDescription>{metadata.description}</IntroDescription>
+      </Intro>
+
+      <Prose>
+        <h2>What is {config.site.name}?</h2>
+
+        <p>
+          <Link href="/" title={config.site.tagline}>
+            {config.site.name}
+          </Link>{" "}
+          is a community driven list of{" "}
+          <strong>open source alternatives to proprietary software</strong> and applications. The
+          goal of the site is to be your first stop when researching for a new open source service
+          to help you grow your business. It will help you find alternatives and reviews of the
+          products you already use.
+        </p>
+
+        <h2>About the Author</h2>
+
+        <p>
+          I'm a software developer and entrepreneur. I've been building web applications for over 15
+          years. I'm passionate about software development and I love to contribute to the community
+          in any way I can.
+        </p>
+
+        <p>
+          I'm always looking for new projects to work on and new people to collaborate with. Feel
+          free to reach out to me if you have any questions or suggestions.
+        </p>
+
+        <p>
+          –{" "}
+          <a href={config.links.author} target="_blank" rel="noreferrer">
+            Piotr Kulpinski
+          </a>
+        </p>
+      </Prose>
+    </>
+  )
+}

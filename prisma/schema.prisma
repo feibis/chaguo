@@ -1,0 +1,177 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters", "postgresqlExtensions", "fullTextSearchPostgres"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  directUrl  = env("DATABASE_URL_UNPOOLED")
+  extensions = [citext, pg_trgm]
+}
+
+enum AdType {
+  Banner
+  Homepage
+  ToolPage
+  BlogPost
+  All
+}
+
+enum ToolStatus {
+  Draft
+  Scheduled
+  Published
+  Deleted
+}
+
+enum ReportType {
+  BrokenLink
+  WrongCategory
+  Outdated
+  Other
+}
+
+model User {
+  id            String   @id @default(cuid())
+  name          String
+  email         String   @unique
+  emailVerified Boolean  @default(false)
+  image         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  accounts Account[]
+  sessions Session[]
+  tools    Tool[]
+
+  // Indexes
+  @@index([id])
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Indexes
+  @@index([userId])
+}
+
+model Account {
+  id                    String    @id @default(cuid())
+  userId                String
+  accountId             String
+  providerId            String
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Indexes
+  @@index([userId])
+}
+
+model Verification {
+  id         String   @id @default(cuid())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Ad {
+  id          String   @id @default(cuid())
+  email       String
+  name        String
+  description String?
+  websiteUrl  String
+  faviconUrl  String?
+  type        AdType   @default(Homepage)
+  startsAt    DateTime
+  endsAt      DateTime
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Tool {
+  id             String                   @id @default(cuid())
+  name           String                   @db.Citext
+  slug           String                   @unique
+  websiteUrl     String                   @unique
+  affiliateUrl   String?
+  tagline        String?
+  description    String?
+  content        String?
+  faviconUrl     String?
+  screenshotUrl  String?
+  isFeatured     Boolean                  @default(false)
+  submitterName  String?
+  submitterEmail String?
+  submitterNote  String?
+  status         ToolStatus               @default(Draft)
+  publishedAt    DateTime?
+  createdAt      DateTime                 @default(now())
+  updatedAt      DateTime                 @updatedAt
+  searchVector   Unsupported("tsvector")?
+
+  // Relations
+  categories Category[]
+  reports    Report[]
+  owner      User?      @relation(fields: [ownerId], references: [id])
+  ownerId    String?
+
+  @@index([id, slug])
+  @@index([name])
+  @@index([status])
+  @@index([searchVector], type: Gin)
+  @@index([ownerId])
+}
+
+model Category {
+  id        String   @id @default(cuid())
+  name      String   @db.Citext
+  slug      String   @unique
+  label     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Implicit relation
+  tools Tool[]
+
+  // Indexes
+  @@index([slug])
+}
+
+model Report {
+  id        String     @id @default(cuid())
+  toolId    String
+  type      ReportType
+  message   String?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  // Relations
+  tool Tool @relation(fields: [toolId], references: [id], onDelete: Cascade)
+
+  // Indexes
+  @@index([toolId])
+}

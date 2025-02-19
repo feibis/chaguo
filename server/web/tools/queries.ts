@@ -1,0 +1,143 @@
+import { performance } from "node:perf_hooks"
+import { getRandomElement } from "@curiousleaf/utils"
+import { type Prisma, ToolStatus } from "@prisma/client"
+import { unstable_cacheLife as cacheLife, unstable_cacheTag as cacheTag } from "next/cache"
+import type { inferParserType } from "nuqs/server"
+import { toolManyPayload, toolOnePayload } from "~/server/web/tools/payloads"
+import type { toolsSearchParams } from "~/server/web/tools/search-params"
+import { db } from "~/services/db"
+
+export const searchTools = async (
+  search: inferParserType<typeof toolsSearchParams>,
+  { where, ...args }: Prisma.ToolFindManyArgs,
+) => {
+  "use cache"
+
+  cacheTag("tools")
+  cacheLife("max")
+
+  const { q, category, page, sort, perPage } = search
+  const start = performance.now()
+  const skip = (page - 1) * perPage
+  const take = perPage
+  const [sortBy, sortOrder] = sort.split("~/")
+
+  const whereQuery: Prisma.ToolWhereInput = {
+    status: ToolStatus.Published,
+    ...(category.length && { categories: { some: { slug: { in: category } } } }),
+  }
+
+  // Use full-text search when query exists
+  if (q) {
+    const searchQuery: { id: string }[] = await db.$queryRaw`
+        SELECT id
+        FROM "Tool", plainto_tsquery('english', ${q}) query
+        WHERE "searchVector" @@ query
+      `
+
+    whereQuery.id = { in: searchQuery.map(r => r.id) }
+  }
+
+  const [tools, totalCount] = await db.$transaction([
+    db.tool.findMany({
+      ...args,
+      orderBy: sortBy ? { [sortBy]: sortOrder } : [{ isFeatured: "desc" }, { createdAt: "desc" }],
+      where: { ...whereQuery, ...where },
+      select: toolManyPayload,
+      take,
+      skip,
+    }),
+
+    db.tool.count({
+      where: { ...whereQuery, ...where },
+    }),
+  ])
+
+  console.log("Tools search:", performance.now() - start)
+
+  return { tools, totalCount }
+}
+
+export const findRelatedTools = async ({
+  where,
+  slug,
+  ...args
+}: Prisma.ToolFindManyArgs & { slug: string }) => {
+  "use cache"
+
+  cacheTag("related-tools")
+  cacheLife("minutes")
+
+  const relatedWhereClause = {
+    ...where,
+    AND: [
+      { status: ToolStatus.Published },
+      { slug: { not: slug } },
+      { categories: { some: { tools: { some: { slug } } } } },
+    ],
+  } satisfies Prisma.ToolWhereInput
+
+  const take = 3
+  const itemCount = await db.tool.count({ where: relatedWhereClause })
+  const skip = Math.max(0, Math.floor(Math.random() * itemCount) - take)
+  const properties = ["id", "name"] satisfies (keyof Prisma.ToolOrderByWithRelationInput)[]
+  const orderBy = getRandomElement(properties)
+  const orderDir = getRandomElement(["asc", "desc"] as const)
+
+  return db.tool.findMany({
+    ...args,
+    where: relatedWhereClause,
+    select: toolManyPayload,
+    orderBy: { [orderBy]: orderDir },
+    take,
+    skip,
+  })
+}
+
+export const findTools = async ({ where, orderBy, ...args }: Prisma.ToolFindManyArgs) => {
+  "use cache"
+
+  cacheTag("tools")
+  cacheLife("max")
+
+  return db.tool.findMany({
+    ...args,
+    where: { status: ToolStatus.Published, ...where },
+    orderBy: orderBy ?? [{ isFeatured: "desc" }, { createdAt: "desc" }],
+    select: toolManyPayload,
+  })
+}
+
+export const findToolSlugs = async ({ where, orderBy, ...args }: Prisma.ToolFindManyArgs) => {
+  "use cache"
+
+  cacheTag("tools")
+  cacheLife("max")
+
+  return db.tool.findMany({
+    ...args,
+    orderBy: orderBy ?? { name: "asc" },
+    where: { status: ToolStatus.Published, ...where },
+    select: { slug: true, updatedAt: true },
+  })
+}
+
+export const countUpcomingTools = async ({ where, ...args }: Prisma.ToolCountArgs) => {
+  return db.tool.count({
+    ...args,
+    where: { status: { in: [ToolStatus.Scheduled, ToolStatus.Draft] }, ...where },
+  })
+}
+
+export const findTool = async ({ where, ...args }: Prisma.ToolFindFirstArgs = {}) => {
+  "use cache"
+
+  cacheTag("tool", `tool-${where?.slug}`)
+  cacheLife("max")
+
+  return db.tool.findFirst({
+    ...args,
+    where: { status: { not: ToolStatus.Draft }, ...where },
+    select: toolOnePayload,
+  })
+}

@@ -1,0 +1,335 @@
+"use client"
+
+import { zodResolver } from "@hookform/resolvers/zod"
+import { ToolStatus } from "@prisma/client"
+import { formatDate } from "date-fns"
+import { redirect } from "next/navigation"
+import type React from "react"
+import { useForm } from "react-hook-form"
+import { toast } from "sonner"
+import { useServerAction } from "zsa-react"
+import { RelationSelector } from "~/components/admin/relation-selector"
+import { Button } from "~/components/common/button"
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "~/components/common/form"
+import { Input } from "~/components/common/input"
+import { Link } from "~/components/common/link"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "~/components/common/select"
+import { Switch } from "~/components/common/switch"
+import { TextArea } from "~/components/common/textarea"
+import type { findCategoryList } from "~/server/admin/categories/queries"
+import { createTool, updateTool } from "~/server/admin/tools/actions"
+import type { findToolBySlug } from "~/server/admin/tools/queries"
+import { type ToolSchema, toolSchema } from "~/server/admin/tools/validations"
+import { cx } from "~/utils/cva"
+import { getDefaults } from "~/utils/helpers"
+
+type ToolFormProps = React.HTMLAttributes<HTMLFormElement> & {
+  tool?: Awaited<ReturnType<typeof findToolBySlug>>
+  categories: ReturnType<typeof findCategoryList>
+}
+
+export function ToolForm({ children, className, tool, categories, ...props }: ToolFormProps) {
+  const form = useForm<ToolSchema>({
+    resolver: zodResolver(toolSchema),
+    defaultValues: tool
+      ? toolSchema.parse({
+          ...tool,
+          categories: tool.categories.map(c => c.id),
+        })
+      : getDefaults(toolSchema),
+  })
+
+  // Create tool
+  const { execute: createToolAction, isPending: isCreatingTool } = useServerAction(createTool, {
+    onSuccess: ({ data }) => {
+      toast.success("Tool successfully created")
+      redirect(`/admin/tools/${data.slug}`)
+    },
+
+    onError: ({ err }) => {
+      toast.error(err.message)
+    },
+  })
+
+  // Update tool
+  const { execute: updateToolAction, isPending: isUpdatingTool } = useServerAction(updateTool, {
+    onSuccess: ({ data }) => {
+      toast.success("Tool successfully updated")
+      redirect(`/admin/tools/${data.slug}`)
+    },
+
+    onError: ({ err }) => {
+      toast.error(err.message)
+    },
+  })
+
+  const onSubmit = form.handleSubmit(data => {
+    tool ? updateToolAction({ id: tool.id, ...data }) : createToolAction(data)
+  })
+
+  const isPending = isCreatingTool || isUpdatingTool
+
+  return (
+    <Form {...form}>
+      <form
+        onSubmit={onSubmit}
+        className={cx("grid grid-cols-1 gap-4 sm:grid-cols-2", className)}
+        noValidate
+        {...props}
+      >
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem className="flex-1">
+              <FormLabel>Name</FormLabel>
+              <FormControl>
+                <Input {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="slug"
+          render={({ field }) => (
+            <FormItem className="flex-1">
+              <FormLabel>Slug</FormLabel>
+              <FormControl>
+                <Input {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="websiteUrl"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Website URL</FormLabel>
+              <FormControl>
+                <Input {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="tagline"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Tagline</FormLabel>
+              <FormControl>
+                <Input {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="description"
+          render={({ field }) => (
+            <FormItem className="col-span-full">
+              <FormLabel>Description</FormLabel>
+              <FormControl>
+                <TextArea {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="content"
+          render={({ field }) => (
+            <FormItem className="col-span-full">
+              <FormLabel>Content</FormLabel>
+              <FormControl>
+                <TextArea {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="isFeatured"
+          render={({ field }) => (
+            <FormItem className="flex-1">
+              <FormLabel>Featured</FormLabel>
+              <FormControl>
+                <Switch onCheckedChange={field.onChange} checked={field.value} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <div className="flex flex-row gap-4 max-sm:contents">
+          <FormField
+            control={form.control}
+            name="publishedAt"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Published At</FormLabel>
+                <FormControl>
+                  <Input
+                    type="datetime-local"
+                    {...field}
+                    value={field.value ? formatDate(field.value, "yyyy-MM-dd HH:mm") : undefined}
+                    onChange={e => field.onChange(e.target.value ? new Date(e.target.value) : null)}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="status"
+            render={({ field }) => (
+              <FormItem className="flex-1">
+                <FormLabel>Status</FormLabel>
+                <FormControl>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <SelectTrigger className="w-full tabular-nums">
+                      <SelectValue />
+                    </SelectTrigger>
+
+                    <SelectContent side="top" className="tabular-nums">
+                      {Object.values(ToolStatus).map(status => (
+                        <SelectItem key={status} value={status}>
+                          {status}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+
+        <FormField
+          control={form.control}
+          name="submitterName"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Submitter Name</FormLabel>
+              <FormControl>
+                <Input {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="submitterEmail"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Submitter Email</FormLabel>
+              <FormControl>
+                <Input type="email" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="submitterNote"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Submitter Note</FormLabel>
+              <FormControl>
+                <Input {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="faviconUrl"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Favicon URL</FormLabel>
+              <FormControl>
+                <Input type="url" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="screenshotUrl"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Screenshot URL</FormLabel>
+              <FormControl>
+                <Input type="url" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="categories"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Categories</FormLabel>
+              <RelationSelector
+                promise={categories}
+                selectedIds={field.value ?? []}
+                onChange={field.onChange}
+              />
+            </FormItem>
+          )}
+        />
+
+        <div className="flex justify-between gap-4 col-span-full">
+          <Button variant="secondary" asChild>
+            <Link href="/admin/tools">Cancel</Link>
+          </Button>
+
+          <Button variant="primary" isPending={isPending}>
+            {tool ? "Update tool" : "Create tool"}
+          </Button>
+        </div>
+      </form>
+    </Form>
+  )
+}
