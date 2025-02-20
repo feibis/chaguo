@@ -1,6 +1,7 @@
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
+import { ToolStatus } from "@prisma/client"
 import { useRouter } from "next/navigation"
 import { posthog } from "posthog-js"
 import type { HTMLAttributes } from "react"
@@ -48,7 +49,7 @@ export const SubmitForm = ({ className, ...props }: HTMLAttributes<HTMLFormEleme
       // Capture event
       posthog.capture("submit_tool", { slug: data.slug })
 
-      if (data.publishedAt && data.publishedAt <= new Date()) {
+      if (data.status === ToolStatus.Published) {
         if (data.isFeatured) {
           toast.info(`${data.name} has already been published.`)
         } else {
@@ -56,7 +57,7 @@ export const SubmitForm = ({ className, ...props }: HTMLAttributes<HTMLFormEleme
             duration: Number.POSITIVE_INFINITY,
           })
         }
-        router.push(`/tools/${data.slug}`)
+        router.push(`/${data.slug}`)
       } else {
         toast.success(`${data.name} has been submitted.`)
         router.push(`/submit/${data.slug}`)
