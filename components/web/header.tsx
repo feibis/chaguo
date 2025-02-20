@@ -1,14 +1,10 @@
 "use client"
 
 import {
-  BlocksIcon,
   CalendarDaysIcon,
   ChevronDownIcon,
-  CopyrightIcon,
   GalleryHorizontalEndIcon,
   SearchIcon,
-  ServerIcon,
-  TagIcon,
 } from "lucide-react"
 import { usePathname } from "next/navigation"
 import { type HTMLAttributes, Suspense, useEffect, useState } from "react"
@@ -19,16 +15,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "~/components/common/dropdown-menu"
-import { BrandBlueskyIcon } from "~/components/common/icons/brand-bluesky"
-import { BrandGitHubIcon } from "~/components/common/icons/brand-github"
-import { BrandXIcon } from "~/components/common/icons/brand-x"
 import { Link } from "~/components/common/link"
 import { Stack } from "~/components/common/stack"
 import { SearchForm } from "~/components/web/search-form"
 import { Container } from "~/components/web/ui/container"
 import { Logo } from "~/components/web/ui/logo"
 import { NavLink, navLinkVariants } from "~/components/web/ui/nav-link"
-import { config } from "~/config"
 import { cx } from "~/utils/cva"
 
 export const Header = ({ children, className, ...props }: HTMLAttributes<HTMLElement>) => {
@@ -117,38 +109,9 @@ export const Header = ({ children, className, ...props }: HTMLAttributes<HTMLEle
           <NavLink href="/advertise">Advertise</NavLink>
         </nav>
 
-        <Stack size="sm" className="max-sm:hidden">
-          <Suspense fallback={<SearchIcon className="size-4" />}>
-            <SearchForm />
-          </Suspense>
-
-          <NavLink
-            href={config.links.bluesky}
-            target="_blank"
-            rel="nofollow noreferrer"
-            title="Follow us on Bluesky"
-          >
-            <BrandBlueskyIcon className="size-4" />
-          </NavLink>
-
-          <NavLink
-            href={config.links.twitter}
-            target="_blank"
-            rel="nofollow noreferrer"
-            title="Follow us on X"
-          >
-            <BrandXIcon className="size-4" />
-          </NavLink>
-
-          <NavLink
-            href={config.links.github}
-            target="_blank"
-            rel="nofollow noreferrer"
-            title="View source code"
-          >
-            <BrandGitHubIcon className="size-4" />
-          </NavLink>
-        </Stack>
+        <Suspense fallback={<SearchIcon className="size-4" />}>
+          <SearchForm />
+        </Suspense>
 
         <Stack size="sm">
           <Button size="sm" variant="secondary" asChild>

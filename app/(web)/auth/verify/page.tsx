@@ -6,6 +6,7 @@ import { Stack } from "~/components/common/stack"
 import { Intro, IntroDescription, IntroTitle } from "~/components/web/ui/intro"
 import { config } from "~/config"
 import { metadataConfig } from "~/config/metadata"
+import { siteConfig } from "~/config/site"
 
 type PageProps = {
   searchParams: Promise<SearchParams>
@@ -30,12 +31,12 @@ export default async function VerifyPage({ searchParams }: PageProps) {
     {
       provider: "Gmail",
       icon: "/gmail.svg",
-      link: "https://mail.google.com/#search/openalternative%20login",
+      link: `https://mail.google.com/#search/${siteConfig.domain}%20login`,
     },
     {
       provider: "Superhuman",
       icon: "/superhuman.svg",
-      link: "superhuman://mail.superhuman.com/search/openalternative%20login",
+      link: `superhuman://mail.superhuman.com/search/${siteConfig.domain}%20login`,
     },
   ]
 

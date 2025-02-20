@@ -4,23 +4,12 @@ import { formatNumber } from "@curiousleaf/utils"
 import { AtSignIcon, RssIcon } from "lucide-react"
 import Image from "next/image"
 import type { HTMLAttributes } from "react"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "~/components/common/dropdown-menu"
 import { H5, H6 } from "~/components/common/heading"
-import { BrandBlueskyIcon } from "~/components/common/icons/brand-bluesky"
 import { BrandGitHubIcon } from "~/components/common/icons/brand-github"
-import { BrandLinkedInIcon } from "~/components/common/icons/brand-linkedin"
-import { BrandMediumIcon } from "~/components/common/icons/brand-medium"
-import { BrandXIcon } from "~/components/common/icons/brand-x"
 import { Stack } from "~/components/common/stack"
 import { Tooltip, TooltipProvider } from "~/components/common/tooltip"
-import { ExternalLink } from "~/components/web/external-link"
 import { NewsletterForm } from "~/components/web/newsletter-form"
-import { NavLink, navLinkVariants } from "~/components/web/ui/nav-link"
+import { NavLink } from "~/components/web/ui/nav-link"
 import { config } from "~/config"
 import { cx } from "~/utils/cva"
 
@@ -57,23 +46,16 @@ export const Footer = ({ children, className, hideNewsletter, ...props }: Footer
 
           <Stack className="text-sm/normal">
             <TooltipProvider delayDuration={500}>
-              <DropdownMenu modal={false}>
-                <Tooltip tooltip="RSS Feeds">
-                  <DropdownMenuTrigger aria-label="RSS Feeds" {...props}>
-                    <RssIcon className="size-[1.44em] stroke-[1.25] text-muted-foreground hover:text-foreground" />
-                  </DropdownMenuTrigger>
-                </Tooltip>
-
-                <DropdownMenuContent align="start" side="top">
-                  {config.links.feeds.map(({ url, title }) => (
-                    <DropdownMenuItem key={url} asChild>
-                      <NavLink href={url} target="_blank" rel="nofollow noreferrer">
-                        RSS &raquo; {title}
-                      </NavLink>
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <Tooltip tooltip="RSS Feed">
+                <NavLink
+                  href={config.links.feed}
+                  target="_blank"
+                  rel="nofollow noreferrer"
+                  aria-label="RSS Feed"
+                >
+                  <RssIcon className="size-[1.44em]" />
+                </NavLink>
+              </Tooltip>
 
               <Tooltip tooltip="Contact us">
                 <NavLink
@@ -89,30 +71,6 @@ export const Footer = ({ children, className, hideNewsletter, ...props }: Footer
               <Tooltip tooltip="View source code">
                 <NavLink href={config.links.github} target="_blank" rel="nofollow noreferrer">
                   <BrandGitHubIcon className="size-[1.44em] stroke-[1.25]" />
-                </NavLink>
-              </Tooltip>
-
-              <Tooltip tooltip="Follow us on X/Twitter">
-                <NavLink href={config.links.twitter} target="_blank" rel="nofollow noreferrer">
-                  <BrandXIcon className="size-[1.44em] stroke-[1.25]" />
-                </NavLink>
-              </Tooltip>
-
-              <Tooltip tooltip="Follow us on Bluesky">
-                <NavLink href={config.links.bluesky} target="_blank" rel="nofollow noreferrer">
-                  <BrandBlueskyIcon className="size-[1.44em] stroke-[1.25]" />
-                </NavLink>
-              </Tooltip>
-
-              <Tooltip tooltip="Follow us on LinkedIn">
-                <NavLink href={config.links.linkedin} target="_blank" rel="nofollow noreferrer">
-                  <BrandLinkedInIcon className="size-[1.44em] stroke-[1.25]" />
-                </NavLink>
-              </Tooltip>
-
-              <Tooltip tooltip="Follow us on Medium">
-                <NavLink href={config.links.medium} target="_blank" rel="nofollow noreferrer">
-                  <BrandMediumIcon className="size-[1.44em] stroke-[1.25]" />
                 </NavLink>
               </Tooltip>
             </TooltipProvider>
@@ -138,24 +96,6 @@ export const Footer = ({ children, className, hideNewsletter, ...props }: Footer
           <NavLink href="/advertise">Advertise</NavLink>
           <NavLink href="/submit">Add a Free Listing</NavLink>
           <NavLink href="/tools/github-stack-analyzer">Stack Analyzer</NavLink>
-        </Stack>
-
-        <Stack direction="column" className="text-sm/normal md:col-span-3">
-          <Stack direction="column">
-            <H6 as="strong">Other Products:</H6>
-
-            {config.links.family.map(({ href, title, description }) => (
-              <ExternalLink
-                key={href}
-                href={href}
-                rel="noreferrer noopener"
-                title={description}
-                className={navLinkVariants()}
-              >
-                {title}
-              </ExternalLink>
-            ))}
-          </Stack>
         </Stack>
       </div>
 

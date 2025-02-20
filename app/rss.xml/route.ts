@@ -5,8 +5,8 @@ import { db } from "~/services/db"
 import { addSearchParams } from "~/utils/search-params"
 
 export async function GET() {
-  const { url, name, tagline } = config.site
-  const rssSearchParams = { utm_source: "openalternative.co", utm_medium: "rss" }
+  const { url, domain, name, tagline } = config.site
+  const rssSearchParams = { utm_source: domain, utm_medium: "rss" }
 
   const tools = await db.tool.findMany({
     where: { status: ToolStatus.Published },

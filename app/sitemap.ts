@@ -16,7 +16,7 @@ const createEntry = (path: string, lastModified: Date, options?: Partial<Entry>)
 export default async function Sitemap(): Promise<MetadataRoute.Sitemap> {
   const [tools, categories] = await Promise.all([findToolSlugs({}), findCategorySlugs({})])
 
-  const pages = ["~/about", "~/advertise", "~/submit"]
+  const pages = ["/about", "/submit"]
   const now = new Date()
 
   return [
@@ -27,14 +27,14 @@ export default async function Sitemap(): Promise<MetadataRoute.Sitemap> {
     ...pages.map(p => createEntry(p, now, { changeFrequency: "monthly" })),
 
     // Posts
-    createEntry("~/blog", now),
+    createEntry("/blog", now),
     ...posts.map(p => createEntry(`/blog/${p._meta.path}`, new Date(p.updatedAt ?? p.publishedAt))),
 
     // Tools
     ...tools.map(t => createEntry(`/${t.slug}`, t.updatedAt)),
 
     // Categories
-    createEntry("~/categories", now),
+    createEntry("/categories", now),
     ...categories.map(c => createEntry(`/categories/${c.slug}`, c.updatedAt)),
   ]
 }
