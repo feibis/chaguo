@@ -6,7 +6,6 @@ import EmailToolScheduled from "~/emails/tool-scheduled"
 import { sendEmails } from "~/lib/email"
 import { generateContent } from "~/lib/generate-content"
 import { uploadFavicon, uploadScreenshot } from "~/lib/media"
-import { firecrawlClient } from "~/services/firecrawl"
 import { inngest } from "~/services/inngest"
 import { ensureFreeSubmissions } from "~/utils/functions"
 
@@ -19,23 +18,10 @@ export const toolScheduled = inngest.createFunction(
       return db.tool.findUniqueOrThrow({ where: { slug: event.data.slug } })
     })
 
-    // Scrape website
-    const scrapedData = await step.run("scrape-website", async () => {
-      const data = await firecrawlClient.scrapeUrl(tool.websiteUrl, { formats: ["markdown"] })
-
-      if (!data.success) {
-        throw new Error(data.error)
-      }
-
-      logger.info(`Scraped website for ${tool.name}`, { data })
-
-      return data
-    })
-
     // Run steps in parallel
     await Promise.all([
       step.run("generate-content", async () => {
-        const { categories, ...content } = await generateContent(scrapedData)
+        const { categories, ...content } = await generateContent(tool.websiteUrl)
 
         return await db.tool.update({
           where: { id: tool.id },
