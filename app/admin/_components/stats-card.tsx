@@ -7,13 +7,13 @@ export const StatsCard = async () => {
 
   const statsLabels = {
     0: "Tools",
-    2: "Categories",
+    1: "Categories",
   }
 
   return (
     <>
       {stats.map((stat, index) => (
-        <Card key={index} hover={false} focus={false} className="col-span-full lg:col-span-3">
+        <Card key={index} hover={false} focus={false}>
           <CardHeader direction="column">
             <CardDescription>{statsLabels[index as keyof typeof statsLabels]}</CardDescription>
             <H2 className="tabular-nums">{stat.toLocaleString()}</H2>

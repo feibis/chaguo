@@ -1,6 +1,5 @@
 import Script from "next/script"
 import { type PropsWithChildren, Suspense } from "react"
-import type { Graph } from "schema-dts"
 import Providers from "~/app/(web)/providers"
 import { Button } from "~/components/common/button"
 import { AdBanner } from "~/components/web/ads/ad-banner"
@@ -49,8 +48,7 @@ export default function RootLayout({ children }: PropsWithChildren) {
       <Script
         defer
         data-domain={env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN}
-        data-api={env.NEXT_PUBLIC_PLAUSIBLE_API_URL}
-        src={env.NEXT_PUBLIC_PLAUSIBLE_SCRIPT_URL}
+        src={`${env.NEXT_PUBLIC_PLAUSIBLE_URL}/js/script.js`}
       />
     </Providers>
   )
