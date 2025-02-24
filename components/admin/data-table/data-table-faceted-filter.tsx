@@ -2,7 +2,7 @@ import type { Column } from "@tanstack/react-table"
 import { PlusCircleIcon } from "lucide-react"
 import type { Option } from "~/types"
 
-import { Slot } from "@radix-ui/react-slot"
+import { Slot } from "radix-ui"
 import { Badge } from "~/components/common/badge"
 import { Button } from "~/components/common/button"
 import {
@@ -89,9 +89,9 @@ export function DataTableFacetedFilter<TData, TValue>({
                       className="pointer-events-none"
                     />
 
-                    <Slot className="size-4 text-muted-foreground" aria-hidden="true">
+                    <Slot.Root className="size-4 text-muted-foreground" aria-hidden="true">
                       {option.icon}
-                    </Slot>
+                    </Slot.Root>
 
                     <span>{option.label}</span>
 

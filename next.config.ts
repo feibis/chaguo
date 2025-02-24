@@ -5,14 +5,12 @@ const nextConfig: NextConfig = {
   experimental: {
     ppr: true,
     useCache: true,
-  },
 
-  typescript: {
-    ignoreBuildErrors: true,
-  },
-
-  eslint: {
-    ignoreDuringBuilds: true,
+    optimizePackageImports: [
+      "@content-collections/core",
+      "@content-collections/mdx",
+      "@content-collections/next",
+    ],
   },
 
   images: {

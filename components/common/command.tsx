@@ -1,6 +1,5 @@
 "use client"
 
-import type { DialogProps } from "@radix-ui/react-dialog"
 import { Command as CommandPrimitive } from "cmdk"
 import { SearchIcon } from "lucide-react"
 import type { ComponentProps } from "react"
@@ -20,7 +19,7 @@ const Command = ({ className, ...props }: ComponentProps<typeof CommandPrimitive
   )
 }
 
-const CommandDialog = ({ children, ...props }: DialogProps) => {
+const CommandDialog = ({ children, ...props }: ComponentProps<typeof Dialog>) => {
   return (
     <Dialog {...props}>
       <DialogTitle className="sr-only">Command Menu</DialogTitle>

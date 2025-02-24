@@ -1,11 +1,11 @@
 "use client"
 
-import * as DialogPrimitive from "@radix-ui/react-dialog"
 import { XIcon } from "lucide-react"
+import { Dialog as DialogPrimitive } from "radix-ui"
 import type { ComponentProps } from "react"
 import { H4 } from "~/components/common/heading"
-import { cx } from "~/utils/cva"
 import { Prose } from "~/components/common/prose"
+import { cx } from "~/utils/cva"
 
 const Dialog = DialogPrimitive.Root
 const DialogTrigger = DialogPrimitive.Trigger
