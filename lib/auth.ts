@@ -1,12 +1,11 @@
 import { betterAuth } from "better-auth"
 import { prismaAdapter } from "better-auth/adapters/prisma"
-import { customSession, magicLink } from "better-auth/plugins"
+import { admin, magicLink } from "better-auth/plugins"
 import { config } from "~/config"
 import EmailLoginLink from "~/emails/login-link"
 import { env } from "~/env"
 import { sendEmails } from "~/lib/email"
 import { db } from "~/services/db"
-import { isAdminEmail } from "~/utils/auth"
 
 export const auth = betterAuth({
   database: prismaAdapter(db, {
@@ -38,9 +37,6 @@ export const auth = betterAuth({
       },
     }),
 
-    customSession(async ({ user, session }) => ({
-      user: { ...user, isAdmin: isAdminEmail(user.email) },
-      session,
-    })),
+    admin(),
   ],
 })

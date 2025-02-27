@@ -1,7 +1,6 @@
 import { betterFetch } from "better-auth/react"
 import { type NextRequest, NextResponse } from "next/server"
 import type { auth } from "~/lib/auth"
-import { isAdminEmail } from "~/utils/auth"
 
 export const config = {
   matcher: ["/admin/:path*", "/auth/:path*"],
@@ -25,7 +24,7 @@ export default async function ({ nextUrl, headers }: NextRequest) {
       return NextResponse.redirect(signInUrl)
     }
 
-    if (!isAdminEmail(session.user.email)) {
+    if (session.user.role !== "admin") {
       return NextResponse.redirect(new URL("/", nextUrl.toString()))
     }
   }
