@@ -165,6 +165,7 @@ export function ToolForm({ children, className, tool, categories, ...props }: To
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
           name="content"
@@ -173,22 +174,24 @@ export function ToolForm({ children, className, tool, categories, ...props }: To
               <Stack className="justify-between">
                 <FormLabel>Content</FormLabel>
 
-                <Button
-                  type="button"
-                  size="sm"
-                  variant="secondary"
-                  onClick={() => setIsPreviewing(prev => !prev)}
-                  prefix={isPreviewing ? <PencilIcon /> : <EyeIcon />}
-                  className="-my-0.5"
-                >
-                  {isPreviewing ? "Edit" : "Preview"}
-                </Button>
+                {field.value && (
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="secondary"
+                    onClick={() => setIsPreviewing(prev => !prev)}
+                    prefix={isPreviewing ? <PencilIcon /> : <EyeIcon />}
+                    className="-my-0.5"
+                  >
+                    {isPreviewing ? "Edit" : "Preview"}
+                  </Button>
+                )}
               </Stack>
 
               <FormControl>
-                {isPreviewing ? (
+                {field.value && isPreviewing ? (
                   <Markdown
-                    code={field.value ?? ""}
+                    code={field.value}
                     className={cx(inputVariants(), "max-w-none border leading-normal")}
                   />
                 ) : (
