@@ -8,7 +8,7 @@ import { Button } from "~/components/common/button"
 import { signIn } from "~/lib/auth-client"
 
 type LoginButtonProps = ComponentProps<typeof Button> & {
-  provider: "google"
+  provider: "google" | "github"
 }
 
 export const LoginButton = ({ provider, ...props }: LoginButtonProps) => {
@@ -32,8 +32,8 @@ export const LoginButton = ({ provider, ...props }: LoginButtonProps) => {
   }
 
   return (
-    <Button size="lg" onClick={handleSignIn} isPending={isPending} {...props}>
-      Sign in with {capitalCase(provider)}
+    <Button size="lg" variant="secondary" onClick={handleSignIn} isPending={isPending} {...props}>
+      Continue with {capitalCase(provider)}
     </Button>
   )
 }

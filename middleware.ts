@@ -1,5 +1,5 @@
-import { betterFetch } from "better-auth/react"
 import { type NextRequest, NextResponse } from "next/server"
+import wretch from "wretch"
 import type { auth } from "~/lib/auth"
 
 export const config = {
@@ -7,10 +7,10 @@ export const config = {
 }
 
 export default async function ({ nextUrl, headers }: NextRequest) {
-  const { data: session } = await betterFetch<typeof auth.$Infer.Session>("/api/auth/get-session", {
-    baseURL: nextUrl.origin,
-    headers: { cookie: headers.get("cookie") || "" },
-  })
+  const session = await wretch(`${nextUrl.origin}/api/auth/get-session`)
+    .headers({ cookie: headers.get("cookie") || "" })
+    .get()
+    .json<typeof auth.$Infer.Session>()
 
   if (session && nextUrl.pathname.startsWith("/auth")) {
     return NextResponse.redirect(new URL("/", nextUrl.toString()))
