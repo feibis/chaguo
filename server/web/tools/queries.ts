@@ -27,8 +27,8 @@ export const searchTools = async (
     ...(category.length && { categories: { some: { slug: { in: category } } } }),
   }
 
-  // Use full-text search when query exists
   if (q) {
+    // Use full-text search when query exists
     const searchQuery: { id: string }[] = await db.$queryRaw`
         SELECT id
         FROM "Tool", plainto_tsquery('english', ${q}) query
@@ -55,7 +55,8 @@ export const searchTools = async (
 
   console.log("Tools search:", performance.now() - start)
 
-  return { tools, totalCount }
+  const pageCount = Math.ceil(totalCount / perPage)
+  return { tools, totalCount, pageCount }
 }
 
 export const findRelatedTools = async ({
