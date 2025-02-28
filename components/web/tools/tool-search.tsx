@@ -12,8 +12,8 @@ import {
   SelectValue,
 } from "~/components/common/select"
 import { Stack } from "~/components/common/stack"
-import { useToolFilters } from "~/contexts/tool-filter-context"
 import { ToolFilters } from "~/components/web/tools/tool-filters"
+import { useToolFilters } from "~/contexts/tool-filter-context"
 
 export type ToolSearchProps = {
   placeholder?: string
@@ -31,10 +31,6 @@ export const ToolSearch = ({ placeholder }: ToolSearchProps) => {
     { value: "publishedAt.desc", label: "Latest" },
     { value: "name.asc", label: "Name (A to Z)" },
     { value: "name.desc", label: "Name (Z to A)" },
-    { value: "stars.desc", label: "Most Stars" },
-    { value: "forks.desc", label: "Most Forks" },
-    { value: "lastCommitDate.desc", label: "Last Commit" },
-    { value: "firstCommitDate.desc", label: "Repository Age" },
   ]
 
   return (

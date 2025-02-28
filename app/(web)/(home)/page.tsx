@@ -17,7 +17,10 @@ export default function Home({ searchParams }: PageProps) {
     <>
       <section className="flex flex-col gap-y-6 w-full mb-[2vh]">
         <Intro alignment="center">
-          <IntroTitle className="max-w-[45rem]">{config.site.tagline}</IntroTitle>
+          <IntroTitle className="max-w-[45rem] lg:text-5xl/[1.1]!">
+            {config.site.tagline}
+          </IntroTitle>
+
           <IntroDescription className="lg:mt-2">{config.site.description}</IntroDescription>
 
           <Suspense fallback={<CountBadgeSkeleton />}>
