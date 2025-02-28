@@ -21,6 +21,7 @@ import {
 } from "~/components/common/form"
 import { Hint } from "~/components/common/hint"
 import { Input } from "~/components/common/input"
+import { TextArea } from "~/components/common/textarea"
 import { FeatureNudge } from "~/components/web/feature-nudge"
 import { useSession } from "~/lib/auth-client"
 import { type SubmitToolSchema, submitToolSchema } from "~/server/schemas"
@@ -146,12 +147,7 @@ export const SubmitForm = ({ className, ...props }: HTMLAttributes<HTMLFormEleme
             <FormItem className="col-span-full">
               <FormLabel>Note:</FormLabel>
               <FormControl>
-                <Input
-                  type="text"
-                  size="lg"
-                  placeholder="Any additional information..."
-                  {...field}
-                />
+                <TextArea size="lg" placeholder="Any additional information..." {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
