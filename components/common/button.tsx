@@ -8,7 +8,7 @@ import { type VariantProps, cva, cx } from "~/utils/cva"
 
 const buttonVariants = cva({
   base: [
-    "group/button relative inline-flex items-center justify-center border border-transparent font-medium text-[0.8125rem] text-start leading-tight rounded-md overflow-clip hover:z-10 hover:border-transparent",
+    "group/button relative inline-flex items-center justify-center border border-transparent font-medium text-[0.8125rem]/tight text-start rounded-md overflow-clip hover:z-10 hover:border-transparent",
     "disabled:opacity-60 disabled:pointer-events-none",
   ],
 
@@ -22,7 +22,7 @@ const buttonVariants = cva({
       destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
     },
     size: {
-      sm: "px-2 py-1 gap-[0.66ch] leading-none",
+      sm: "px-2 py-1 gap-[0.66ch]",
       md: "px-3 py-2 gap-[0.75ch]",
       lg: "px-4 py-2.5 gap-[1ch] rounded-lg sm:text-sm",
     },

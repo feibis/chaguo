@@ -15,31 +15,36 @@ const stackVariants = cva({
       lg: "gap-x-4 gap-y-3",
     },
     direction: {
-      row: "flex-row flex-wrap items-center place-content-start",
+      row: "flex-row items-center place-content-start",
       column: "flex-col items-start",
+    },
+    wrap: {
+      true: "flex-wrap",
+      false: "",
     },
   },
 
   defaultVariants: {
     size: "md",
     direction: "row",
+    wrap: true,
   },
 })
 
 type StackProps = ComponentProps<"div"> &
   VariantProps<typeof stackVariants> & {
     /**
-     * If stack to `true`, the button will be rendered as a child within the component.
+     * If set to `true`, the stack will be rendered as a child within the component.
      * This child component must be a valid React component.
      */
     asChild?: boolean
   }
 
-const Stack = ({ className, asChild, size, direction, ...props }: StackProps) => {
+const Stack = ({ className, asChild, size, direction, wrap, ...props }: StackProps) => {
   const useAsChild = asChild && isValidElement(props.children)
   const Comp = useAsChild ? Slot.Root : "div"
 
-  return <Comp className={cx(stackVariants({ size, direction, className }))} {...props} />
+  return <Comp className={cx(stackVariants({ size, direction, wrap, className }))} {...props} />
 }
 
 export { Stack }
