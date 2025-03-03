@@ -37,8 +37,8 @@ export const Footer = ({ children, className, hideNewsletter, ...props }: Footer
             </H5>
 
             <p className="-mt-2 px-0.5 text-sm text-muted-foreground first:mt-0">
-              Join {formatNumber(config.stats.subscribers, "standard")}+ other members and get
-              updates on new directory websites.
+              Join {formatNumber(5000, "standard")}+ other members and get updates on new directory
+              websites.
             </p>
 
             <NewsletterForm medium="footer_form" />
@@ -80,22 +80,17 @@ export const Footer = ({ children, className, hideNewsletter, ...props }: Footer
         <Stack direction="column" className="text-sm/normal md:col-span-3 md:col-start-8">
           <H6 as="strong">Browse:</H6>
 
-          <NavLink href="/alternatives">Alternatives</NavLink>
+          <NavLink href="/">Tools</NavLink>
           <NavLink href="/categories">Categories</NavLink>
-          <NavLink href="/self-hosted">Self-hosted</NavLink>
-          <NavLink href="/stacks">Tech Stacks</NavLink>
-          <NavLink href="/topics">Topics</NavLink>
-          <NavLink href="/licenses">Licenses</NavLink>
+          <NavLink href="/blog">Blog</NavLink>
         </Stack>
 
         <Stack direction="column" className="text-sm/normal md:col-span-3">
           <H6 as="strong">Quick Links:</H6>
 
+          <NavLink href="/submit">Submit</NavLink>
           <NavLink href="/about">About Us</NavLink>
-          <NavLink href="/blog">Blog</NavLink>
           <NavLink href="/advertise">Advertise</NavLink>
-          <NavLink href="/submit">Add a Free Listing</NavLink>
-          <NavLink href="/tools/github-stack-analyzer">Stack Analyzer</NavLink>
         </Stack>
       </div>
 

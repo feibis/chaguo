@@ -2,15 +2,11 @@ import { performance } from "node:perf_hooks"
 import { getRandomElement } from "@curiousleaf/utils"
 import { type Prisma, ToolStatus } from "@prisma/client"
 import { unstable_cacheLife as cacheLife, unstable_cacheTag as cacheTag } from "next/cache"
-import type { inferParserType } from "nuqs/server"
+import type { FilterSearchParams } from "~/server/schemas"
 import { toolManyPayload, toolOnePayload } from "~/server/web/tools/payloads"
-import type { toolsSearchParams } from "~/server/web/tools/search-params"
 import { db } from "~/services/db"
 
-export const searchTools = async (
-  search: inferParserType<typeof toolsSearchParams>,
-  { where, ...args }: Prisma.ToolFindManyArgs,
-) => {
+export const searchTools = async (search: FilterSearchParams, where?: Prisma.ToolWhereInput) => {
   "use cache"
 
   cacheTag("tools")
@@ -24,23 +20,19 @@ export const searchTools = async (
 
   const whereQuery: Prisma.ToolWhereInput = {
     status: ToolStatus.Published,
-    ...(category.length && { categories: { some: { slug: { in: category } } } }),
+    ...(category && { categories: { some: { slug: category } } }),
   }
 
   if (q) {
-    // Use full-text search when query exists
-    const searchQuery: { id: string }[] = await db.$queryRaw`
-        SELECT id
-        FROM "Tool", plainto_tsquery('english', ${q}) query
-        WHERE "searchVector" @@ query
-      `
-
-    whereQuery.id = { in: searchQuery.map(r => r.id) }
+    whereQuery.OR = [
+      { name: { contains: q, mode: "insensitive" } },
+      { tagline: { contains: q, mode: "insensitive" } },
+      { description: { contains: q, mode: "insensitive" } },
+    ]
   }
 
   const [tools, totalCount] = await db.$transaction([
     db.tool.findMany({
-      ...args,
       orderBy: sortBy ? { [sortBy]: sortOrder } : [{ isFeatured: "desc" }, { createdAt: "desc" }],
       where: { ...whereQuery, ...where },
       select: toolManyPayload,

@@ -1,14 +1,14 @@
 import type { Metadata } from "next"
 import { Suspense } from "react"
-import { CategoryListing } from "~/app/(web)/categories/(categories)/listing"
 import { CategoryListSkeleton } from "~/components/web/categories/category-list"
+import { CategoryQuery } from "~/components/web/categories/category-query"
 import { Breadcrumbs } from "~/components/web/ui/breadcrumbs"
 import { Intro, IntroDescription, IntroTitle } from "~/components/web/ui/intro"
 import { metadataConfig } from "~/config/metadata"
 
 export const metadata: Metadata = {
-  title: "Open Source Software Categories",
-  description: "Browse top categories to find your best Open Source software options.",
+  title: "Categories",
+  description: "Browse top categories to find your best tools.",
   openGraph: { ...metadataConfig.openGraph, url: "/categories" },
   alternates: { ...metadataConfig.alternates, canonical: "/categories" },
 }
@@ -31,7 +31,7 @@ export default function Categories() {
       </Intro>
 
       <Suspense fallback={<CategoryListSkeleton />}>
-        <CategoryListing />
+        <CategoryQuery />
       </Suspense>
     </>
   )

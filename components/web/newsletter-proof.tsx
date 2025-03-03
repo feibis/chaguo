@@ -1,7 +1,6 @@
 import { formatNumber } from "@curiousleaf/utils"
 import Image from "next/image"
 import type { HTMLAttributes } from "react"
-import { config } from "~/config"
 import { cx } from "~/utils/cva"
 
 export const NewsletterProof = ({ className, ...props }: HTMLAttributes<HTMLElement>) => {
@@ -26,7 +25,7 @@ export const NewsletterProof = ({ className, ...props }: HTMLAttributes<HTMLElem
       ))}
 
       <p className="w-full text-xs text-muted-foreground">
-        Join {formatNumber(config.stats.subscribers, "standard")}+ directory enthusiasts
+        Join {formatNumber(5000, "standard")}+ directory enthusiasts
       </p>
     </div>
   )

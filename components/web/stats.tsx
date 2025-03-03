@@ -1,14 +1,13 @@
 import type { HTMLAttributes } from "react"
 import { MDXComponents } from "~/components/web/mdx-components"
 import { Stat } from "~/components/web/ui/stat"
-import { config } from "~/config"
 import { cx } from "~/utils/cva"
 
 export const Stats = ({ className, ...props }: HTMLAttributes<HTMLElement>) => {
   const stats = [
-    { value: config.stats.pageviews, label: "Monthly Pageviews" },
-    { value: config.stats.tools, label: "Listed Projects" },
-    { value: config.stats.subscribers, label: "Newsletter Subscribers" },
+    { value: 250000, label: "Monthly Pageviews" },
+    { value: 2000, label: "Listed Tools" },
+    { value: 5000, label: "Newsletter Subscribers" },
   ]
 
   return (
@@ -29,6 +28,7 @@ export const Stats = ({ className, ...props }: HTMLAttributes<HTMLElement>) => {
             style={{ "--number-flow-char-height": "0.75em" }}
             className="text-5xl font-semibold tabular-nums"
           />
+
           <p className="text-muted-foreground">{label}</p>
         </MDXComponents.a>
       ))}

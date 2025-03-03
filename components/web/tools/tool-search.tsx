@@ -1,8 +1,6 @@
 "use client"
 
-import { useLocalStorage } from "@mantine/hooks"
-import { cx } from "cva"
-import { ListFilterIcon, LoaderIcon, SearchIcon } from "lucide-react"
+import { LoaderIcon, SearchIcon } from "lucide-react"
 import { Input } from "~/components/common/input"
 import {
   Select,
@@ -12,20 +10,16 @@ import {
   SelectValue,
 } from "~/components/common/select"
 import { Stack } from "~/components/common/stack"
-import { ToolFilters } from "~/components/web/tools/tool-filters"
-import { useToolFilters } from "~/contexts/tool-filter-context"
+import { useFilters } from "~/contexts/filter-context"
+import type { CategoryMany } from "~/server/web/categories/payloads"
 
 export type ToolSearchProps = {
+  categories?: CategoryMany[]
   placeholder?: string
 }
 
-export const ToolSearch = ({ placeholder }: ToolSearchProps) => {
-  const { filters, isLoading, updateFilters } = useToolFilters()
-
-  const [isFiltersOpen, setIsFiltersOpen] = useLocalStorage({
-    key: "filtersOpen",
-    defaultValue: false,
-  })
+export const ToolSearch = ({ categories, placeholder }: ToolSearchProps) => {
+  const { filters, isLoading, updateFilters } = useFilters()
 
   const sortOptions = [
     { value: "publishedAt.desc", label: "Latest" },
@@ -48,21 +42,23 @@ export const ToolSearch = ({ placeholder }: ToolSearchProps) => {
             placeholder={isLoading ? "Loading..." : placeholder || "Search tools..."}
             className="w-full truncate px-10"
           />
-
-          <button
-            type="button"
-            className={cx(
-              "absolute right-1.5 top-1/2 -translate-y-1/2 flex items-center gap-2 py-1.5 px-2.5 rounded-md",
-              isFiltersOpen
-                ? "bg-accent text-foreground"
-                : "text-muted-foreground hover:bg-accent hover:text-foreground",
-            )}
-            onClick={() => setIsFiltersOpen(prev => !prev)}
-          >
-            <ListFilterIcon className="size-4" />
-            <span className="text-sm leading-none max-sm:sr-only">Filters</span>
-          </button>
         </div>
+
+        {!!categories?.length && (
+          <Select value={filters.category} onValueChange={category => updateFilters({ category })}>
+            <SelectTrigger size="lg" className="w-auto min-w-40 max-sm:flex-1">
+              <SelectValue placeholder="All categories" />
+            </SelectTrigger>
+
+            <SelectContent align="end">
+              {categories.map(category => (
+                <SelectItem key={category.slug} value={category.slug}>
+                  {category.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
 
         <Select value={filters.sort} onValueChange={value => updateFilters({ sort: value })}>
           <SelectTrigger size="lg" className="w-auto min-w-36 max-sm:flex-1">
@@ -78,8 +74,6 @@ export const ToolSearch = ({ placeholder }: ToolSearchProps) => {
           </SelectContent>
         </Select>
       </Stack>
-
-      {isFiltersOpen && <ToolFilters />}
     </Stack>
   )
 }

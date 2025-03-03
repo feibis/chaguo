@@ -1,38 +1,33 @@
-import { Input } from "~/components/common/input"
-import { ToolFiltersProvider, type ToolFiltersProviderProps } from "~/contexts/tool-filter-context"
-import { Pagination } from "~/components/web/pagination"
-import type { ToolMany } from "~/server/web/tools/payloads"
-import { ToolList } from "~/components/web/tools/tool-list"
-import { ToolListSkeleton } from "~/components/web/tools/tool-list"
-import { ToolSearch } from "~/components/web/tools/tool-search"
+import type { Prisma } from "@prisma/client"
+import type { SearchParams } from "nuqs"
+import { ToolListing } from "~/components/web/tools/tool-listing"
+import { filterSearchParamsCache } from "~/server/schemas"
+import { findCategories } from "~/server/web/categories/queries"
+import { searchTools } from "~/server/web/tools/queries"
 
-type ToolQueryProps = ToolFiltersProviderProps & {
-  tools: ToolMany[]
-  perPage: number
-  totalCount: number
+type ToolQueryProps = {
+  searchParams: Promise<SearchParams>
+  where?: Prisma.ToolWhereInput
   placeholder?: string
 }
 
-const ToolQuery = ({ tools, perPage, totalCount, placeholder, lockedFilters }: ToolQueryProps) => {
-  return (
-    <ToolFiltersProvider lockedFilters={lockedFilters}>
-      <div className="flex flex-col gap-5" id="tools">
-        <ToolSearch placeholder={placeholder} />
-        <ToolList tools={tools} />
-      </div>
+const ToolQuery = async ({ searchParams, where, placeholder }: ToolQueryProps) => {
+  const parsedParams = filterSearchParamsCache.parse(await searchParams)
 
-      <Pagination pageSize={perPage} totalCount={totalCount} />
-    </ToolFiltersProvider>
+  const [{ tools, totalCount }, categories] = await Promise.all([
+    searchTools(parsedParams, where),
+    findCategories({}),
+  ])
+
+  return (
+    <ToolListing
+      tools={tools}
+      totalCount={totalCount}
+      perPage={parsedParams.perPage}
+      categories={where?.categories ? undefined : categories}
+      placeholder={placeholder}
+    />
   )
 }
 
-const ToolQuerySkeleton = () => {
-  return (
-    <div className="flex flex-col gap-5">
-      <Input size="lg" placeholder="Loading..." disabled />
-      <ToolListSkeleton />
-    </div>
-  )
-}
-
-export { ToolQuery, ToolQuerySkeleton }
+export { ToolQuery }

@@ -1,13 +1,12 @@
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["driverAdapters", "postgresqlExtensions", "fullTextSearchPostgres"]
+  previewFeatures = ["driverAdapters", "postgresqlExtensions"]
 }
 
 datasource db {
   provider   = "postgresql"
   url        = env("DATABASE_URL")
-  directUrl  = env("DATABASE_URL_UNPOOLED")
-  extensions = [citext, pg_trgm]
+  extensions = [citext]
 }
 
 enum AdType {
@@ -118,25 +117,24 @@ model Ad {
 }
 
 model Tool {
-  id             String                   @id @default(cuid())
-  name           String                   @db.Citext
-  slug           String                   @unique
-  websiteUrl     String                   @unique
+  id             String     @id @default(cuid())
+  name           String     @db.Citext
+  slug           String     @unique
+  websiteUrl     String     @unique
   affiliateUrl   String?
   tagline        String?
   description    String?
   content        String?
   faviconUrl     String?
   screenshotUrl  String?
-  isFeatured     Boolean                  @default(false)
+  isFeatured     Boolean    @default(false)
   submitterName  String?
   submitterEmail String?
   submitterNote  String?
-  status         ToolStatus               @default(Draft)
+  status         ToolStatus @default(Draft)
   publishedAt    DateTime?
-  createdAt      DateTime                 @default(now())
-  updatedAt      DateTime                 @updatedAt
-  searchVector   Unsupported("tsvector")?
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
 
   // Relations
   categories Category[]
@@ -147,7 +145,6 @@ model Tool {
   @@index([id, slug])
   @@index([name])
   @@index([status])
-  @@index([searchVector], type: Gin)
   @@index([ownerId])
 }
 

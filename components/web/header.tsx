@@ -91,6 +91,7 @@ export const Header = ({ children, className, ...props }: HTMLAttributes<HTMLEle
           </DropdownMenu>
 
           <NavLink href="/advertise">Advertise</NavLink>
+          <NavLink href="/about">About Us</NavLink>
         </nav>
 
         <Stack size="sm" wrap={false} className="flex-1 justify-end">

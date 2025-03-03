@@ -2,8 +2,8 @@ import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import type { SearchParams } from "nuqs/server"
 import { Suspense, cache } from "react"
-import { CategoryToolListing } from "~/app/(web)/categories/[slug]/listing"
-import { ToolQuerySkeleton } from "~/components/web/tools/tool-query"
+import { ToolListingSkeleton } from "~/components/web/tools/tool-listing"
+import { ToolQuery } from "~/components/web/tools/tool-query"
 import { Breadcrumbs } from "~/components/web/ui/breadcrumbs"
 import { Intro, IntroDescription, IntroTitle } from "~/components/web/ui/intro"
 import { metadataConfig } from "~/config/metadata"
@@ -27,11 +27,11 @@ const getCategory = cache(async ({ params }: PageProps) => {
 })
 
 const getMetadata = (category: CategoryOne): Metadata => {
-  const name = category.label || `${category.name} Tools`
+  const title = category.label || `${category.name} Tools`
 
   return {
-    title: `Open Source ${name}`,
-    description: `A curated collection of the ${category._count.tools} best open source ${name} for inspiration and reference. Each listing includes a website screenshot along with a detailed review of its features.`,
+    title,
+    description: `A curated collection of the best ${title}.`,
   }
 }
 
@@ -75,8 +75,12 @@ export default async function CategoryPage(props: PageProps) {
         <IntroDescription className="max-w-3xl">{description}</IntroDescription>
       </Intro>
 
-      <Suspense fallback={<ToolQuerySkeleton />}>
-        <CategoryToolListing category={category} searchParams={props.searchParams} />
+      <Suspense fallback={<ToolListingSkeleton />}>
+        <ToolQuery
+          searchParams={props.searchParams}
+          where={{ categories: { some: { slug: category.slug } } }}
+          placeholder={`Search ${String(title).toLowerCase()}...`}
+        />
       </Suspense>
     </>
   )

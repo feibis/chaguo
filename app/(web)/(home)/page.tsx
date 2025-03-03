@@ -1,10 +1,10 @@
 import type { SearchParams } from "nuqs/server"
 import { Suspense } from "react"
 import { CountBadge, CountBadgeSkeleton } from "~/app/(web)/(home)/count-badge"
-import { HomeToolListing } from "~/app/(web)/(home)/listing"
 import { NewsletterForm } from "~/components/web/newsletter-form"
 import { NewsletterProof } from "~/components/web/newsletter-proof"
-import { ToolQuerySkeleton } from "~/components/web/tools/tool-query"
+import { ToolListingSkeleton } from "~/components/web/tools/tool-listing"
+import { ToolQuery } from "~/components/web/tools/tool-query"
 import { Intro, IntroDescription, IntroTitle } from "~/components/web/ui/intro"
 import { config } from "~/config"
 
@@ -37,8 +37,8 @@ export default function Home({ searchParams }: PageProps) {
         </NewsletterForm>
       </section>
 
-      <Suspense fallback={<ToolQuerySkeleton />}>
-        <HomeToolListing searchParams={searchParams} />
+      <Suspense fallback={<ToolListingSkeleton />}>
+        <ToolQuery searchParams={searchParams} />
       </Suspense>
     </>
   )
