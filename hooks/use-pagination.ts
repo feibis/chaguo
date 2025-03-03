@@ -14,7 +14,7 @@ export const usePagination = ({
   pageSize,
   siblingCount = 1,
 }: UsePaginationProps) => {
-  const DOTS = "~/"
+  const DOTS = "..."
 
   const paginationRange = useMemo(() => {
     const totalPageCount = Math.ceil(totalCount / pageSize)

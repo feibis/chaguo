@@ -20,7 +20,7 @@ export const searchTools = async (
   const start = performance.now()
   const skip = (page - 1) * perPage
   const take = perPage
-  const [sortBy, sortOrder] = sort.split("~/")
+  const [sortBy, sortOrder] = sort.split(".")
 
   const whereQuery: Prisma.ToolWhereInput = {
     status: ToolStatus.Published,

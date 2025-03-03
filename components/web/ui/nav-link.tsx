@@ -21,7 +21,7 @@ const navLinkVariants = cva({
 })
 
 const isItemActive = (href: string | undefined, pathname: string, exact = false) => {
-  if (href && href !== "~/") {
+  if (href && href !== "/") {
     return exact ? pathname === href : pathname.includes(href)
   }
 

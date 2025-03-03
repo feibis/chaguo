@@ -3,13 +3,11 @@
 import { useMediaQuery } from "@mantine/hooks"
 import { cx } from "cva"
 import {
-  CopyrightIcon,
   GalleryHorizontalEndIcon,
   GemIcon,
   GlobeIcon,
   LayoutDashboardIcon,
   LogOutIcon,
-  ReplaceIcon,
 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
@@ -28,7 +26,7 @@ export const Sidebar = () => {
       fetchOptions: {
         onSuccess: () => {
           toast.success("You've been signed out successfully")
-          router.push("~/")
+          router.push("/")
         },
       },
     })
