@@ -3,7 +3,6 @@ import type { Metadata } from "next"
 import Image from "next/image"
 import { notFound } from "next/navigation"
 import { Suspense, cache } from "react"
-import type { ImageObject } from "schema-dts"
 import { FeaturedTools } from "~/app/(web)/[slug]/featured-tools"
 import { RelatedTools } from "~/app/(web)/[slug]/related-tools"
 import { Button } from "~/components/common/button"
@@ -113,15 +112,32 @@ export default async function ToolPage(props: PageProps) {
             </div>
 
             {tool.screenshotUrl && (
-              <Image
-                key={tool.screenshotUrl}
-                src={tool.screenshotUrl}
-                alt={`A screenshot of ${tool.name}`}
-                width={1280}
-                height={1024}
-                loading="lazy"
-                className="aspect-video h-auto w-full rounded-md border object-cover object-top max-md:order-2"
-              />
+              <ExternalLink
+                href={tool.websiteUrl}
+                doFollow={tool.isFeatured}
+                eventName="click_website"
+                eventProps={{ url: tool.websiteUrl }}
+                className="group relative bg-accent border rounded-md overflow-clip max-md:order-2"
+              >
+                <Image
+                  src={tool.screenshotUrl}
+                  alt={`A screenshot of ${tool.name}`}
+                  width={1280}
+                  height={720}
+                  loading="lazy"
+                  className="aspect-video h-auto w-full object-cover object-top group-hover:opacity-50 group-hover:scale-[102%] group-hover:blur-[1px]"
+                />
+
+                <Button
+                  size="md"
+                  focus={false}
+                  suffix={<ArrowUpRightIcon />}
+                  className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 pointer-events-none shadow-xl group-hover:opacity-100"
+                  asChild
+                >
+                  <span>Visit</span>
+                </Button>
+              </ExternalLink>
             )}
 
             {tool.content && <Markdown code={tool.content} className="max-md:order-5" />}

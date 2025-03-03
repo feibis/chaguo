@@ -2,12 +2,12 @@
 
 import { formatNumber } from "@curiousleaf/utils"
 import { AtSignIcon, RssIcon } from "lucide-react"
-import Image from "next/image"
 import type { HTMLAttributes } from "react"
 import { H5, H6 } from "~/components/common/heading"
 import { BrandGitHubIcon } from "~/components/common/icons/brand-github"
 import { Stack } from "~/components/common/stack"
 import { Tooltip, TooltipProvider } from "~/components/common/tooltip"
+import { ExternalLink } from "~/components/web/external-link"
 import { NewsletterForm } from "~/components/web/newsletter-form"
 import { NavLink } from "~/components/web/ui/nav-link"
 import { config } from "~/config"
@@ -99,26 +99,27 @@ export const Footer = ({ children, className, hideNewsletter, ...props }: Footer
         </Stack>
       </div>
 
-      <div className="flex flex-row flex-wrap items-end justify-between gap-x-4 gap-y-2 w-full">
-        <NavLink
-          href={config.links.author}
-          className="text-xs"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            src="/authors/piotrkulpinski.webp"
-            alt="Piotr Kulpinski"
-            loading="lazy"
-            width="16"
-            height="16"
-            decoding="async"
-            className="max-sm:hidden size-4 rounded-full"
-          />
-          Made by Piotr Kulpinski
-        </NavLink>
+      <div className="flex flex-row flex-wrap items-end justify-between gap-x-4 gap-y-2 w-full text-sm text-muted-foreground">
+        <p>
+          Made with{" "}
+          <ExternalLink
+            href={config.links.madeWith}
+            className="font-medium text-foreground hover:text-secondary-foreground"
+            doFollow
+          >
+            Dirstarter
+          </ExternalLink>{" "}
+          by{" "}
+          <ExternalLink
+            href={config.links.author}
+            className="font-medium text-foreground hover:text-secondary-foreground"
+            doFollow
+          >
+            Piotr Kulpinski
+          </ExternalLink>
+        </p>
 
-        <p className="text-xs text-muted-foreground">This website may contain affiliate links</p>
+        <p>This website may contain affiliate links</p>
       </div>
 
       {children}
