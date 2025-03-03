@@ -138,6 +138,7 @@ model Tool {
 
   // Relations
   categories Category[]
+  tags       Tag[]
   reports    Report[]
   owner      User?      @relation(fields: [ownerId], references: [id])
   ownerId    String?
@@ -161,6 +162,20 @@ model Category {
 
   // Indexes
   @@index([slug])
+}
+
+model Tag {
+  id        String   @id @default(cuid())
+  name      String   @db.Citext
+  slug      String   @unique
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+
+  // Relations
+  tools Tool[]
+
+  // Indexes
+  @@index([name])
 }
 
 model Report {

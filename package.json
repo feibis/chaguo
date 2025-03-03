@@ -15,7 +15,11 @@
     "db:studio": "prisma studio",
     "db:push": "prisma db push --skip-generate",
     "db:reset": "prisma migrate reset",
+    "db:seed": "prisma db seed",
     "postinstall": "bun run db:generate"
+  },
+  "prisma": {
+    "seed": "bun prisma/seed.ts"
   },
   "dependencies": {
     "@ai-sdk/google": "^1.1.18",
