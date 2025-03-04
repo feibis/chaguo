@@ -2,7 +2,7 @@ import Image from "next/image"
 import type { ComponentProps } from "react"
 import { Stack } from "~/components/common/stack"
 
-type AuthorProps = ComponentProps<typeof Stack> & {
+export type AuthorProps = ComponentProps<typeof Stack> & {
   name: string
   image: string
   title?: string

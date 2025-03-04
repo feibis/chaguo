@@ -102,7 +102,6 @@ export const AdsPicker = ({ className, ads, ...props }: AdsCalendarProps) => {
                     <Button
                       variant="secondary"
                       size="sm"
-                      className="p-0.5"
                       aria-label={`Clear ${adSpot.label} selection`}
                       prefix={<XIcon />}
                       onClick={() => clearSelection(selection.type)}

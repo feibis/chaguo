@@ -85,7 +85,6 @@ const AdCardSkeleton = ({ className }: ComponentProps<typeof Card>) => {
 
       <CardDescription className="flex flex-col gap-0.5 mb-auto">
         <Skeleton className="h-5 w-full">&nbsp;</Skeleton>
-        <Skeleton className="h-5 w-full">&nbsp;</Skeleton>
         <Skeleton className="h-5 w-2/3">&nbsp;</Skeleton>
       </CardDescription>
 

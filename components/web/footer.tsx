@@ -114,8 +114,6 @@ export const Footer = ({ children, className, hideNewsletter, ...props }: Footer
             Piotr Kulpinski
           </ExternalLink>
         </p>
-
-        <p>This website may contain affiliate links</p>
       </div>
 
       {children}
