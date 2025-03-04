@@ -57,6 +57,7 @@ async function main() {
       { name: "Paid", slug: "paid" },
       { name: "Open Source", slug: "open-source" },
       { name: "AI", slug: "ai" },
+      { name: "API", slug: "api" },
     ],
   })
 
@@ -90,7 +91,7 @@ async function main() {
       status: ToolStatus.Published,
       publishedAt: new Date(),
       faviconUrl: "https://nextjs.org/favicon.ico",
-      screenshotUrl: "https://nextjs.org/static/twitter-cards/home.jpg",
+      screenshotUrl: "https://assets.vercel.com/image/upload/front/nextjs/twitter-card.png",
       categories: ["frontend"],
       tags: ["typescript", "javascript", "free", "open-source"],
     },
@@ -106,8 +107,7 @@ async function main() {
       publishedAt: new Date(),
       faviconUrl:
         "https://www.docker.com/wp-content/uploads/2023/04/cropped-Docker-favicon-32x32.png",
-      screenshotUrl:
-        "https://www.docker.com/wp-content/uploads/2023/08/desktop-4.30-macOS-dark.png.webp",
+      screenshotUrl: "https://www.docker.com/app/uploads/2023/06/meta-image-homepage-1110x580.png",
       categories: ["devops"],
       tags: ["docker", "free", "open-source"],
     },
@@ -123,7 +123,7 @@ async function main() {
       publishedAt: new Date(),
       faviconUrl: "https://static.figma.com/app/icon/1/favicon.png",
       screenshotUrl:
-        "https://cdn.sanity.io/images/599r6htc/localized/11279bf56dcf1fd86177fe2d4d8bf5be1760a3a5-2310x1286.png?w=1060&q=75&fit=max&auto=format",
+        "https://cdn.sanity.io/images/599r6htc/regionalized/1adfa5a99040c80af7b4b5e3e2cf845315ea2367-2400x1260.png?w=1200&q=70&fit=max&auto=format",
       categories: ["design-tools"],
       tags: ["free", "paid"],
     },
@@ -134,11 +134,11 @@ async function main() {
       tagline: "JavaScript runtime built on Chrome's V8 JavaScript engine",
       description:
         "Node.js is an open-source, cross-platform JavaScript runtime environment that executes JavaScript code outside a web browser.",
-      isFeatured: true,
       status: ToolStatus.Published,
       publishedAt: new Date(),
       faviconUrl: "https://nodejs.org/static/images/favicons/favicon.ico",
-      screenshotUrl: "https://nodejs.org/static/images/logos/nodejs-new-pantone-black.svg",
+      screenshotUrl:
+        "https://nodejs.org/en/next-data/og/announcement/Node.js%20%E2%80%94%20Run%20JavaScript%20Everywhere",
       categories: ["backend"],
       tags: ["nodejs", "javascript", "free", "open-source"],
     },
@@ -149,12 +149,10 @@ async function main() {
       tagline: "Your AI pair programmer",
       description:
         "GitHub Copilot uses the OpenAI Codex to suggest code and entire functions in real-time, right from your editor.",
-      isFeatured: true,
       status: ToolStatus.Published,
       publishedAt: new Date(),
       faviconUrl: "https://github.githubassets.com/favicons/favicon.svg",
-      screenshotUrl:
-        "https://github.githubassets.com/images/modules/site/copilot/copilot-hub-hero.jpg",
+      screenshotUrl: "https://github.githubassets.com/assets/copilot-2023-83117d7c0b8a.png",
       categories: ["productivity", "ai-tools"],
       tags: ["paid", "ai"],
     },
@@ -182,7 +180,7 @@ async function main() {
       status: ToolStatus.Published,
       publishedAt: new Date(),
       faviconUrl: "https://a0.awsstatic.com/libra-css/images/site/fav/favicon.ico",
-      screenshotUrl: "https://a0.awsstatic.com/libra-css/images/site/touch-icon-ipad-144-smile.png",
+      screenshotUrl: "https://a0.awsstatic.com/libra-css/images/logos/aws_logo_smile_1200x630.png",
       categories: ["devops"],
       tags: ["aws", "paid"],
     },
@@ -196,14 +194,14 @@ async function main() {
       status: ToolStatus.Published,
       publishedAt: new Date(),
       faviconUrl: "https://developer.mozilla.org/favicon-48x48.png",
-      screenshotUrl: "https://developer.mozilla.org/mdn-social-share.png",
+      screenshotUrl: "https://developer.mozilla.org/mdn-social-share.d893525a4fb5fb1f67a2.png",
       categories: ["learning"],
       tags: ["javascript", "css", "html", "free", "open-source"],
     },
     {
       name: "ChatGPT",
       slug: "chatgpt",
-      websiteUrl: "https://chat.openai.com",
+      websiteUrl: "https://chatgpt.com",
       tagline: "Optimizing language models for dialogue",
       description:
         "ChatGPT is a large language model developed by OpenAI that can generate human-like text based on the context and prompt it's given.",
@@ -211,7 +209,7 @@ async function main() {
       status: ToolStatus.Published,
       publishedAt: new Date(),
       faviconUrl: "https://cdn.oaistatic.com/assets/favicon-miwirzcw.ico",
-      screenshotUrl: "https://openai.com/content/images/2022/11/ChatGPT.jpg",
+      screenshotUrl: "https://cdn.oaistatic.com/assets/chatgpt-share-og-u7j5uyao.webp",
       categories: ["ai-tools", "productivity"],
       tags: ["free", "paid", "ai"],
     },
@@ -225,7 +223,7 @@ async function main() {
       status: ToolStatus.Published,
       publishedAt: new Date(),
       faviconUrl: "https://tailwindcss.com/favicons/apple-touch-icon.png",
-      screenshotUrl: "https://tailwindcss.com/_next/static/media/social-card-large.a6e71726.jpg",
+      screenshotUrl: "https://tailwindcss.com/opengraph-image.jpg",
       categories: ["frontend"],
       tags: ["css", "free", "open-source"],
     },
@@ -242,6 +240,37 @@ async function main() {
       screenshotUrl: "https://react.dev/images/og-home.png",
       categories: ["frontend"],
       tags: ["react", "javascript", "free", "open-source"],
+    },
+    {
+      name: "Postman",
+      slug: "postman",
+      websiteUrl: "https://www.postman.com",
+      tagline: "API platform for building and using APIs",
+      description:
+        "Postman is an API platform for developers to design, build, test and iterate their APIs.",
+      status: ToolStatus.Published,
+      publishedAt: new Date(),
+      faviconUrl: "https://www.postman.com/_ar-assets/images/favicon-1-32.png",
+      screenshotUrl:
+        "https://voyager.postman.com/social-preview/postman-api-platform-social-preview-2.jpeg",
+      categories: ["testing", "backend"],
+      tags: ["free", "paid", "api"],
+    },
+    {
+      name: "GitHub",
+      slug: "github",
+      websiteUrl: "https://github.com",
+      tagline: "Where the world builds software",
+      description:
+        "GitHub is a code hosting platform for version control and collaboration, letting you and others work together on projects.",
+      isFeatured: true,
+      status: ToolStatus.Published,
+      publishedAt: new Date(),
+      faviconUrl: "https://github.githubassets.com/favicons/favicon.svg",
+      screenshotUrl:
+        "https://github.githubassets.com/images/modules/site/social-cards/github-social.png",
+      categories: ["devops"],
+      tags: ["free", "paid", "open-source", "ci-cd"],
     },
   ]
 

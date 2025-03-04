@@ -5,6 +5,7 @@ import {
   ChevronDownIcon,
   GalleryHorizontalEndIcon,
   SearchIcon,
+  TagIcon,
 } from "lucide-react"
 import { usePathname, useSearchParams } from "next/navigation"
 import { type HTMLAttributes, Suspense, useEffect, useState } from "react"
@@ -88,6 +89,11 @@ export const Header = ({ children, className, ...props }: HTMLAttributes<HTMLEle
                   <GalleryHorizontalEndIcon className="shrink-0 size-4 opacity-75" /> Categories
                 </NavLink>
               </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <NavLink href="/tags">
+                  <TagIcon className="shrink-0 size-4 opacity-75" /> Tags
+                </NavLink>
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
 
@@ -119,6 +125,9 @@ export const Header = ({ children, className, ...props }: HTMLAttributes<HTMLEle
         </NavLink>
         <NavLink href="/categories" className="text-base">
           Categories
+        </NavLink>
+        <NavLink href="/tags" className="text-base">
+          Tags
         </NavLink>
         <NavLink href="/submit" className="text-base">
           Submit
