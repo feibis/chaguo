@@ -1,8 +1,14 @@
 import { Prisma } from "@prisma/client"
 import { categoryManyPayload } from "~/server/web/categories/payloads"
+import { tagManyPayload } from "~/server/web/tags/payloads"
 
 export const toolCategoriesPayload = Prisma.validator<Prisma.Tool$categoriesArgs>()({
   select: categoryManyPayload,
+  orderBy: { name: "asc" },
+})
+
+export const toolTagsPayload = Prisma.validator<Prisma.Tool$tagsArgs>()({
+  select: tagManyPayload,
   orderBy: { name: "asc" },
 })
 
@@ -21,6 +27,7 @@ export const toolOnePayload = Prisma.validator<Prisma.ToolSelect>()({
   updatedAt: true,
   owner: true,
   categories: toolCategoriesPayload,
+  tags: toolTagsPayload,
 })
 
 export const toolManyPayload = Prisma.validator<Prisma.ToolSelect>()({

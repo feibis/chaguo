@@ -1,18 +1,6 @@
 import { ReportType } from "@prisma/client"
-import { createSearchParamsCache, parseAsInteger, parseAsString } from "nuqs/server"
 import { z } from "zod"
 import { config } from "~/config"
-
-export const filterSearchParams = {
-  q: parseAsString.withDefault(""),
-  sort: parseAsString.withDefault(""),
-  page: parseAsInteger.withDefault(1),
-  perPage: parseAsInteger.withDefault(35),
-  category: parseAsString.withDefault(""),
-}
-
-export const filterSearchParamsCache = createSearchParamsCache(filterSearchParams)
-export type FilterSearchParams = Awaited<ReturnType<typeof filterSearchParamsCache.parse>>
 
 export const submitToolSchema = z.object({
   name: z.string().min(1, "Name is required"),

@@ -1,9 +1,9 @@
 import type { Prisma } from "@prisma/client"
 import type { SearchParams } from "nuqs"
 import { ToolListing } from "~/components/web/tools/tool-listing"
-import { filterSearchParamsCache } from "~/server/schemas"
 import { findCategories } from "~/server/web/categories/queries"
 import { searchTools } from "~/server/web/tools/queries"
+import { toolsSearchParamsCache } from "~/server/web/tools/schemas"
 
 type ToolQueryProps = {
   searchParams: Promise<SearchParams>
@@ -12,7 +12,7 @@ type ToolQueryProps = {
 }
 
 const ToolQuery = async ({ searchParams, where, placeholder }: ToolQueryProps) => {
-  const parsedParams = filterSearchParamsCache.parse(await searchParams)
+  const parsedParams = toolsSearchParamsCache.parse(await searchParams)
 
   const [{ tools, totalCount }, categories] = await Promise.all([
     searchTools(parsedParams, where),

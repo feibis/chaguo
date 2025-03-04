@@ -78,7 +78,7 @@ async function main() {
       faviconUrl: "https://code.visualstudio.com/favicon.ico",
       screenshotUrl: "https://code.visualstudio.com/opengraphimg/opengraph-home.png",
       categories: ["frontend"],
-      tags: ["typescript", "javascript", "free", "open-source"],
+      tags: ["free", "open-source"],
     },
     {
       name: "Next.js",
@@ -281,7 +281,6 @@ async function main() {
         ...toolData,
         categories: { connect: categories.map(slug => ({ slug })) },
         tags: { connect: tags.map(slug => ({ slug })) },
-        owner: { connect: { id: admin.id } },
       },
     })
   }

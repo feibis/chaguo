@@ -46,7 +46,7 @@ const ToolCard = ({ className, tool, isRelated, ...props }: ToolCardProps) => {
             direction="column"
             className="flex-1 transition-opacity duration-200 group-hover:opacity-0"
           >
-            {tool.tagline && <CardDescription>{tool.tagline}</CardDescription>}
+            {tool.tagline && <CardDescription className="min-h-10">{tool.tagline}</CardDescription>}
 
             {!!tool.categories.length && (
               <Stack size="sm" className="mt-auto">

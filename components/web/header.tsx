@@ -7,7 +7,7 @@ import {
   SearchIcon,
   TagIcon,
 } from "lucide-react"
-import { usePathname, useSearchParams } from "next/navigation"
+import { usePathname } from "next/navigation"
 import { type HTMLAttributes, Suspense, useEffect, useState } from "react"
 import { Button } from "~/components/common/button"
 import {
@@ -27,7 +27,6 @@ import { cx } from "~/utils/cva"
 
 export const Header = ({ children, className, ...props }: HTMLAttributes<HTMLElement>) => {
   const pathname = usePathname()
-  const searchParams = useSearchParams()
   const [isNavOpen, setNavOpen] = useState(false)
 
   // Close the mobile navigation when the user presses the "Escape" key
@@ -42,7 +41,7 @@ export const Header = ({ children, className, ...props }: HTMLAttributes<HTMLEle
 
   useEffect(() => {
     setNavOpen(false)
-  }, [pathname, searchParams])
+  }, [pathname])
 
   return (
     <Container

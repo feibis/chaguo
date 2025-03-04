@@ -2,6 +2,7 @@ import { allPosts as posts } from "content-collections"
 import type { MetadataRoute } from "next"
 import { config } from "~/config"
 import { findCategorySlugs } from "~/server/web/categories/queries"
+import { findTagSlugs } from "~/server/web/tags/queries"
 import { findToolSlugs } from "~/server/web/tools/queries"
 
 type Entry = MetadataRoute.Sitemap[number]
@@ -14,9 +15,13 @@ const createEntry = (path: string, lastModified: Date, options?: Partial<Entry>)
 })
 
 export default async function Sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [tools, categories] = await Promise.all([findToolSlugs({}), findCategorySlugs({})])
+  const [tools, categories, tags] = await Promise.all([
+    findToolSlugs({}),
+    findCategorySlugs({}),
+    findTagSlugs({}),
+  ])
 
-  const pages = ["/about", "/submit"]
+  const pages = ["/about", "/advertise", "/submit"]
   const now = new Date()
 
   return [
@@ -36,5 +41,9 @@ export default async function Sitemap(): Promise<MetadataRoute.Sitemap> {
     // Categories
     createEntry("/categories", now),
     ...categories.map(c => createEntry(`/categories/${c.slug}`, c.updatedAt)),
+
+    // Tags
+    createEntry("/tags", now),
+    ...tags.map(t => createEntry(`/tags/${t.slug}`, t.updatedAt)),
   ]
 }

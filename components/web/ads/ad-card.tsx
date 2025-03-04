@@ -61,7 +61,7 @@ const AdCard = async ({ className, type, ...props }: AdCardProps) => {
         </Button>
 
         {isDefault && (
-          <LogoSymbol className="absolute -bottom-2/5 -right-1/4 -z-10 size-64 opacity-[3.5%] rotate-45 pointer-events-none transition group-hover/button:rotate-[60deg]" />
+          <LogoSymbol className="absolute -bottom-2/5 -right-1/4 -z-10 size-64 opacity-[3.5%] rotate-[30deg] pointer-events-none transition group-hover/button:rotate-[45deg]" />
         )}
       </ExternalLink>
     </Card>

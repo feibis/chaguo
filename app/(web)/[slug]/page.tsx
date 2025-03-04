@@ -157,6 +157,21 @@ export default async function ToolPage(props: PageProps) {
               </Stack>
             )}
 
+            {/* Tags */}
+            {!!tool.tags.length && (
+              <Stack direction="column">
+                <H5 as="h4">Tags:</H5>
+
+                <Stack>
+                  {tool.tags.map(tag => (
+                    <Tag key={tag.slug} href={`/tags/${tag.slug}`} prefix={<HashIcon />}>
+                      {tag.slug}
+                    </Tag>
+                  ))}
+                </Stack>
+              </Stack>
+            )}
+
             <ShareButtons title={`${title}`} className="max-md:order-9" />
           </Section.Content>
 
