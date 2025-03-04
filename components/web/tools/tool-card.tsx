@@ -1,5 +1,3 @@
-import { formatNumber } from "@curiousleaf/utils"
-import { formatDistanceToNowStrict } from "date-fns"
 import { GitForkIcon, StarIcon, TimerIcon } from "lucide-react"
 import type { ComponentProps } from "react"
 import { Badge } from "~/components/common/badge"
@@ -37,15 +35,11 @@ const ToolCard = ({ className, tool, isRelated, ...props }: ToolCardProps) => {
         </CardHeader>
 
         <div className="relative size-full flex flex-col">
-          <Stack
-            size="lg"
-            direction="column"
-            className="items-stretch absolute inset-0 opacity-0 transition-opacity group-hover:opacity-100"
-          >
-            {tool.description && (
-              <CardDescription className="line-clamp-4">{tool.description}</CardDescription>
-            )}
-          </Stack>
+          {tool.description && (
+            <div className="absolute inset-0 opacity-0 transition-opacity group-hover:opacity-100">
+              <CardDescription className="line-clamp-3">{tool.description}</CardDescription>
+            </div>
+          )}
 
           <Stack
             size="lg"
@@ -53,6 +47,16 @@ const ToolCard = ({ className, tool, isRelated, ...props }: ToolCardProps) => {
             className="flex-1 transition-opacity duration-200 group-hover:opacity-0"
           >
             {tool.tagline && <CardDescription>{tool.tagline}</CardDescription>}
+
+            {!!tool.categories.length && (
+              <Stack size="sm" className="mt-auto">
+                {tool.categories.map(category => (
+                  <Badge key={category.slug} variant="outline">
+                    {category.name}
+                  </Badge>
+                ))}
+              </Stack>
+            )}
           </Stack>
         </div>
       </Link>

@@ -32,6 +32,7 @@ export const toolManyPayload = Prisma.validator<Prisma.ToolSelect>()({
   faviconUrl: true,
   publishedAt: true,
   updatedAt: true,
+  categories: toolCategoriesPayload,
 })
 
 export type ToolOne = Prisma.ToolGetPayload<{ select: typeof toolOnePayload }>

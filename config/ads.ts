@@ -31,8 +31,7 @@ export const adsConfig = {
     type: "All",
     websiteUrl: "/advertise",
     name: "Advertise with us",
-    description:
-      "Reach out to our audience of professional open source/tech enthusiasts to boost your sales.",
+    description: "Reach our audience of professional directory owners and boost your sales.",
     faviconUrl: null,
   } satisfies AdOne,
 }

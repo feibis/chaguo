@@ -56,7 +56,7 @@ const AdCard = async ({ className, type, ...props }: AdCardProps) => {
 
         <CardDescription className="mb-auto line-clamp-4">{ad.description}</CardDescription>
 
-        <Button className="w-full pointer-events-none" suffix={<ArrowUpRightIcon />} asChild>
+        <Button size="md" className="pointer-events-none" suffix={<ArrowUpRightIcon />} asChild>
           <span>{isDefault ? "Advertise" : `Visit ${ad.name}`}</span>
         </Button>
 
@@ -89,7 +89,7 @@ const AdCardSkeleton = ({ className }: ComponentProps<typeof Card>) => {
         <Skeleton className="h-5 w-2/3">&nbsp;</Skeleton>
       </CardDescription>
 
-      <Button className="w-full pointer-events-none" suffix={<ArrowUpRightIcon />} asChild>
+      <Button size="md" className="pointer-events-none" suffix={<ArrowUpRightIcon />} asChild>
         <span>&nbsp;</span>
       </Button>
     </Card>
