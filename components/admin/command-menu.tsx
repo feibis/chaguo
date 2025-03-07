@@ -1,5 +1,3 @@
-"use client"
-
 import { useDebouncedState } from "@mantine/hooks"
 import type { Category, Tool } from "@prisma/client"
 import { LoaderIcon } from "lucide-react"
