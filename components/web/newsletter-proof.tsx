@@ -1,9 +1,9 @@
 import { formatNumber } from "@curiousleaf/utils"
 import Image from "next/image"
-import type { HTMLAttributes } from "react"
+import type { ComponentProps } from "react"
 import { cx } from "~/utils/cva"
 
-export const NewsletterProof = ({ className, ...props }: HTMLAttributes<HTMLElement>) => {
+export const NewsletterProof = ({ className, ...props }: ComponentProps<"div">) => {
   return (
     <div
       className={cx(

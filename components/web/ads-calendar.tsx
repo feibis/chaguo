@@ -1,8 +1,7 @@
 import type { AdType } from "@prisma/client"
 import { differenceInDays, endOfDay, startOfDay } from "date-fns"
 import { EyeIcon } from "lucide-react"
-import type { HTMLAttributes } from "react"
-import { useCallback, useMemo } from "react"
+import { type ComponentProps, useCallback, useMemo } from "react"
 import type { DateRange } from "react-day-picker"
 import { Button } from "~/components/common/button"
 import { Calendar } from "~/components/common/calendar"
@@ -17,7 +16,7 @@ import type { AdMany } from "~/server/web/ads/payloads"
 import { getFirstAvailableMonth } from "~/utils/ads"
 import { cx } from "~/utils/cva"
 
-type AdsCalendarProps = HTMLAttributes<HTMLDivElement> & {
+type AdsCalendarProps = ComponentProps<"div"> & {
   adSpot: AdSpot
   ads: AdMany[]
   price: ReturnType<typeof useAds>["price"]

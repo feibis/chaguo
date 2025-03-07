@@ -2,7 +2,7 @@
 
 import { formatNumber } from "@curiousleaf/utils"
 import { AtSignIcon, RssIcon } from "lucide-react"
-import type { HTMLAttributes } from "react"
+import type { ComponentProps } from "react"
 import { H5, H6 } from "~/components/common/heading"
 import { BrandGitHubIcon } from "~/components/common/icons/brand-github"
 import { Stack } from "~/components/common/stack"
@@ -13,7 +13,7 @@ import { NavLink } from "~/components/web/ui/nav-link"
 import { config } from "~/config"
 import { cx } from "~/utils/cva"
 
-type FooterProps = HTMLAttributes<HTMLElement> & {
+type FooterProps = ComponentProps<"div"> & {
   hideNewsletter?: boolean
 }
 

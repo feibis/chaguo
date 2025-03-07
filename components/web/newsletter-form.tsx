@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { posthog } from "posthog-js"
-import type { ComponentProps, HTMLAttributes } from "react"
+import type { ComponentProps } from "react"
 import { useForm } from "react-hook-form"
 import { useServerAction } from "zsa-react"
 import { subscribeToNewsletter } from "~/actions/subscribe"
@@ -17,7 +17,7 @@ import { cx } from "~/utils/cva"
 type ButtonProps = ComponentProps<typeof Button>
 type InputProps = ComponentProps<typeof Input>
 
-type NewsletterFormProps = HTMLAttributes<HTMLElement> & {
+type NewsletterFormProps = ComponentProps<"form"> & {
   medium?: string
   placeholder?: string
   size?: InputProps["size"]

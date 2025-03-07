@@ -8,7 +8,7 @@ import {
   TagIcon,
 } from "lucide-react"
 import { usePathname } from "next/navigation"
-import { type HTMLAttributes, Suspense, useEffect, useState } from "react"
+import { type ComponentProps, Suspense, useEffect, useState } from "react"
 import { Button } from "~/components/common/button"
 import {
   DropdownMenu,
@@ -25,7 +25,7 @@ import { Logo } from "~/components/web/ui/logo"
 import { NavLink, navLinkVariants } from "~/components/web/ui/nav-link"
 import { cx } from "~/utils/cva"
 
-export const Header = ({ children, className, ...props }: HTMLAttributes<HTMLElement>) => {
+export const Header = ({ children, className, ...props }: ComponentProps<typeof Container>) => {
   const pathname = usePathname()
   const [isNavOpen, setNavOpen] = useState(false)
 
