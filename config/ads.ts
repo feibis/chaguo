@@ -32,6 +32,6 @@ export const adsConfig = {
     websiteUrl: "/advertise",
     name: "Advertise with us",
     description: "Reach our audience of professional directory owners and boost your sales.",
-    faviconUrl: null,
+    faviconUrl: "/favicon.png",
   } satisfies AdOne,
 }

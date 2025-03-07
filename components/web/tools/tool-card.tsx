@@ -8,7 +8,6 @@ import { Skeleton } from "~/components/common/skeleton"
 import { Stack } from "~/components/common/stack"
 import { ToolBadges } from "~/components/web/tools/tool-badges"
 import { Favicon } from "~/components/web/ui/favicon"
-import { Insights } from "~/components/web/ui/insights"
 import type { ToolMany } from "~/server/web/tools/payloads"
 
 type ToolCardProps = ComponentProps<typeof Card> & {
@@ -74,7 +73,7 @@ const ToolCardSkeleton = () => {
   return (
     <Card hover={false} className="items-stretch select-none">
       <CardHeader>
-        <Favicon src="/favicon.png" className="animate-pulse opacity-50" />
+        <Favicon src="/favicon.png" className="animate-pulse opacity-25 grayscale" />
 
         <H4 className="w-2/3">
           <Skeleton>&nbsp;</Skeleton>
@@ -86,8 +85,12 @@ const ToolCardSkeleton = () => {
         <Skeleton className="h-5 w-1/2">&nbsp;</Skeleton>
       </CardDescription>
 
-      <Stack size="sm">
-        <Insights insights={insights} className="mt-auto animate-pulse" />
+      <Stack size="sm" className="mt-auto">
+        {[...Array(2)].map((_, index) => (
+          <Badge key={index} variant="outline" className="w-12">
+            &nbsp;
+          </Badge>
+        ))}
       </Stack>
     </Card>
   )

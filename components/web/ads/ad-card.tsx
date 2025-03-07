@@ -71,12 +71,8 @@ const AdCard = async ({ className, type, ...props }: AdCardProps) => {
 const AdCardSkeleton = ({ className }: ComponentProps<typeof Card>) => {
   return (
     <Card hover={false} className={cx("items-stretch select-none", className)}>
-      <CardBadges>
-        <Badge variant="outline">Ad</Badge>
-      </CardBadges>
-
       <CardHeader>
-        <Favicon src="/favicon.png" className="animate-pulse opacity-25" />
+        <Favicon src="/favicon.png" className="animate-pulse opacity-25 grayscale" />
 
         <H4 className="w-2/3">
           <Skeleton>&nbsp;</Skeleton>
@@ -88,7 +84,7 @@ const AdCardSkeleton = ({ className }: ComponentProps<typeof Card>) => {
         <Skeleton className="h-5 w-2/3">&nbsp;</Skeleton>
       </CardDescription>
 
-      <Button size="md" className="pointer-events-none opacity-25 text-transparent" asChild>
+      <Button size="md" className="pointer-events-none opacity-10 text-transparent" asChild>
         <span>&nbsp;</span>
       </Button>
     </Card>
