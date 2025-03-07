@@ -13,9 +13,7 @@ import {
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 import { Nav } from "~/components/admin/nav"
-import { NavMain } from "~/components/admin/nav-main"
 import { Kbd } from "~/components/common/kbd"
-import { Separator } from "~/components/common/separator"
 import { siteConfig } from "~/config/site"
 import { signOut } from "~/lib/auth-client"
 
@@ -34,80 +32,64 @@ export const Sidebar = () => {
     })
   }
 
+  const handleQuickMenu = () => {
+    document.dispatchEvent(
+      new KeyboardEvent("keydown", {
+        key: "k",
+        metaKey: true,
+      }),
+    )
+  }
+
   return (
-    <div
-      className={cx("sticky top-0 h-dvh z-40 flex flex-col border-r", isMobile ? "w-12" : "w-48")}
-    >
-      <Nav>
-        <NavMain
-          isCollapsed={!!isMobile}
-          links={[
-            {
-              title: "Dashboard",
-              href: "/admin",
-              prefix: <LayoutDashboardIcon />,
-            },
-          ]}
-        />
-      </Nav>
+    <Nav
+      isCollapsed={!!isMobile}
+      className={cx("sticky top-0 h-dvh z-40 border-r", isMobile ? "w-12" : "w-48")}
+      links={[
+        {
+          title: "Dashboard",
+          href: "/admin",
+          prefix: <LayoutDashboardIcon />,
+        },
 
-      <Separator />
+        undefined, // Separator
 
-      <Nav>
-        <NavMain
-          isCollapsed={!!isMobile}
-          links={[
-            {
-              title: "Tools",
-              href: "/admin/tools",
-              prefix: <GemIcon />,
-            },
-            {
-              title: "Categories",
-              href: "/admin/categories",
-              prefix: <GalleryHorizontalEndIcon />,
-            },
-          ]}
-        />
-      </Nav>
+        {
+          title: "Tools",
+          href: "/admin/tools",
+          prefix: <GemIcon />,
+        },
+        {
+          title: "Categories",
+          href: "/admin/categories",
+          prefix: <GalleryHorizontalEndIcon />,
+        },
 
-      <Separator />
+        undefined, // Separator
 
-      <Nav>
-        <NavMain
-          isCollapsed={!!isMobile}
-          links={[
-            {
-              title: "Quick Menu",
-              href: "#",
-              onClick: () =>
-                document.dispatchEvent(
-                  new KeyboardEvent("keydown", {
-                    key: "k",
-                    metaKey: true,
-                  }),
-                ),
-              prefix: <DockIcon />,
-              suffix: (
-                <Kbd meta className="size-auto">
-                  K
-                </Kbd>
-              ),
-            },
-            {
-              title: "Visit Site",
-              href: siteConfig.url,
-              prefix: <GlobeIcon />,
-            },
-            {
-              title: "Sign Out",
-              href: "#",
-              onClick: handleSignOut,
-              prefix: <LogOutIcon />,
-            },
-          ]}
-        />
-      </Nav>
-    </div>
+        {
+          title: "Quick Menu",
+          href: "#",
+          onClick: handleQuickMenu,
+          prefix: <DockIcon />,
+          suffix: (
+            <Kbd meta className="size-auto">
+              K
+            </Kbd>
+          ),
+        },
+        {
+          title: "Visit Site",
+          href: siteConfig.url,
+          prefix: <GlobeIcon />,
+        },
+        {
+          title: "Sign Out",
+          href: "#",
+          onClick: handleSignOut,
+          prefix: <LogOutIcon />,
+        },
+      ]}
+    />
   )
 }
