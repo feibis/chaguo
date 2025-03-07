@@ -1,7 +1,7 @@
 import { Text } from "@react-email/components"
+import { config } from "~/config"
 import { EmailButton } from "~/emails/components/button"
 import { EmailWrapper, type EmailWrapperProps } from "~/emails/components/wrapper"
-import { config } from "~/config"
 
 export type EmailProps = EmailWrapperProps & {
   url: string
@@ -18,7 +18,7 @@ const EmailLoginLink = ({ url, ...props }: EmailProps) => {
 
       <Text>or copy and paste this URL into your browser:</Text>
 
-      <Text className="max-w-sm flex-wrap break-words font-medium">{url}</Text>
+      <Text className="max-w-sm flex-wrap break-words font-medium leading-snug">{url}</Text>
     </EmailWrapper>
   )
 }

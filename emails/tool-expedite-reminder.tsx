@@ -2,21 +2,19 @@ import type { Tool } from "@prisma/client"
 import { Text } from "@react-email/components"
 import type { Jsonify } from "inngest/helpers/jsonify"
 import plur from "plur"
+import { config } from "~/config"
 import { EmailButton } from "~/emails/components/button"
 import { EmailWrapper, type EmailWrapperProps } from "~/emails/components/wrapper"
-import { config } from "~/config"
 
 export type EmailProps = EmailWrapperProps & {
   monthsWaiting: number
   tool: Tool | Jsonify<Tool>
 }
 
-export default function EmailToolExpediteReminder({ tool, monthsWaiting, ...props }: EmailProps) {
-  const link = `${config.site.url}/submit/${tool?.slug}`
-
+const EmailToolExpediteReminder = ({ tool, monthsWaiting, ...props }: EmailProps) => {
   return (
     <EmailWrapper {...props}>
-      <Text>Hey {tool?.submitterName}!</Text>
+      <Text>Hey {tool.submitterName}!</Text>
 
       <Text>
         It's been {monthsWaiting} {plur("month", monthsWaiting)} since you submitted {tool.name} to{" "}
@@ -40,7 +38,11 @@ export default function EmailToolExpediteReminder({ tool, monthsWaiting, ...prop
         </Text>
       )}
 
-      <EmailButton href={link}>Click here to expedite your listing</EmailButton>
+      <EmailButton href={`${config.site.url}/submit/${tool.slug}`}>
+        Publish {tool.name} within 24 hours
+      </EmailButton>
     </EmailWrapper>
   )
 }
+
+export default EmailToolExpediteReminder
