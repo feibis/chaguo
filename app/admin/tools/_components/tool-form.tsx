@@ -259,7 +259,7 @@ export function ToolForm({ children, className, tool, categories, ...props }: To
                       <SelectValue />
                     </SelectTrigger>
 
-                    <SelectContent side="top" className="tabular-nums">
+                    <SelectContent className="tabular-nums">
                       {Object.values(ToolStatus).map(status => (
                         <SelectItem key={status} value={status}>
                           {status}
@@ -306,10 +306,10 @@ export function ToolForm({ children, className, tool, categories, ...props }: To
           control={form.control}
           name="submitterNote"
           render={({ field }) => (
-            <FormItem>
+            <FormItem className="col-span-full">
               <FormLabel>Submitter Note</FormLabel>
               <FormControl>
-                <Input {...field} />
+                <TextArea {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -348,7 +348,7 @@ export function ToolForm({ children, className, tool, categories, ...props }: To
           control={form.control}
           name="categories"
           render={({ field }) => (
-            <FormItem>
+            <FormItem className="col-span-full">
               <FormLabel>Categories</FormLabel>
               <RelationSelector
                 promise={categories}

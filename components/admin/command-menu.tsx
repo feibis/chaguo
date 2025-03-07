@@ -5,6 +5,7 @@ import type { Category, Tool } from "@prisma/client"
 import { LoaderIcon } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
+import { useServerAction } from "zsa-react"
 import { searchItems } from "~/actions/search"
 import {
   CommandDialog,
@@ -13,6 +14,7 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
+  CommandShortcut,
 } from "~/components/common/command"
 
 type SearchResult = {
@@ -20,40 +22,31 @@ type SearchResult = {
   categories: Category[]
 }
 
-export const CommandMenu = () => {
+type CommandMenuProps = {
+  isOpen: boolean
+  onOpenChange: (isOpen: boolean) => void
+}
+
+export const CommandMenu = ({ isOpen, onOpenChange }: CommandMenuProps) => {
   const router = useRouter()
-  const [open, setOpen] = useState(false)
   const [query, setQuery] = useDebouncedState("", 100)
   const [searchResults, setSearchResults] = useState<SearchResult | null>(null)
-  const [isSearching, setIsSearching] = useState(false)
 
-  useEffect(() => {
-    const down = (e: KeyboardEvent) => {
-      if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
-        e.preventDefault()
-        setOpen(open => {
-          if (!open) {
-            return true
-          }
+  const { execute, isPending } = useServerAction(searchItems, {
+    onSuccess: ({ data }) => {
+      setSearchResults(data)
+    },
 
-          // Clear search results
-          clearSearch()
-          return false
-        })
-      }
-    }
-
-    document.addEventListener("keydown", down)
-    return () => document.removeEventListener("keydown", down)
-  }, [])
+    onError: ({ err }) => {
+      console.error(err)
+      setSearchResults(null)
+    },
+  })
 
   useEffect(() => {
     const performSearch = async () => {
       if (query.length > 1) {
-        setIsSearching(true)
-        const results = await searchItems({ query })
-        results && setSearchResults(results[0])
-        setIsSearching(false)
+        execute({ query })
       } else {
         setSearchResults(null)
       }
@@ -63,14 +56,10 @@ export const CommandMenu = () => {
   }, [query])
 
   const handleOpenChange = (newOpen: boolean) => {
-    setOpen(newOpen)
+    onOpenChange(newOpen)
 
     // Clear search results
     !newOpen && clearSearch()
-  }
-
-  const handleSearch = (value: string) => {
-    setQuery(value)
   }
 
   const handleSelect = (url: string) => {
@@ -86,10 +75,10 @@ export const CommandMenu = () => {
   }
 
   return (
-    <CommandDialog open={open} onOpenChange={handleOpenChange}>
-      <CommandInput placeholder="Type to search..." onValueChange={handleSearch} />
+    <CommandDialog open={isOpen} onOpenChange={handleOpenChange}>
+      <CommandInput placeholder="Type to search..." onValueChange={setQuery} />
 
-      {isSearching && (
+      {isPending && (
         <div className="absolute top-4 left-3 bg-background text-muted-foreground">
           <LoaderIcon className="size-4 animate-spin" />
         </div>
@@ -99,20 +88,21 @@ export const CommandMenu = () => {
         <CommandEmpty>No results found.</CommandEmpty>
 
         <CommandGroup heading="Create">
-          <CommandItem onSelect={() => handleSelect("~/admin/tools/new")}>New Tool</CommandItem>
-          <CommandItem onSelect={() => handleSelect("~/admin/categories/new")}>
+          <CommandItem onSelect={() => handleSelect("/admin/tools/new")}>
+            New Tool
+            <CommandShortcut meta>1</CommandShortcut>
+          </CommandItem>
+
+          <CommandItem onSelect={() => handleSelect("/admin/categories/new")}>
             New Category
+            <CommandShortcut meta>2</CommandShortcut>
           </CommandItem>
         </CommandGroup>
 
         {!!searchResults?.tools.length && (
           <CommandGroup heading="Tools">
             {searchResults.tools.map(tool => (
-              <CommandItem
-                key={tool.id}
-                value={`tool:${tool.name}`}
-                onSelect={() => handleSelect(`/admin/tools/${tool.slug}`)}
-              >
+              <CommandItem key={tool.id} onSelect={() => handleSelect(`/admin/tools/${tool.slug}`)}>
                 {tool.name}
               </CommandItem>
             ))}

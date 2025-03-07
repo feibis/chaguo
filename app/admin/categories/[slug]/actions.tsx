@@ -24,7 +24,7 @@ export const UpdateCategoryActions = ({ category }: UpdateCategoryActionProps) =
         onOpenChange={() => setRowAction(null)}
         categories={rowAction?.data ? [rowAction?.data] : []}
         showTrigger={false}
-        onSuccess={() => router.push("~/admin/categories")}
+        onSuccess={() => router.push("/admin/categories")}
       />
     </>
   )

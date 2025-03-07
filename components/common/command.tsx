@@ -4,6 +4,7 @@ import { Command as CommandPrimitive } from "cmdk"
 import { SearchIcon } from "lucide-react"
 import type { ComponentProps } from "react"
 import { Dialog, DialogContent, DialogTitle } from "~/components/common/dialog"
+import { Kbd } from "~/components/common/kbd"
 import { ScrollArea } from "~/components/common/scroll-area"
 import { cx } from "~/utils/cva"
 
@@ -90,13 +91,8 @@ const CommandItem = ({ className, ...props }: ComponentProps<typeof CommandPrimi
   )
 }
 
-const CommandShortcut = ({ className, ...props }: ComponentProps<"span">) => {
-  return (
-    <span
-      className={cx("ml-auto text-xs tracking-widest text-accent-foreground", className)}
-      {...props}
-    />
-  )
+const CommandShortcut = ({ className, ...props }: ComponentProps<typeof Kbd>) => {
+  return <Kbd className={cx("ml-auto", className)} {...props} />
 }
 
 export {

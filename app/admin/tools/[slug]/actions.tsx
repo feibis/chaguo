@@ -32,7 +32,7 @@ export const UpdateToolActions = ({ tool }: UpdateToolActionProps) => {
         onOpenChange={() => setRowAction(null)}
         tools={rowAction?.data ? [rowAction?.data] : []}
         showTrigger={false}
-        onSuccess={() => router.push("~/admin/tools")}
+        onSuccess={() => router.push("/admin/tools")}
       />
     </>
   )
