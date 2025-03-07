@@ -55,7 +55,7 @@ export const getColumns = ({ setRowAction }: GetColumnsProps): ColumnDef<Categor
       ),
     },
     {
-      accessorKey: "tagline",
+      accessorKey: "label",
       header: ({ column }) => <DataTableColumnHeader column={column} title="Label" />,
       cell: ({ row }) => (
         <span className="max-w-96 truncate text-muted-foreground">{row.original.label}</span>

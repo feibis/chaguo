@@ -82,11 +82,7 @@ export const Sidebar = () => {
             href: "#",
             onClick: () => setIsCommandOpen(true),
             prefix: <DockIcon />,
-            suffix: (
-              <Kbd meta className="size-auto">
-                K
-              </Kbd>
-            ),
+            suffix: <Kbd meta>K</Kbd>,
           },
           {
             title: "Visit Site",

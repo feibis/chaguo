@@ -1,12 +1,15 @@
 "use client"
 
+import { useHotkeys } from "@mantine/hooks"
 import type { Table } from "@tanstack/react-table"
 import { XIcon } from "lucide-react"
 import * as React from "react"
+import { useRef } from "react"
 import { DataTableFacetedFilter } from "~/components/admin/data-table/data-table-faceted-filter"
-import { DataTableViewOptions } from "~/components/admin/data-table/data-table-view-options"
 import { Button } from "~/components/common/button"
 import { Input } from "~/components/common/input"
+import { Kbd } from "~/components/common/kbd"
+import { Stack } from "~/components/common/stack"
 import type { DataTableFilterField } from "~/types"
 import { cx } from "~/utils/cva"
 
@@ -23,6 +26,9 @@ export function DataTableToolbar<TData>({
   ...props
 }: DataTableToolbarProps<TData>) {
   const isFiltered = table.getState().columnFilters.length > 0
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  useHotkeys([["/", () => inputRef.current?.focus()]])
 
   // Memoize computation of searchableColumns and filterableColumns
   const { searchableColumns, filterableColumns } = React.useMemo(() => {
@@ -40,33 +46,38 @@ export function DataTableToolbar<TData>({
       )}
       {...props}
     >
-      <div className="flex items-center space-x-2">
-        {searchableColumns.length > 0 &&
-          searchableColumns.map(
-            column =>
-              table.getColumn(column.id ? String(column.id) : "") && (
+      <Stack size="sm" wrap={false}>
+        {searchableColumns.map(
+          column =>
+            table.getColumn(column.id) && (
+              <div className="relative">
                 <Input
                   key={String(column.id)}
+                  ref={inputRef}
                   className="w-40 lg:w-60"
                   placeholder={column.placeholder}
-                  value={(table.getColumn(String(column.id))?.getFilterValue() as string) ?? ""}
-                  onChange={e => table.getColumn(String(column.id))?.setFilterValue(e.target.value)}
+                  value={String(table.getColumn(column.id)?.getFilterValue() ?? "")}
+                  onChange={e => table.getColumn(column.id)?.setFilterValue(e.target.value)}
                 />
-              ),
-          )}
 
-        {filterableColumns.length > 0 &&
-          filterableColumns.map(
-            column =>
-              table.getColumn(column.id ? String(column.id) : "") && (
-                <DataTableFacetedFilter
-                  key={String(column.id)}
-                  column={table.getColumn(column.id ? String(column.id) : "")}
-                  title={column.label}
-                  options={column.options ?? []}
-                />
-              ),
-          )}
+                <Kbd className="absolute right-2 top-1/2 -translate-y-1/2 m-0 pointer-events-none">
+                  /
+                </Kbd>
+              </div>
+            ),
+        )}
+
+        {filterableColumns.map(
+          column =>
+            table.getColumn(column.id) && (
+              <DataTableFacetedFilter
+                key={String(column.id)}
+                column={table.getColumn(column.id)}
+                title={column.label}
+                options={column.options ?? []}
+              />
+            ),
+        )}
 
         {isFiltered && (
           <Button
@@ -79,12 +90,11 @@ export function DataTableToolbar<TData>({
             Reset
           </Button>
         )}
-      </div>
+      </Stack>
 
-      <div className="flex items-center gap-2">
+      <Stack size="sm" wrap={false}>
         {children}
-        <DataTableViewOptions table={table} />
-      </div>
+      </Stack>
     </div>
   )
 }

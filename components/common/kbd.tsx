@@ -2,12 +2,12 @@ import type { ComponentProps } from "react"
 import { type VariantProps, cva, cx } from "~/utils/cva"
 
 const kbdVariants = cva({
-  base: "inline-flex gap-[0.2em] whitespace-nowrap tabular-nums rounded-sm border px-[0.4em] py-[0.088em] text-xs/tight font-medium text-secondary-foreground",
+  base: "inline-flex gap-[0.2em] -my-0.5 px-[0.4em] py-[0.088em] whitespace-nowrap tabular-nums rounded-sm border text-xs/tight font-medium text-muted-foreground",
 
   variants: {
     variant: {
       soft: "border-transparent bg-accent",
-      outline: "",
+      outline: "bg-background",
     },
   },
 
