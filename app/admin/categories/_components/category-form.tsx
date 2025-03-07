@@ -20,10 +20,9 @@ import { Input } from "~/components/common/input"
 import { Link } from "~/components/common/link"
 import { createCategory, updateCategory } from "~/server/admin/categories/actions"
 import type { findCategoryBySlug } from "~/server/admin/categories/queries"
-import { type CategorySchema, categorySchema } from "~/server/admin/categories/validations"
+import { categorySchema } from "~/server/admin/categories/validations"
 import type { findToolList } from "~/server/admin/tools/queries"
 import { cx } from "~/utils/cva"
-import { getDefaults } from "~/utils/helpers"
 
 type CategoryFormProps = React.HTMLAttributes<HTMLFormElement> & {
   category?: Awaited<ReturnType<typeof findCategoryBySlug>>
@@ -37,14 +36,14 @@ export function CategoryForm({
   tools,
   ...props
 }: CategoryFormProps) {
-  const form = useForm<CategorySchema>({
+  const form = useForm({
     resolver: zodResolver(categorySchema),
-    defaultValues: category
-      ? categorySchema.parse({
-          ...category,
-          tools: category.tools.map(t => t.id),
-        })
-      : getDefaults(categorySchema),
+    defaultValues: {
+      name: category?.name ?? "",
+      slug: category?.slug ?? "",
+      label: category?.label ?? "",
+      tools: category?.tools.map(t => t.id) ?? [],
+    },
   })
 
   // Create category

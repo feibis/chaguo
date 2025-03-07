@@ -22,7 +22,7 @@ type NavMainProps = ComponentProps<"nav"> & {
 
 export const NavMain = ({ className, links, isCollapsed, ...props }: NavMainProps) => {
   const pathname = usePathname()
-  const rootPath = "~/admin"
+  const rootPath = "/admin"
 
   const isActive = (href: string) => {
     if (

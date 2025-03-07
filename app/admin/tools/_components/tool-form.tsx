@@ -36,9 +36,8 @@ import { Markdown } from "~/components/web/markdown"
 import type { findCategoryList } from "~/server/admin/categories/queries"
 import { createTool, updateTool } from "~/server/admin/tools/actions"
 import type { findToolBySlug } from "~/server/admin/tools/queries"
-import { type ToolSchema, toolSchema } from "~/server/admin/tools/validations"
+import { toolSchema } from "~/server/admin/tools/validations"
 import { cx } from "~/utils/cva"
-import { getDefaults } from "~/utils/helpers"
 
 type ToolFormProps = React.HTMLAttributes<HTMLFormElement> & {
   tool?: Awaited<ReturnType<typeof findToolBySlug>>
@@ -48,14 +47,25 @@ type ToolFormProps = React.HTMLAttributes<HTMLFormElement> & {
 export function ToolForm({ children, className, tool, categories, ...props }: ToolFormProps) {
   const [isPreviewing, setIsPreviewing] = useState(false)
 
-  const form = useForm<ToolSchema>({
+  const form = useForm({
     resolver: zodResolver(toolSchema),
-    defaultValues: tool
-      ? toolSchema.parse({
-          ...tool,
-          categories: tool.categories.map(c => c.id),
-        })
-      : getDefaults(toolSchema),
+    defaultValues: {
+      name: tool?.name ?? "",
+      slug: tool?.slug ?? "",
+      tagline: tool?.tagline ?? "",
+      description: tool?.description ?? "",
+      content: tool?.content ?? "",
+      websiteUrl: tool?.websiteUrl ?? "",
+      faviconUrl: tool?.faviconUrl ?? "",
+      screenshotUrl: tool?.screenshotUrl ?? "",
+      isFeatured: tool?.isFeatured ?? false,
+      submitterName: tool?.submitterName ?? "",
+      submitterEmail: tool?.submitterEmail ?? "",
+      submitterNote: tool?.submitterNote ?? "",
+      status: tool?.status ?? ToolStatus.Draft,
+      publishedAt: tool?.publishedAt ?? undefined,
+      categories: tool?.categories.map(c => c.id) ?? [],
+    },
   })
 
   // Create tool
@@ -181,7 +191,7 @@ export function ToolForm({ children, className, tool, categories, ...props }: To
                     variant="secondary"
                     onClick={() => setIsPreviewing(prev => !prev)}
                     prefix={isPreviewing ? <PencilIcon /> : <EyeIcon />}
-                    className="-my-0.5"
+                    className="-my-1"
                   >
                     {isPreviewing ? "Edit" : "Preview"}
                   </Button>

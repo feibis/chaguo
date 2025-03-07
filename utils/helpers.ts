@@ -1,5 +1,4 @@
 import wretch from "wretch"
-import { z } from "zod"
 
 type Success<T> = {
   data: T
@@ -40,18 +39,4 @@ export const isDisposableEmail = async (email: string) => {
   const domain = email.split("@")[1]
 
   return disposableDomains.includes(domain)
-}
-
-/**
- * Returns an object with the default values for the given schema
- * @param schema - The schema to get the defaults for
- * @returns An object with the default values for the given schema
- */
-export const getDefaults = <Schema extends z.AnyZodObject>(schema: Schema) => {
-  return Object.fromEntries(
-    Object.entries(schema.shape).map(([key, value]) => {
-      if (value instanceof z.ZodDefault) return [key, value._def.defaultValue()]
-      return [key, undefined]
-    }),
-  )
 }

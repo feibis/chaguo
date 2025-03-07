@@ -3,6 +3,7 @@
 import { useMediaQuery } from "@mantine/hooks"
 import { cx } from "cva"
 import {
+  DockIcon,
   GalleryHorizontalEndIcon,
   GemIcon,
   GlobeIcon,
@@ -13,6 +14,7 @@ import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 import { Nav } from "~/components/admin/nav"
 import { NavMain } from "~/components/admin/nav-main"
+import { Kbd } from "~/components/common/kbd"
 import { Separator } from "~/components/common/separator"
 import { siteConfig } from "~/config/site"
 import { signOut } from "~/lib/auth-client"
@@ -69,10 +71,29 @@ export const Sidebar = () => {
         />
       </Nav>
 
-      <Nav className="mt-auto">
+      <Separator />
+
+      <Nav>
         <NavMain
           isCollapsed={!!isMobile}
           links={[
+            {
+              title: "Quick Menu",
+              href: "#",
+              onClick: () =>
+                document.dispatchEvent(
+                  new KeyboardEvent("keydown", {
+                    key: "k",
+                    metaKey: true,
+                  }),
+                ),
+              prefix: <DockIcon />,
+              suffix: (
+                <Kbd meta className="size-auto">
+                  K
+                </Kbd>
+              ),
+            },
             {
               title: "Visit Site",
               href: siteConfig.url,
