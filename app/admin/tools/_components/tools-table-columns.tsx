@@ -4,10 +4,10 @@ import { formatDate } from "@curiousleaf/utils"
 import type { Tool } from "@prisma/client"
 import type { ColumnDef } from "@tanstack/react-table"
 import type { Dispatch, SetStateAction } from "react"
-import { DataTableColumnHeader } from "~/components/admin/data-table/data-table-column-header"
-import { DataTableLink } from "~/components/admin/data-table/data-table-link"
-import { DataTableThumbnail } from "~/components/admin/data-table/data-table-thumbnail"
 import { ToolActions } from "~/app/admin/tools/_components/tool-actions"
+import { DataTableColumnHeader } from "~/components/data-table/data-table-column-header"
+import { DataTableLink } from "~/components/data-table/data-table-link"
+import { DataTableThumbnail } from "~/components/data-table/data-table-thumbnail"
 import type { DataTableRowAction } from "~/types"
 
 type GetColumnsProps = {

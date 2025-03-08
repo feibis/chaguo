@@ -1,7 +1,5 @@
 import type { Column } from "@tanstack/react-table"
 import { PlusCircleIcon } from "lucide-react"
-import type { Option } from "~/types"
-
 import { Slot } from "radix-ui"
 import { Badge } from "~/components/common/badge"
 import { Button } from "~/components/common/button"
@@ -16,6 +14,7 @@ import {
 } from "~/components/common/command"
 import { Popover, PopoverContent, PopoverTrigger } from "~/components/common/popover"
 import { Separator } from "~/components/common/separator"
+import type { Option } from "~/types"
 
 type DataTableFacetedFilterProps<TData, TValue> = {
   column?: Column<TData, TValue>

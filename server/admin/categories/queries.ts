@@ -1,11 +1,14 @@
 import { isTruthy } from "@curiousleaf/utils"
 import type { Prisma } from "@prisma/client"
 import { endOfDay, startOfDay } from "date-fns"
+import type { FindCategoriesSchema } from "~/server/admin/categories/schemas"
 import { db } from "~/services/db"
-import type { GetCategoriesSchema } from "~/server/admin/categories/validations"
 
-export const findCategories = async (search: GetCategoriesSchema) => {
-  const { page, perPage, sort, name, operator, from, to } = search
+export const findCategories = async (
+  search: FindCategoriesSchema,
+  where?: Prisma.CategoryWhereInput,
+) => {
+  const { name, page, perPage, sort, from, to, operator } = search
 
   // Offset to paginate the results
   const offset = (page - 1) * perPage
@@ -25,21 +28,21 @@ export const findCategories = async (search: GetCategoriesSchema) => {
     fromDate || toDate ? { createdAt: { gte: fromDate, lte: toDate } } : undefined,
   ]
 
-  const where: Prisma.CategoryWhereInput = {
+  const whereQuery: Prisma.CategoryWhereInput = {
     [operator.toUpperCase()]: expressions.filter(isTruthy),
   }
 
   // Transaction is used to ensure both queries are executed in a single transaction
   const [categories, categoriesTotal] = await db.$transaction([
     db.category.findMany({
-      where,
+      where: { ...whereQuery, ...where },
       orderBy,
       take: perPage,
       skip: offset,
     }),
 
     db.category.count({
-      where,
+      where: { ...whereQuery, ...where },
     }),
   ])
 

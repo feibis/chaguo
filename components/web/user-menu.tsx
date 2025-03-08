@@ -1,5 +1,5 @@
 import { getInitials } from "@curiousleaf/utils"
-import { ShieldHalfIcon } from "lucide-react"
+import { ShieldHalfIcon, UserIcon } from "lucide-react"
 import { headers } from "next/headers"
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/common/avatar"
 import { Box } from "~/components/common/box"
@@ -57,6 +57,12 @@ const UserMenu = async () => {
             </NavLink>
           </DropdownMenuItem>
         )}
+
+        <DropdownMenuItem asChild>
+          <NavLink href="/dashboard">
+            <UserIcon className="shrink-0 size-4 opacity-75" /> Dashboard
+          </NavLink>
+        </DropdownMenuItem>
 
         <DropdownMenuItem asChild>
           <UserLogout />

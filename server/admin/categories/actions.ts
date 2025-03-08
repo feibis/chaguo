@@ -4,7 +4,7 @@ import { slugify } from "@curiousleaf/utils"
 import { revalidateTag } from "next/cache"
 import { z } from "zod"
 import { adminProcedure } from "~/lib/safe-actions"
-import { categorySchema } from "~/server/admin/categories/validations"
+import { categorySchema } from "~/server/admin/categories/schemas"
 import { db } from "~/services/db"
 
 export const createCategory = adminProcedure

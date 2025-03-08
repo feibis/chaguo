@@ -4,16 +4,16 @@ import { useHotkeys } from "@mantine/hooks"
 import type { Table } from "@tanstack/react-table"
 import { XIcon } from "lucide-react"
 import * as React from "react"
-import { useRef } from "react"
-import { DataTableFacetedFilter } from "~/components/admin/data-table/data-table-faceted-filter"
+import { type ComponentProps, useRef } from "react"
 import { Button } from "~/components/common/button"
 import { Input } from "~/components/common/input"
 import { Kbd } from "~/components/common/kbd"
 import { Stack } from "~/components/common/stack"
+import { DataTableFacetedFilter } from "~/components/data-table/data-table-faceted-filter"
 import type { DataTableFilterField } from "~/types"
 import { cx } from "~/utils/cva"
 
-interface DataTableToolbarProps<TData> extends React.HTMLAttributes<HTMLDivElement> {
+type DataTableToolbarProps<TData> = ComponentProps<"div"> & {
   table: Table<TData>
   filterFields?: DataTableFilterField<TData>[]
 }
@@ -39,20 +39,17 @@ export function DataTableToolbar<TData>({
   }, [filterFields])
 
   return (
-    <div
-      className={cx(
-        "flex items-center justify-between gap-2 w-full py-1 -my-1 overflow-auto",
-        className,
-      )}
+    <Stack
+      size="sm"
+      className={cx("justify-between w-full py-1 -my-1 overflow-auto", className)}
       {...props}
     >
       <Stack size="sm" wrap={false}>
         {searchableColumns.map(
           column =>
             table.getColumn(column.id) && (
-              <div className="relative">
+              <div key={String(column.id)} className="relative">
                 <Input
-                  key={String(column.id)}
                   ref={inputRef}
                   className="w-40 lg:w-60"
                   placeholder={column.placeholder}
@@ -95,6 +92,6 @@ export function DataTableToolbar<TData>({
       <Stack size="sm" wrap={false}>
         {children}
       </Stack>
-    </div>
+    </Stack>
   )
 }

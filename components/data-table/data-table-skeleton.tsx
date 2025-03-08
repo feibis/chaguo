@@ -16,7 +16,7 @@ type DataTableSkeletonProps = ComponentProps<"div"> & {
    * The title of the table.
    * @type string
    */
-  title: string
+  title?: string
 
   /**
    * The number of columns in the table.
@@ -82,12 +82,12 @@ export function DataTableSkeleton(props: DataTableSkeletonProps) {
     title,
     columnCount = 5,
     rowCount = 10,
-    searchableColumnCount = 0,
-    filterableColumnCount = 0,
+    searchableColumnCount = 1,
+    filterableColumnCount = 2,
     showViewOptions = true,
     cellWidths = ["auto"],
     withPagination = true,
-    shrinkZero = false,
+    shrinkZero = true,
     className,
     ...skeletonProps
   } = props
@@ -98,18 +98,18 @@ export function DataTableSkeleton(props: DataTableSkeletonProps) {
 
       <div className="flex w-full items-center justify-between space-x-2 overflow-auto">
         <div className="flex flex-1 items-center space-x-2">
-          {searchableColumnCount > 0
-            ? Array.from({ length: searchableColumnCount }).map((_, i) => (
-                <Skeleton key={i} className="h-8 w-40 lg:w-60" />
-              ))
-            : null}
-          {filterableColumnCount > 0
-            ? Array.from({ length: filterableColumnCount }).map((_, i) => (
-                <Skeleton key={i} className="h-8 w-[4.5rem] border-dashed" />
-              ))
-            : null}
+          {searchableColumnCount > 0 &&
+            Array.from({ length: searchableColumnCount }).map((_, i) => (
+              <Skeleton key={i} className="h-8 w-40 lg:w-60" />
+            ))}
+
+          {filterableColumnCount > 0 &&
+            Array.from({ length: filterableColumnCount }).map((_, i) => (
+              <Skeleton key={i} className="h-8 w-[4.5rem] border-dashed" />
+            ))}
         </div>
-        {showViewOptions ? <Skeleton className="ml-auto hidden h-8 w-[4.5rem] lg:flex" /> : null}
+
+        {showViewOptions && <Skeleton className="ml-auto hidden h-8 w-[4.5rem] lg:flex" />}
       </div>
 
       <div className="rounded-md border">
@@ -131,6 +131,7 @@ export function DataTableSkeleton(props: DataTableSkeletonProps) {
               </TableRow>
             ))}
           </TableHeader>
+
           <TableBody>
             {Array.from({ length: rowCount }).map((_, i) => (
               <TableRow key={i} className="hover:bg-transparent">
@@ -150,7 +151,8 @@ export function DataTableSkeleton(props: DataTableSkeletonProps) {
           </TableBody>
         </Table>
       </div>
-      {withPagination ? (
+
+      {withPagination && (
         <div className="flex w-full items-center justify-between gap-4 overflow-auto sm:gap-8">
           <Skeleton className="h-8 w-40 shrink-0" />
           <div className="flex items-center gap-4 sm:gap-6 lg:gap-8">
@@ -169,7 +171,7 @@ export function DataTableSkeleton(props: DataTableSkeletonProps) {
             </div>
           </div>
         </div>
-      ) : null}
+      )}
     </div>
   )
 }

@@ -1,5 +1,6 @@
 import { type Table as TanstackTable, flexRender } from "@tanstack/react-table"
 import type * as React from "react"
+import type { ComponentProps } from "react"
 import {
   Table,
   TableBody,
@@ -8,11 +9,11 @@ import {
   TableHeader,
   TableRow,
 } from "~/components/common/table"
-import { DataTablePagination } from "~/components/admin/data-table/data-table-pagination"
+import { DataTablePagination } from "~/components/data-table/data-table-pagination"
 import { getColumnPinningStyle } from "~/lib/data-table"
 import { cx } from "~/utils/cva"
 
-type DataTableProps<TData> = React.HTMLAttributes<HTMLDivElement> & {
+type DataTableProps<TData> = ComponentProps<"div"> & {
   /**
    * The table instance returned from useDataTable hook with pagination, sorting, filtering, etc.
    * @type TanstackTable<TData>
@@ -69,11 +70,7 @@ export function DataTable<TData>({
                     <TableCell
                       key={cell.id}
                       style={getColumnPinningStyle({ column: cell.column })}
-                      className={cx(
-                        cell.column.getIsPinned()
-                          ? "sticky z-10 bg-background group-hover/row:!bg-muted group-data-[state=selected]/row:bg-accent"
-                          : "relative",
-                      )}
+                      className={cx(cell.column.getIsPinned() ? "sticky z-10" : "relative")}
                     >
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>

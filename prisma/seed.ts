@@ -84,7 +84,7 @@ async function main() {
       name: "Next.js",
       slug: "nextjs",
       websiteUrl: "https://nextjs.org",
-      tagline: "The React Framework for Production",
+      tagline: "The full-stack React framework for the web",
       description:
         "Next.js gives you the best developer experience with all the features you need for production: hybrid static & server rendering, TypeScript support, smart bundling, route pre-fetching, and more.",
       isFeatured: true,
@@ -202,7 +202,7 @@ async function main() {
       name: "ChatGPT",
       slug: "chatgpt",
       websiteUrl: "https://chatgpt.com",
-      tagline: "Optimizing language models for dialogue",
+      tagline: "A conversational AI system that listens, learns, and challenges",
       description:
         "ChatGPT is a large language model developed by OpenAI that can generate human-like text based on the context and prompt it's given.",
       isFeatured: true,
@@ -260,7 +260,7 @@ async function main() {
       name: "GitHub",
       slug: "github",
       websiteUrl: "https://github.com",
-      tagline: "Where the world builds software",
+      tagline: "Build and ship software on a single, collaborative platform",
       description:
         "GitHub is a code hosting platform for version control and collaboration, letting you and others work together on projects.",
       isFeatured: true,

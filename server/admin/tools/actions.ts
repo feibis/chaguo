@@ -7,7 +7,7 @@ import { z } from "zod"
 import { isProd } from "~/env"
 import { uploadFavicon, uploadScreenshot } from "~/lib/media"
 import { adminProcedure } from "~/lib/safe-actions"
-import { toolSchema } from "~/server/admin/tools/validations"
+import { toolSchema } from "~/server/admin/tools/schemas"
 import { db } from "~/services/db"
 import { inngest } from "~/services/inngest"
 

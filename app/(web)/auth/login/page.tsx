@@ -32,7 +32,10 @@ export default function LoginPage() {
             or
           </div>
 
-          <LoginButton provider="google" suffix={<Image src={googleIcon} alt="Google" />} />
+          <LoginButton
+            provider="google"
+            suffix={<Image src={googleIcon} alt="Google" className="size-4" />}
+          />
         </Stack>
       </Suspense>
     </>

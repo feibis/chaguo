@@ -1,11 +1,11 @@
 import { isTruthy } from "@curiousleaf/utils"
 import { type Prisma, ToolStatus } from "@prisma/client"
 import { endOfDay, startOfDay } from "date-fns"
+import type { FindToolsSchema } from "~/server/admin/tools/schemas"
 import { db } from "~/services/db"
-import type { GetToolsSchema } from "~/server/admin/tools/validations"
 
-export const findTools = async (search: GetToolsSchema) => {
-  const { page, perPage, sort, name, status, operator, from, to } = search
+export const findTools = async (search: FindToolsSchema, where?: Prisma.ToolWhereInput) => {
+  const { name, sort, page, perPage, from, to, operator, status } = search
 
   // Offset to paginate the results
   const offset = (page - 1) * perPage
@@ -21,28 +21,28 @@ export const findTools = async (search: GetToolsSchema) => {
     // Filter by name
     name ? { name: { contains: name, mode: "insensitive" } } : undefined,
 
-    // Filter tasks by status
-    status.length > 0 ? { status: { in: status } } : undefined,
-
     // Filter by createdAt
     fromDate || toDate ? { createdAt: { gte: fromDate, lte: toDate } } : undefined,
+
+    // Filter tasks by status
+    status.length > 0 ? { status: { in: status } } : undefined,
   ]
 
-  const where: Prisma.ToolWhereInput = {
+  const whereQuery: Prisma.ToolWhereInput = {
     [operator.toUpperCase()]: expressions.filter(isTruthy),
   }
 
   // Transaction is used to ensure both queries are executed in a single transaction
   const [tools, toolsTotal] = await db.$transaction([
     db.tool.findMany({
-      where,
+      where: { ...whereQuery, ...where },
       orderBy,
       take: perPage,
       skip: offset,
     }),
 
     db.tool.count({
-      where,
+      where: { ...whereQuery, ...where },
     }),
   ])
 
