@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { redirect } from "next/navigation"
-import type React from "react"
+import type { ComponentProps } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import { useServerAction } from "zsa-react"
@@ -24,7 +24,7 @@ import { categorySchema } from "~/server/admin/categories/schemas"
 import type { findToolList } from "~/server/admin/tools/queries"
 import { cx } from "~/utils/cva"
 
-type CategoryFormProps = React.ComponentProps<"form"> & {
+type CategoryFormProps = ComponentProps<"form"> & {
   category?: Awaited<ReturnType<typeof findCategoryBySlug>>
   tools: ReturnType<typeof findToolList>
 }

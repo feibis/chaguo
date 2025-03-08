@@ -5,8 +5,7 @@ import { ToolStatus } from "@prisma/client"
 import { formatDate } from "date-fns"
 import { EyeIcon, PencilIcon } from "lucide-react"
 import { redirect } from "next/navigation"
-import type React from "react"
-import { useState } from "react"
+import { type ComponentProps, useState } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import { useServerAction } from "zsa-react"
@@ -39,7 +38,7 @@ import type { findToolBySlug } from "~/server/admin/tools/queries"
 import { toolSchema } from "~/server/admin/tools/schemas"
 import { cx } from "~/utils/cva"
 
-type ToolFormProps = React.ComponentProps<"form"> & {
+type ToolFormProps = ComponentProps<"form"> & {
   tool?: Awaited<ReturnType<typeof findToolBySlug>>
   categories: ReturnType<typeof findCategoryList>
 }
