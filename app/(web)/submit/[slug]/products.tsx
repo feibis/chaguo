@@ -1,6 +1,6 @@
 import type { SearchParams } from "nuqs/server"
 import { Plan } from "~/components/web/plan"
-import { getProductFeatures, getProducts } from "~/lib/products"
+import { getProductFeatures, getProducts, prepareProductsWithPrices } from "~/lib/products"
 import { isToolPublished } from "~/lib/tools"
 import type { ToolOne } from "~/server/web/tools/payloads"
 import { countUpcomingTools } from "~/server/web/tools/queries"
@@ -28,6 +28,7 @@ export const SubmitProducts = async ({ tool, searchParams }: SubmitProductsProps
           code: String(discountCode),
           limit: 1,
           active: true,
+          expand: ["data.coupon.applies_to"],
         })
       : undefined,
 
@@ -38,27 +39,21 @@ export const SubmitProducts = async ({ tool, searchParams }: SubmitProductsProps
   const isPublished = isToolPublished(tool)
   const products = getProducts(stripeProducts.data, isPublished)
   const coupon = stripePromo?.data[0]?.coupon
+  const productsWithPrices = await prepareProductsWithPrices(products, coupon, stripe)
 
   return (
     <>
-      {products.map(async (plan, index) => {
-        const prices = await stripe.prices.list({
-          product: plan.id,
-          active: true,
-        })
-
-        return (
-          <Plan
-            key={plan.id}
-            isFeatured={index === products.length - 1}
-            tool={tool}
-            plan={plan}
-            features={getProductFeatures(plan, isPublished, queueLength)}
-            prices={prices.data}
-            coupon={coupon}
-          />
-        )
-      })}
+      {productsWithPrices.map(({ product, prices, isDiscounted, isFeatured }) => (
+        <Plan
+          key={product.id}
+          isFeatured={isFeatured}
+          tool={tool}
+          plan={product}
+          features={getProductFeatures(product, isPublished, queueLength)}
+          prices={prices}
+          coupon={isDiscounted ? coupon : undefined}
+        />
+      ))}
     </>
   )
 }

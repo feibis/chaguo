@@ -199,7 +199,7 @@ const Plan = ({
 
       <Button
         type="button"
-        variant={!price ? "secondary" : "primary"}
+        variant={!price ? "secondary" : isFeatured ? "fancy" : "primary"}
         isPending={isPending}
         disabled={!price || isPending}
         suffix={!price ? <span /> : <ArrowUpRightIcon />}
