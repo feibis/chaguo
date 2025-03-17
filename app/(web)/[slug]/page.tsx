@@ -7,7 +7,7 @@ import { FeaturedTools } from "~/app/(web)/[slug]/featured-tools"
 import { RelatedTools } from "~/app/(web)/[slug]/related-tools"
 import { Box } from "~/components/common/box"
 import { Button } from "~/components/common/button"
-import { H1, H5 } from "~/components/common/heading"
+import { H2, H5 } from "~/components/common/heading"
 import { Stack } from "~/components/common/stack"
 import { AdCard, AdCardSkeleton } from "~/components/web/ads/ad-card"
 import { ExternalLink } from "~/components/web/external-link"
@@ -74,10 +74,12 @@ export default async function ToolPage(props: PageProps) {
           <div className="flex flex-1 flex-col items-start gap-6 max-md:order-1 md:gap-8">
             <div className="flex w-full flex-col items-start gap-y-4">
               <Stack className="w-full">
-                <FaviconImage src={tool.faviconUrl} title={tool.name} />
+                <FaviconImage src={tool.faviconUrl} title={tool.name} className="size-8" />
 
-                <Stack className="flex-1">
-                  <H1 className="!leading-tight truncate">{tool.name}</H1>
+                <Stack className="grow">
+                  <H2 as="h1" className="!leading-tight truncate">
+                    {tool.name}
+                  </H2>
 
                   {tool.owner && <VerifiedBadge size="lg" />}
                 </Stack>
@@ -131,11 +133,11 @@ export default async function ToolPage(props: PageProps) {
             </Box>
           )}
 
-          {tool.content && <Markdown code={tool.content} className="max-md:order-5" />}
+          {tool.content && <Markdown code={tool.content} className="max-md:order-4" />}
 
           {/* Categories */}
           {!!tool.categories.length && (
-            <Stack size="lg" direction="column" className="w-full max-md:order-7">
+            <Stack size="lg" direction="column" className="w-full max-md:order-5">
               <H5 as="strong">Categories:</H5>
 
               <Stack>
@@ -150,7 +152,7 @@ export default async function ToolPage(props: PageProps) {
 
           {/* Tags */}
           {!!tool.tags.length && (
-            <Stack direction="column">
+            <Stack direction="column" className="w-full max-md:order-6">
               <H5 as="h4">Tags:</H5>
 
               <Stack>
@@ -163,18 +165,18 @@ export default async function ToolPage(props: PageProps) {
             </Stack>
           )}
 
-          <ShareButtons title={`${title}`} className="max-md:order-9" />
+          <ShareButtons title={`${title}`} className="max-md:order-7" />
         </Section.Content>
 
         <Section.Sidebar className="max-md:contents">
           {/* Advertisement */}
-          <Suspense fallback={<AdCardSkeleton className="max-md:order-4" />}>
-            <AdCard type="ToolPage" className="max-md:order-4" />
+          <Suspense fallback={<AdCardSkeleton className="max-md:order-3" />}>
+            <AdCard type="ToolPage" className="max-md:order-3" />
           </Suspense>
 
           {/* Featured */}
           <Suspense>
-            <FeaturedTools className="max-md:order-10" />
+            <FeaturedTools className="max-md:order-8" />
           </Suspense>
         </Section.Sidebar>
       </Section>
