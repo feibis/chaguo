@@ -12,6 +12,10 @@ export const toolTagsPayload = Prisma.validator<Prisma.Tool$tagsArgs>()({
   orderBy: { name: "asc" },
 })
 
+export const toolOwnerPayload = Prisma.validator<Prisma.Tool$ownerArgs>()({
+  select: { id: true },
+})
+
 export const toolOnePayload = Prisma.validator<Prisma.ToolSelect>()({
   name: true,
   slug: true,
@@ -25,7 +29,7 @@ export const toolOnePayload = Prisma.validator<Prisma.ToolSelect>()({
   status: true,
   publishedAt: true,
   updatedAt: true,
-  owner: true,
+  owner: toolOwnerPayload,
   categories: toolCategoriesPayload,
   tags: toolTagsPayload,
 })
@@ -39,6 +43,7 @@ export const toolManyPayload = Prisma.validator<Prisma.ToolSelect>()({
   faviconUrl: true,
   publishedAt: true,
   updatedAt: true,
+  owner: toolOwnerPayload,
   categories: toolCategoriesPayload,
 })
 

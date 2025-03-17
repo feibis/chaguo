@@ -32,22 +32,25 @@ const DialogContent = ({
   return (
     <DialogPortal>
       <DialogOverlay />
-      <DialogPrimitive.Content
-        className={cx(
-          "fixed left-1/2 top-1/4 z-50 grid w-[95%] max-w-lg max-h-dvh -translate-x-1/2 gap-4 border bg-background p-4 rounded-md shadow-lg sm:p-6 sm:rounded-lg",
-          "data-[state=open]:animate-in data-[state=closed]:animate-out",
-          "data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0",
-          "data-[state=open]:slide-in-from-bottom-4 data-[state=closed]:slide-out-to-bottom-4",
-          className,
-        )}
-        {...props}
-      >
-        {children}
-        <DialogPrimitive.Close className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-ring disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
-          <XIcon className="size-4" />
-          <span className="sr-only">Close</span>
-        </DialogPrimitive.Close>
-      </DialogPrimitive.Content>
+
+      <div className="fixed inset-0 z-50 flex h-screen items-end justify-center px-4 py-6 sm:items-center">
+        <DialogPrimitive.Content
+          className={cx(
+            "relative max-h-full w-full max-w-lg grid gap-4 border bg-background p-4 rounded-md shadow-lg overflow-y-auto overscroll-contain sm:p-6 sm:rounded-lg",
+            "data-[state=open]:animate-in data-[state=closed]:animate-out",
+            "data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0",
+            "data-[state=open]:slide-in-from-bottom-4 data-[state=closed]:slide-out-to-bottom-4",
+            className,
+          )}
+          {...props}
+        >
+          {children}
+          <DialogPrimitive.Close className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-ring disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
+            <XIcon className="size-4" />
+            <span className="sr-only">Close</span>
+          </DialogPrimitive.Close>
+        </DialogPrimitive.Content>
+      </div>
     </DialogPortal>
   )
 }

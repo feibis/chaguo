@@ -7,7 +7,7 @@ import { FeaturedTools } from "~/app/(web)/[slug]/featured-tools"
 import { RelatedTools } from "~/app/(web)/[slug]/related-tools"
 import { Box } from "~/components/common/box"
 import { Button } from "~/components/common/button"
-import { H1, H5 } from "~/components/common/heading"
+import { H2, H5 } from "~/components/common/heading"
 import { Stack } from "~/components/common/stack"
 import { AdCard, AdCardSkeleton } from "~/components/web/ads/ad-card"
 import { ExternalLink } from "~/components/web/external-link"
@@ -21,6 +21,7 @@ import { FaviconImage } from "~/components/web/ui/favicon"
 import { IntroDescription } from "~/components/web/ui/intro"
 import { Section } from "~/components/web/ui/section"
 import { Tag } from "~/components/web/ui/tag"
+import { VerifiedBadge } from "~/components/web/verified-badge"
 import { metadataConfig } from "~/config/metadata"
 import type { ToolOne } from "~/server/web/tools/payloads"
 import { findTool, findToolSlugs } from "~/server/web/tools/queries"
@@ -85,14 +86,18 @@ export default async function ToolPage(props: PageProps) {
       <div className="flex flex-col gap-12">
         <Section>
           <Section.Content className="max-md:contents">
-            <div className="flex flex-1 flex-col items-start gap-4 max-md:order-1 md:gap-6">
+            <div className="flex flex-1 flex-col items-start gap-6 max-md:order-1 md:gap-8">
               <div className="flex w-full flex-col items-start gap-y-4">
                 <Stack className="w-full">
-                  <FaviconImage src={tool.faviconUrl} title={tool.name} />
+                  <FaviconImage src={tool.faviconUrl} title={tool.name} className="size-8" />
 
-                  <div className="flex flex-1">
-                    <H1 className="!leading-snug truncate">{tool.name}</H1>
-                  </div>
+                  <Stack className="flex-1">
+                    <H2 as="h1" className="!leading-tight truncate">
+                      {tool.name}
+                    </H2>
+
+                    {tool.owner && <VerifiedBadge size="lg" />}
+                  </Stack>
 
                   <ToolActions tool={tool} />
                 </Stack>

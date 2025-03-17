@@ -1,14 +1,16 @@
 "use server"
 
 import { z } from "zod"
-import { createServerAction } from "zsa"
 import { getIP, isRateLimited } from "~/lib/rate-limiter"
-import { reportSchema } from "~/server/schemas"
+import { userProcedure } from "~/lib/safe-actions"
+import { reportSchema } from "~/server/web/shared/schemas"
 import { db } from "~/services/db"
+import { tryCatch } from "~/utils/helpers"
 
-export const reportTool = createServerAction()
+export const reportTool = userProcedure
+  .createServerAction()
   .input(reportSchema.extend({ toolSlug: z.string() }))
-  .handler(async ({ input: { toolSlug, type, message } }) => {
+  .handler(async ({ input: { toolSlug, type, message }, ctx: { user } }) => {
     const ip = await getIP()
     const rateLimitKey = `report:${ip}`
 
@@ -17,18 +19,21 @@ export const reportTool = createServerAction()
       throw new Error("Too many requests. Please try again later.")
     }
 
-    try {
-      await db.report.create({
+    const result = await tryCatch(
+      db.report.create({
         data: {
           type,
           message,
           tool: { connect: { slug: toolSlug } },
+          user: { connect: { id: user.id } },
         },
-      })
+      }),
+    )
 
-      return { success: true }
-    } catch (error) {
-      console.error("Failed to report tool:", error)
+    if (result.error) {
+      console.error("Failed to report tool:", result.error)
       return { success: false, error: "Failed to report tool. Please try again later." }
     }
+
+    return { success: true }
   })

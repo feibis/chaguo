@@ -1,4 +1,5 @@
 import { adsConfig } from "~/config/ads"
+import { claimsConfig } from "~/config/claims"
 import { dataTableConfig } from "~/config/data-table"
 import { linksConfig } from "~/config/links"
 import { metadataConfig } from "~/config/metadata"
@@ -13,5 +14,6 @@ export const config = {
   ads: adsConfig,
   submissions: submissionsConfig,
   search: searchConfig,
+  claims: claimsConfig,
   dataTable: dataTableConfig,
 }

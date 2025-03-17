@@ -1,5 +1,6 @@
 import { render } from "@react-email/components"
 import type { ReactElement } from "react"
+import type { CreateEmailOptions } from "resend"
 import { config } from "~/config"
 import { env, isProd } from "~/env"
 import { resend } from "~/services/resend"
@@ -15,7 +16,7 @@ export type EmailParams = {
  * @param email - The email to prepare
  * @returns The prepared email
  */
-const prepareEmail = async (email: EmailParams) => {
+const prepareEmail = async (email: EmailParams): Promise<CreateEmailOptions> => {
   return {
     from: `${config.site.name} <${env.RESEND_SENDER_EMAIL}>`,
     replyTo: config.site.email,

@@ -6,8 +6,8 @@ import { H4 } from "~/components/common/heading"
 import { Link } from "~/components/common/link"
 import { Skeleton } from "~/components/common/skeleton"
 import { Stack } from "~/components/common/stack"
-import { ToolBadges } from "~/components/web/tools/tool-badges"
 import { Favicon } from "~/components/web/ui/favicon"
+import { VerifiedBadge } from "~/components/web/verified-badge"
 import type { ToolMany } from "~/server/web/tools/payloads"
 
 type ToolCardProps = ComponentProps<typeof Card> & {
@@ -30,7 +30,7 @@ const ToolCard = ({ className, tool, isRelated, ...props }: ToolCardProps) => {
             {tool.name}
           </H4>
 
-          <ToolBadges tool={tool} className="ml-auto" />
+          {tool.owner && <VerifiedBadge size="md" className="-ml-1.5" />}
         </CardHeader>
 
         <div className="relative size-full flex flex-col">
