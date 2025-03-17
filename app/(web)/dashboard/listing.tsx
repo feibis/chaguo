@@ -15,7 +15,7 @@ export const DashboardToolListing = async ({ searchParams }: DashboardPageProps)
   const status = [ToolStatus.Draft, ToolStatus.Scheduled, ToolStatus.Published]
 
   if (!session?.user) {
-    throw redirect("/auth/login?callbackURL=/dashboard")
+    throw redirect("/auth/login?next=/dashboard")
   }
 
   const toolsPromise = findTools(
