@@ -18,6 +18,7 @@ export type EmailParams = {
 const prepareEmail = async (email: EmailParams) => {
   return {
     from: `${config.site.name} <${env.RESEND_SENDER_EMAIL}>`,
+    replyTo: config.site.email,
     to: email.to,
     subject: email.subject,
     react: email.react,
