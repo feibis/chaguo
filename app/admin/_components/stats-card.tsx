@@ -3,20 +3,21 @@ import { H2 } from "~/components/common/heading"
 import { db } from "~/services/db"
 
 export const StatsCard = async () => {
-  const stats = await db.$transaction([db.tool.count(), db.category.count()])
+  const stats = [
+    { label: "Tools", query: () => db.tool.count() },
+    { label: "Categories", query: () => db.category.count() },
+    { label: "Users", query: () => db.user.count() },
+  ] as const
 
-  const statsLabels = {
-    0: "Tools",
-    1: "Categories",
-  }
+  const counts = await db.$transaction(stats.map(stat => stat.query()))
 
   return (
     <>
       {stats.map((stat, index) => (
-        <Card key={index} hover={false} focus={false}>
+        <Card key={stat.label} hover={false} focus={false}>
           <CardHeader direction="column">
-            <CardDescription>{statsLabels[index as keyof typeof statsLabels]}</CardDescription>
-            <H2 className="tabular-nums">{stat.toLocaleString()}</H2>
+            <CardDescription>{stat.label}</CardDescription>
+            <H2 className="tabular-nums">{counts[index].toLocaleString()}</H2>
           </CardHeader>
         </Card>
       ))}

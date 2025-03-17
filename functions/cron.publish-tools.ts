@@ -1,5 +1,4 @@
 import { ToolStatus } from "@prisma/client"
-import { NonRetriableError } from "inngest"
 import { revalidateTag } from "next/cache"
 import { config } from "~/config"
 import EmailToolPublished from "~/emails/tool-published"
