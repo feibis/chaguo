@@ -1,4 +1,10 @@
 export const claimsConfig = {
-  resendCooldown: 60, // in seconds
-  otpExpiration: 600, // in seconds
+  // Cooldown period in seconds before allowing resend
+  resendCooldown: 60,
+
+  // OTP expiration time in seconds
+  otpExpiration: 600,
+
+  // OTP length
+  otpLength: 6,
 }

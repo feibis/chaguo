@@ -51,7 +51,7 @@ export const sendToolClaimOtp = userProcedure
     }
 
     // Generate OTP
-    const otp = getRandomDigits(6)
+    const otp = getRandomDigits(claimsConfig.otpLength)
     const expiresAt = addSeconds(new Date(), claimsConfig.otpExpiration)
     const to = email
     const subject = `Verify domain ownership for ${tool.name}`

@@ -26,6 +26,7 @@ import {
 import { Input } from "~/components/common/input"
 import { Stack } from "~/components/common/stack"
 import { LoginDialog } from "~/components/web/auth/login-dialog"
+import { claimsConfig } from "~/config/claims"
 import { siteConfig } from "~/config/site"
 import { useSession } from "~/lib/auth-client"
 import type { ToolOne } from "~/server/web/tools/payloads"
@@ -90,7 +91,7 @@ export const ToolClaimDialog = ({ tool, isOpen, setIsOpen }: ToolClaimDialogProp
       toast.success("OTP code sent to your email")
       setVerificationEmail(emailForm.getValues().email)
       setStep("otp")
-      setCooldownRemaining(RESEND_COOLDOWN)
+      setCooldownRemaining(claimsConfig.resendCooldown)
     },
     onError: ({ err }) => {
       toast.error(err.message)
@@ -226,7 +227,10 @@ export const ToolClaimDialog = ({ tool, isOpen, setIsOpen }: ToolClaimDialogProp
                     <FormItem className="w-full">
                       <FormLabel>Verification Code</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter the 6-digit code" {...field} />
+                        <Input
+                          placeholder={`Enter the ${claimsConfig.otpLength}-digit code`}
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
