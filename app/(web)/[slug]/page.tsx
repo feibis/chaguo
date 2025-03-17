@@ -7,7 +7,7 @@ import { FeaturedTools } from "~/app/(web)/[slug]/featured-tools"
 import { RelatedTools } from "~/app/(web)/[slug]/related-tools"
 import { Box } from "~/components/common/box"
 import { Button } from "~/components/common/button"
-import { H2, H5 } from "~/components/common/heading"
+import { H1, H5 } from "~/components/common/heading"
 import { Stack } from "~/components/common/stack"
 import { AdCard, AdCardSkeleton } from "~/components/web/ads/ad-card"
 import { ExternalLink } from "~/components/web/external-link"
@@ -16,7 +16,6 @@ import { Markdown } from "~/components/web/markdown"
 import { ShareButtons } from "~/components/web/share-buttons"
 import { ToolActions } from "~/components/web/tools/tool-actions"
 import { ToolListSkeleton } from "~/components/web/tools/tool-list"
-import { Breadcrumbs } from "~/components/web/ui/breadcrumbs"
 import { FaviconImage } from "~/components/web/ui/favicon"
 import { IntroDescription } from "~/components/web/ui/intro"
 import { Section } from "~/components/web/ui/section"
@@ -69,144 +68,127 @@ export default async function ToolPage(props: PageProps) {
   const { title } = getMetadata(tool)
 
   return (
-    <>
-      <Breadcrumbs
-        items={[
-          {
-            href: "/#tools",
-            name: "Tools",
-          },
-          {
-            href: `/${tool.slug}`,
-            name: tool.name,
-          },
-        ]}
-      />
+    <div className="flex flex-col gap-12">
+      <Section>
+        <Section.Content className="max-md:contents">
+          <div className="flex flex-1 flex-col items-start gap-6 max-md:order-1 md:gap-8">
+            <div className="flex w-full flex-col items-start gap-y-4">
+              <Stack className="w-full">
+                <FaviconImage src={tool.faviconUrl} title={tool.name} />
 
-      <div className="flex flex-col gap-12">
-        <Section>
-          <Section.Content className="max-md:contents">
-            <div className="flex flex-1 flex-col items-start gap-6 max-md:order-1 md:gap-8">
-              <div className="flex w-full flex-col items-start gap-y-4">
-                <Stack className="w-full">
-                  <FaviconImage src={tool.faviconUrl} title={tool.name} className="size-8" />
+                <Stack className="flex-1">
+                  <H1 className="!leading-tight truncate">{tool.name}</H1>
 
-                  <Stack className="flex-1">
-                    <H2 as="h1" className="!leading-tight truncate">
-                      {tool.name}
-                    </H2>
-
-                    {tool.owner && <VerifiedBadge size="lg" />}
-                  </Stack>
-
-                  <ToolActions tool={tool} />
+                  {tool.owner && <VerifiedBadge size="lg" />}
                 </Stack>
 
-                {tool.description && <IntroDescription>{tool.description}</IntroDescription>}
-              </div>
+                <ToolActions tool={tool} />
+              </Stack>
 
-              <Button suffix={<ArrowUpRightIcon />} asChild>
-                <ExternalLink
-                  href={tool.websiteUrl}
-                  rel={tool.isFeatured ? "noopener noreferrer" : undefined}
-                  eventName="click_website"
-                  eventProps={{ url: tool.websiteUrl }}
-                >
-                  Visit {tool.name}
-                </ExternalLink>
-              </Button>
+              {tool.description && <IntroDescription>{tool.description}</IntroDescription>}
             </div>
 
-            {tool.screenshotUrl && (
-              <Box hover>
-                <ExternalLink
-                  href={tool.websiteUrl}
-                  doFollow={tool.isFeatured}
-                  eventName="click_website"
-                  eventProps={{ url: tool.websiteUrl }}
-                  className="group relative rounded-md overflow-clip max-md:order-2"
+            <Button suffix={<ArrowUpRightIcon />} asChild>
+              <ExternalLink
+                href={tool.websiteUrl}
+                rel={tool.isFeatured ? "noopener noreferrer" : undefined}
+                eventName="click_website"
+                eventProps={{ url: tool.websiteUrl }}
+              >
+                Visit {tool.name}
+              </ExternalLink>
+            </Button>
+          </div>
+
+          {tool.screenshotUrl && (
+            <Box hover>
+              <ExternalLink
+                href={tool.websiteUrl}
+                doFollow={tool.isFeatured}
+                eventName="click_website"
+                eventProps={{ url: tool.websiteUrl }}
+                className="group relative rounded-md overflow-clip max-md:order-2"
+              >
+                <Image
+                  src={tool.screenshotUrl}
+                  alt={`A screenshot of ${tool.name}`}
+                  width={1280}
+                  height={720}
+                  loading="lazy"
+                  className="aspect-video h-auto w-full object-cover will-change-transform group-hover:opacity-75 group-hover:scale-[102%] group-hover:blur-[1px]"
+                />
+
+                <Button
+                  size="md"
+                  focus={false}
+                  suffix={<ArrowUpRightIcon />}
+                  className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 pointer-events-none shadow-lg group-hover:opacity-100"
+                  asChild
                 >
-                  <Image
-                    src={tool.screenshotUrl}
-                    alt={`A screenshot of ${tool.name}`}
-                    width={1280}
-                    height={720}
-                    loading="lazy"
-                    className="aspect-video h-auto w-full object-cover will-change-transform group-hover:opacity-75 group-hover:scale-[102%] group-hover:blur-[1px]"
-                  />
+                  <span>Visit</span>
+                </Button>
+              </ExternalLink>
+            </Box>
+          )}
 
-                  <Button
-                    size="md"
-                    focus={false}
-                    suffix={<ArrowUpRightIcon />}
-                    className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 pointer-events-none shadow-lg group-hover:opacity-100"
-                    asChild
-                  >
-                    <span>Visit</span>
-                  </Button>
-                </ExternalLink>
-              </Box>
-            )}
+          {tool.content && <Markdown code={tool.content} className="max-md:order-5" />}
 
-            {tool.content && <Markdown code={tool.content} className="max-md:order-5" />}
+          {/* Categories */}
+          {!!tool.categories.length && (
+            <Stack size="lg" direction="column" className="w-full max-md:order-7">
+              <H5 as="strong">Categories:</H5>
 
-            {/* Categories */}
-            {!!tool.categories.length && (
-              <Stack size="lg" direction="column" className="w-full max-md:order-7">
-                <H5 as="strong">Categories:</H5>
-
-                <Stack>
-                  {tool.categories?.map(({ slug, name }) => (
-                    <Tag key={slug} href={`/categories/${slug}`} prefix={<HashIcon />}>
-                      {name}
-                    </Tag>
-                  ))}
-                </Stack>
+              <Stack>
+                {tool.categories?.map(({ slug, name }) => (
+                  <Tag key={slug} href={`/categories/${slug}`} prefix={<HashIcon />}>
+                    {name}
+                  </Tag>
+                ))}
               </Stack>
-            )}
+            </Stack>
+          )}
 
-            {/* Tags */}
-            {!!tool.tags.length && (
-              <Stack direction="column">
-                <H5 as="h4">Tags:</H5>
+          {/* Tags */}
+          {!!tool.tags.length && (
+            <Stack direction="column">
+              <H5 as="h4">Tags:</H5>
 
-                <Stack>
-                  {tool.tags.map(tag => (
-                    <Tag key={tag.slug} href={`/tags/${tag.slug}`} prefix={<HashIcon />}>
-                      {tag.slug}
-                    </Tag>
-                  ))}
-                </Stack>
+              <Stack>
+                {tool.tags.map(tag => (
+                  <Tag key={tag.slug} href={`/tags/${tag.slug}`} prefix={<HashIcon />}>
+                    {tag.slug}
+                  </Tag>
+                ))}
               </Stack>
-            )}
+            </Stack>
+          )}
 
-            <ShareButtons title={`${title}`} className="max-md:order-9" />
-          </Section.Content>
+          <ShareButtons title={`${title}`} className="max-md:order-9" />
+        </Section.Content>
 
-          <Section.Sidebar className="max-md:contents">
-            {/* Advertisement */}
-            <Suspense fallback={<AdCardSkeleton className="max-md:order-4" />}>
-              <AdCard type="ToolPage" className="max-md:order-4" />
-            </Suspense>
+        <Section.Sidebar className="max-md:contents">
+          {/* Advertisement */}
+          <Suspense fallback={<AdCardSkeleton className="max-md:order-4" />}>
+            <AdCard type="ToolPage" className="max-md:order-4" />
+          </Suspense>
 
-            {/* Featured */}
-            <Suspense>
-              <FeaturedTools className="max-md:order-10" />
-            </Suspense>
-          </Section.Sidebar>
-        </Section>
+          {/* Featured */}
+          <Suspense>
+            <FeaturedTools className="max-md:order-10" />
+          </Suspense>
+        </Section.Sidebar>
+      </Section>
 
-        {/* Related */}
-        <Suspense
-          fallback={
-            <Listing title={`Similar to ${tool.name}:`}>
-              <ToolListSkeleton count={3} />
-            </Listing>
-          }
-        >
-          <RelatedTools tool={tool} />
-        </Suspense>
-      </div>
-    </>
+      {/* Related */}
+      <Suspense
+        fallback={
+          <Listing title={`Similar to ${tool.name}:`}>
+            <ToolListSkeleton count={3} />
+          </Listing>
+        }
+      >
+        <RelatedTools tool={tool} />
+      </Suspense>
+    </div>
   )
 }

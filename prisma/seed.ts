@@ -1,4 +1,5 @@
 import { PrismaClient, ToolStatus } from "@prisma/client"
+import { addDays } from "date-fns"
 
 const prisma = new PrismaClient()
 
@@ -84,13 +85,13 @@ async function main() {
       tagline: "Free source-code editor made by Microsoft",
       description:
         "Visual Studio Code is a lightweight but powerful source code editor with support for many programming languages through extensions.",
-      isFeatured: true,
       status: ToolStatus.Published,
       publishedAt: now,
       faviconUrl: "https://code.visualstudio.com/favicon.ico",
       screenshotUrl: "https://code.visualstudio.com/opengraphimg/opengraph-home.png",
       categories: ["frontend"],
       tags: ["free", "open-source"],
+      owner: { connect: { email: "admin@dirstarter.com" } },
     },
     {
       name: "Next.js",
@@ -291,11 +292,13 @@ async function main() {
       tagline: "The fastest way to build Svelte apps",
       description:
         "SvelteKit is a framework for building web applications of all sizes, with a beautiful development experience and flexible filesystem-based routing.",
-      status: ToolStatus.Draft,
+      status: ToolStatus.Scheduled,
+      publishedAt: addDays(now, 7),
       faviconUrl: "https://svelte.dev/favicon.png",
       screenshotUrl: "https://svelte.dev/images/twitter-thumbnail.jpg",
       categories: ["frontend"],
       tags: ["svelte", "javascript", "free", "open-source"],
+      owner: { connect: { email: "admin@dirstarter.com" } },
     },
     {
       name: "Rust",
@@ -309,6 +312,7 @@ async function main() {
       screenshotUrl: "https://www.rust-lang.org/static/images/rust-social-wide.jpg",
       categories: ["backend"],
       tags: ["rust", "free", "open-source"],
+      owner: { connect: { email: "admin@dirstarter.com" } },
     },
     {
       name: "Kubernetes",
@@ -322,6 +326,7 @@ async function main() {
       screenshotUrl: "https://kubernetes.io/images/kubernetes-open-graph.png",
       categories: ["devops"],
       tags: ["kubernetes", "free", "open-source"],
+      owner: { connect: { email: "admin@dirstarter.com" } },
     },
   ]
 
