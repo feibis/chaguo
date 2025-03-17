@@ -6,7 +6,7 @@ import type { ComponentProps } from "react"
 import { H5, H6 } from "~/components/common/heading"
 import { BrandGitHubIcon } from "~/components/common/icons/brand-github"
 import { Stack } from "~/components/common/stack"
-import { Tooltip, TooltipProvider } from "~/components/common/tooltip"
+import { Tooltip } from "~/components/common/tooltip"
 import { ExternalLink } from "~/components/web/external-link"
 import { NewsletterForm } from "~/components/web/newsletter-form"
 import { NavLink } from "~/components/web/ui/nav-link"
@@ -45,35 +45,33 @@ export const Footer = ({ children, className, hideNewsletter, ...props }: Footer
           </Stack>
 
           <Stack className="text-sm/normal">
-            <TooltipProvider delayDuration={500}>
-              <Tooltip tooltip="RSS Feed">
-                <NavLink
-                  href={config.links.feed}
-                  target="_blank"
-                  rel="nofollow noreferrer"
-                  aria-label="RSS Feed"
-                >
-                  <RssIcon className="size-[1.44em]" />
-                </NavLink>
-              </Tooltip>
+            <Tooltip tooltip="RSS Feed">
+              <NavLink
+                href={config.links.feed}
+                target="_blank"
+                rel="nofollow noreferrer"
+                aria-label="RSS Feed"
+              >
+                <RssIcon className="size-[1.44em]" />
+              </NavLink>
+            </Tooltip>
 
-              <Tooltip tooltip="Contact us">
-                <NavLink
-                  href={`mailto:${config.site.email}`}
-                  target="_blank"
-                  rel="nofollow noreferrer"
-                  aria-label="Contact us"
-                >
-                  <AtSignIcon className="size-[1.44em] stroke-[1.25]" />
-                </NavLink>
-              </Tooltip>
+            <Tooltip tooltip="Contact us">
+              <NavLink
+                href={`mailto:${config.site.email}`}
+                target="_blank"
+                rel="nofollow noreferrer"
+                aria-label="Contact us"
+              >
+                <AtSignIcon className="size-[1.44em] stroke-[1.25]" />
+              </NavLink>
+            </Tooltip>
 
-              <Tooltip tooltip="View source code">
-                <NavLink href={config.links.github} target="_blank" rel="nofollow noreferrer">
-                  <BrandGitHubIcon className="size-[1.44em] stroke-[1.25]" />
-                </NavLink>
-              </Tooltip>
-            </TooltipProvider>
+            <Tooltip tooltip="View source code">
+              <NavLink href={config.links.github} target="_blank" rel="nofollow noreferrer">
+                <BrandGitHubIcon className="size-[1.44em] stroke-[1.25]" />
+              </NavLink>
+            </Tooltip>
           </Stack>
         </Stack>
 

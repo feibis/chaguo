@@ -6,6 +6,7 @@ import { config } from "~/config"
 import { geist } from "~/lib/fonts"
 
 import "./styles.css"
+import { TooltipProvider } from "~/components/common/tooltip"
 
 export const metadata: Metadata = {
   metadataBase: new URL(config.site.url),
@@ -32,7 +33,10 @@ export default function RootLayout({ children }: PropsWithChildren) {
   return (
     <html lang="en" className={`${geist.variable} scroll-smooth`} suppressHydrationWarning>
       <body className="min-h-dvh flex flex-col bg-background text-foreground font-sans">
-        <NuqsAdapter>{children}</NuqsAdapter>
+        <NuqsAdapter>
+          <TooltipProvider delayDuration={250}>{children}</TooltipProvider>
+        </NuqsAdapter>
+
         <Toaster />
       </body>
     </html>

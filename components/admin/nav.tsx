@@ -7,7 +7,7 @@ import { Button, type ButtonProps } from "~/components/common/button"
 import { Link } from "~/components/common/link"
 import { Separator } from "~/components/common/separator"
 import { Stack } from "~/components/common/stack"
-import { Tooltip, TooltipProvider } from "~/components/common/tooltip"
+import { Tooltip } from "~/components/common/tooltip"
 import { cx } from "~/utils/cva"
 
 type NavLink = ButtonProps & {
@@ -43,64 +43,62 @@ export const Nav = ({ className, links, isCollapsed, ...props }: NavProps) => {
         className,
       )}
     >
-      <TooltipProvider delayDuration={250}>
-        {links.map((link, index) => {
-          if (!link) {
-            return <Separator key={index} className="my-2 -mx-3 w-auto" />
-          }
+      {links.map((link, index) => {
+        if (!link) {
+          return <Separator key={index} className="my-2 -mx-3 w-auto" />
+        }
 
-          const { href, title, label, suffix, ...props } = link
+        const { href, title, label, suffix, ...props } = link
 
-          if (isCollapsed) {
-            return (
-              <Tooltip
-                key={index}
-                side="right"
-                tooltip={
-                  <Stack size="lg">
-                    {title}
-                    {label && <span className="opacity-60">{label}</span>}
-                  </Stack>
-                }
-              >
-                <Button
-                  size="md"
-                  variant="ghost"
-                  aria-label={title}
-                  className={cx(isActive(href) && "bg-accent text-foreground")}
-                  hover={false}
-                  asChild
-                  {...props}
-                >
-                  <Link href={href} />
-                </Button>
-              </Tooltip>
-            )
-          }
-
+        if (isCollapsed) {
           return (
-            <Button
+            <Tooltip
               key={index}
-              size="md"
-              variant="ghost"
-              suffix={
-                suffix ||
-                (label && (
-                  <Badge variant="outline" className="ml-auto size-auto">
-                    {label}
-                  </Badge>
-                ))
+              side="right"
+              tooltip={
+                <Stack size="lg">
+                  {title}
+                  {label && <span className="opacity-60">{label}</span>}
+                </Stack>
               }
-              className={cx("justify-start", isActive(href) && "bg-accent text-foreground")}
-              hover={false}
-              asChild
-              {...props}
             >
-              <Link href={href}>{title}</Link>
-            </Button>
+              <Button
+                size="md"
+                variant="ghost"
+                aria-label={title}
+                className={cx(isActive(href) && "bg-accent text-foreground")}
+                hover={false}
+                asChild
+                {...props}
+              >
+                <Link href={href} />
+              </Button>
+            </Tooltip>
           )
-        })}
-      </TooltipProvider>
+        }
+
+        return (
+          <Button
+            key={index}
+            size="md"
+            variant="ghost"
+            suffix={
+              suffix ||
+              (label && (
+                <Badge variant="outline" className="ml-auto size-auto">
+                  {label}
+                </Badge>
+              ))
+            }
+            className={cx("justify-start", isActive(href) && "bg-accent text-foreground")}
+            hover={false}
+            asChild
+            {...props}
+          >
+            <Link href={href}>{title}</Link>
+          </Button>
+        )
+      })}
     </nav>
   )
 }
