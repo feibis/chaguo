@@ -7,6 +7,7 @@ import {
   isBefore,
   startOfMonth,
 } from "date-fns"
+import { adsConfig } from "~/config/ads"
 
 type PricingItem = {
   price: number
@@ -29,10 +30,10 @@ export const calculateAdsPrice = (selections: PricingItem[], basePrice: number) 
   // Convert total value to equivalent days at base price
   const equivalentDays = Math.round(totalPrice / basePrice)
 
-  // Apply volume discount (max 30%)
+  // Apply volume discount
   const discountPercentage = Math.min(
     Math.max(equivalentDays - 1, 0), // Ensure non-negative
-    30, // Cap at 30%
+    adsConfig.maxDiscount, // Cap at max discount
   )
 
   // Calculate final price with discount

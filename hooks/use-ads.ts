@@ -4,7 +4,7 @@ import type { AdType } from "@prisma/client"
 import { useCallback, useMemo, useState } from "react"
 import type { DateRange } from "react-day-picker"
 import { config } from "~/config"
-import { calculateAdsPrice } from "~/utils/ads"
+import { calculateAdsPrice } from "~/lib/ads"
 
 export type AdsPicker = {
   label: string

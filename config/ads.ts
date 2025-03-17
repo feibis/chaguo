@@ -10,6 +10,8 @@ export type AdSpot = {
 }
 
 export const adsConfig = {
+  maxDiscount: 30,
+
   adSpots: [
     {
       label: "Listing Ad",
