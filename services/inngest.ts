@@ -9,7 +9,6 @@ type Events = {
   "tool.featured": { data: ToolEventData }
   "tool.scheduled": { data: ToolEventData }
   "tool.published": { data: ToolEventData }
-  "tool.deleted": { data: ToolEventData }
 }
 
 const prismaMiddleware = new InngestMiddleware({

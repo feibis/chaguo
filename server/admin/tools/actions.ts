@@ -3,9 +3,10 @@
 import { slugify } from "@curiousleaf/utils"
 import { ToolStatus } from "@prisma/client"
 import { revalidatePath, revalidateTag } from "next/cache"
+import { after } from "next/server"
 import { z } from "zod"
 import { isProd } from "~/env"
-import { uploadFavicon, uploadScreenshot } from "~/lib/media"
+import { removeS3Directories, uploadFavicon, uploadScreenshot } from "~/lib/media"
 import { adminProcedure } from "~/lib/safe-actions"
 import { toolSchema } from "~/server/admin/tools/schemas"
 import { db } from "~/services/db"
@@ -65,10 +66,10 @@ export const deleteTools = adminProcedure
     revalidatePath("/admin/tools")
     revalidateTag("tools")
 
-    // Send an event to the Inngest pipeline
-    for (const tool of tools) {
-      isProd && (await inngest.send({ name: "tool.deleted", data: { slug: tool.slug } }))
-    }
+    // Remove the tool images from S3 asynchronously
+    after(async () => {
+      await removeS3Directories(tools.map(tool => `tools/${tool.slug}`))
+    })
 
     return true
   })
