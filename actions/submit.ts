@@ -42,18 +42,17 @@ export const submitTool = createServerAction()
   .handler(async ({ input: { newsletterOptIn, ...data } }) => {
     const session = await auth.api.getSession({ headers: await headers() })
 
-    if (!session?.user) {
-      const ip = await getIP()
+    const ip = await getIP()
+    const rateLimitKey = `submission:${ip}`
 
-      // Rate limiting check
-      if (await isRateLimited(ip, "submission")) {
-        throw new Error("Too many submissions. Please try again later.")
-      }
+    // Rate limiting check
+    if (await isRateLimited(rateLimitKey, "submission")) {
+      throw new Error("Too many submissions. Please try again later.")
+    }
 
-      // Disposable email check
-      if (await isDisposableEmail(data.submitterEmail)) {
-        throw new Error("Invalid email address, please use a real one")
-      }
+    // Disposable email check
+    if (!session?.user && (await isDisposableEmail(data.submitterEmail))) {
+      throw new Error("Invalid email address, please use a real one")
     }
 
     if (newsletterOptIn) {
