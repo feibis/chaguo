@@ -6,8 +6,7 @@ import { isFriday } from "date-fns"
 import { addDays, isWednesday } from "date-fns"
 import { isMonday } from "date-fns"
 import { ClockIcon } from "lucide-react"
-import * as React from "react"
-import type { ComponentProps } from "react"
+import { type ComponentProps, useState } from "react"
 import { toast } from "sonner"
 import { useServerAction } from "zsa-react"
 import { Button } from "~/components/common/button"
@@ -36,7 +35,7 @@ export const ToolScheduleDialog = ({
   onSuccess,
   ...props
 }: ToolScheduleDialogProps) => {
-  const [publishedAt, setPublishedAt] = React.useState<Date | undefined>(undefined)
+  const [publishedAt, setPublishedAt] = useState<Date | undefined>(undefined)
 
   const { execute, isPending } = useServerAction(scheduleTool, {
     onSuccess: () => {

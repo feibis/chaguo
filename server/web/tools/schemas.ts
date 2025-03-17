@@ -1,6 +1,6 @@
 import { createSearchParamsCache, parseAsInteger, parseAsString } from "nuqs/server"
 
-export const toolsSearchParams = {
+export const toolsFilterParamsSchema = {
   q: parseAsString.withDefault(""),
   sort: parseAsString.withDefault(""),
   page: parseAsInteger.withDefault(1),
@@ -8,5 +8,5 @@ export const toolsSearchParams = {
   category: parseAsString.withDefault(""),
 }
 
-export const toolsSearchParamsCache = createSearchParamsCache(toolsSearchParams)
-export type ToolsSearchParams = Awaited<ReturnType<typeof toolsSearchParamsCache.parse>>
+export const toolsFilterParamsCache = createSearchParamsCache(toolsFilterParamsSchema)
+export type ToolsFiltersSchema = Awaited<ReturnType<typeof toolsFilterParamsCache.parse>>

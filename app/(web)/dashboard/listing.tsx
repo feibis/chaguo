@@ -7,16 +7,15 @@ import { DashboardTable } from "~/app/(web)/dashboard/table"
 import { DataTableSkeleton } from "~/components/data-table/data-table-skeleton"
 import { auth } from "~/lib/auth"
 import { findTools } from "~/server/admin/tools/queries"
-import { adminToolsSearchParams } from "~/server/admin/tools/schemas"
+import { toolsTableParamsCache } from "~/server/admin/tools/schemas"
 
-export const DashboardToolListing = async ({ params, searchParams }: DashboardPageProps) => {
-  const { path } = await params
-  const parsedParams = adminToolsSearchParams.parse(await searchParams)
+export const DashboardToolListing = async ({ searchParams }: DashboardPageProps) => {
+  const parsedParams = toolsTableParamsCache.parse(await searchParams)
   const session = await auth.api.getSession({ headers: await headers() })
   const status = [ToolStatus.Draft, ToolStatus.Scheduled, ToolStatus.Published]
 
   if (!session?.user) {
-    throw redirect(`/auth/login?callbackURL=${encodeURIComponent("/dashboard")}`)
+    throw redirect("/auth/login?callbackURL=/dashboard")
   }
 
   const toolsPromise = findTools(

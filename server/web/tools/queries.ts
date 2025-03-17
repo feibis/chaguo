@@ -3,10 +3,10 @@ import { getRandomElement } from "@curiousleaf/utils"
 import { type Prisma, ToolStatus } from "@prisma/client"
 import { unstable_cacheLife as cacheLife, unstable_cacheTag as cacheTag } from "next/cache"
 import { toolManyPayload, toolOnePayload } from "~/server/web/tools/payloads"
-import type { ToolsSearchParams } from "~/server/web/tools/schemas"
+import type { ToolsFiltersSchema } from "~/server/web/tools/schemas"
 import { db } from "~/services/db"
 
-export const searchTools = async (search: ToolsSearchParams, where?: Prisma.ToolWhereInput) => {
+export const searchTools = async (search: ToolsFiltersSchema, where?: Prisma.ToolWhereInput) => {
   "use cache"
 
   cacheTag("tools")
@@ -45,7 +45,7 @@ export const searchTools = async (search: ToolsSearchParams, where?: Prisma.Tool
     }),
   ])
 
-  console.log("Tools search:", performance.now() - start)
+  console.log(`Tools search: ${Math.round(performance.now() - start)}ms`)
 
   const pageCount = Math.ceil(totalCount / perPage)
   return { tools, totalCount, pageCount }

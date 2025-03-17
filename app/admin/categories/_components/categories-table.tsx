@@ -2,7 +2,8 @@
 
 import type { Category } from "@prisma/client"
 import { PlusIcon } from "lucide-react"
-import * as React from "react"
+import { useQueryStates } from "nuqs"
+import { use, useMemo, useState } from "react"
 import { CategoriesDeleteDialog } from "~/app/admin/categories/_components/categories-delete-dialog"
 import { getColumns } from "~/app/admin/categories/_components/categories-table-columns"
 import { CategoriesTableToolbarActions } from "~/app/admin/categories/_components/categories-table-toolbar-actions"
@@ -15,6 +16,7 @@ import { DataTableToolbar } from "~/components/data-table/data-table-toolbar"
 import { DataTableViewOptions } from "~/components/data-table/data-table-view-options"
 import { useDataTable } from "~/hooks/use-data-table"
 import type { findCategories } from "~/server/admin/categories/queries"
+import { categoriesTableParamsSchema } from "~/server/admin/categories/schemas"
 import type { DataTableFilterField, DataTableRowAction } from "~/types"
 
 type CategoriesTableProps = {
@@ -22,12 +24,12 @@ type CategoriesTableProps = {
 }
 
 export function CategoriesTable({ categoriesPromise }: CategoriesTableProps) {
-  const { categories, categoriesTotal, pageCount } = React.use(categoriesPromise)
-
-  const [rowAction, setRowAction] = React.useState<DataTableRowAction<Category> | null>(null)
+  const { categories, categoriesTotal, pageCount } = use(categoriesPromise)
+  const [{ perPage, sort }] = useQueryStates(categoriesTableParamsSchema)
+  const [rowAction, setRowAction] = useState<DataTableRowAction<Category> | null>(null)
 
   // Memoize the columns so they don't re-render on every render
-  const columns = React.useMemo(() => getColumns({ setRowAction }), [])
+  const columns = useMemo(() => getColumns({ setRowAction }), [])
 
   // Search filters
   const filterFields: DataTableFilterField<Category>[] = [
@@ -46,7 +48,8 @@ export function CategoriesTable({ categoriesPromise }: CategoriesTableProps) {
     shallow: false,
     clearOnDefault: true,
     initialState: {
-      sorting: [{ id: "name", desc: false }],
+      pagination: { pageIndex: 0, pageSize: perPage },
+      sorting: sort,
       columnPinning: { right: ["actions"] },
     },
     getRowId: (originalRow, index) => `${originalRow.id}-${index}`,

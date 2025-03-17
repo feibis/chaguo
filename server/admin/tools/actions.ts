@@ -2,7 +2,7 @@
 
 import { slugify } from "@curiousleaf/utils"
 import { ToolStatus } from "@prisma/client"
-import { revalidateTag } from "next/cache"
+import { revalidatePath, revalidateTag } from "next/cache"
 import { z } from "zod"
 import { isProd } from "~/env"
 import { uploadFavicon, uploadScreenshot } from "~/lib/media"
@@ -62,6 +62,7 @@ export const deleteTools = adminProcedure
       where: { id: { in: ids } },
     })
 
+    revalidatePath("/admin/tools")
     revalidateTag("tools")
 
     // Send an event to the Inngest pipeline

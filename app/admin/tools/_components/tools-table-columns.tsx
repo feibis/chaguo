@@ -7,7 +7,6 @@ import type { Dispatch, SetStateAction } from "react"
 import { ToolActions } from "~/app/admin/tools/_components/tool-actions"
 import { DataTableColumnHeader } from "~/components/data-table/data-table-column-header"
 import { DataTableLink } from "~/components/data-table/data-table-link"
-import { DataTableThumbnail } from "~/components/data-table/data-table-thumbnail"
 import type { DataTableRowAction } from "~/types"
 
 type GetColumnsProps = {
@@ -49,12 +48,11 @@ export const getColumns = ({ setRowAction }: GetColumnsProps): ColumnDef<Tool>[]
     {
       accessorKey: "name",
       header: ({ column }) => <DataTableColumnHeader column={column} title="Name" />,
-      cell: ({ row }) => (
-        <DataTableLink href={`/admin/tools/${row.original.slug}`}>
-          {row.original.faviconUrl && <DataTableThumbnail src={row.original.faviconUrl} />}
-          {row.getValue("name")}
-        </DataTableLink>
-      ),
+      cell: ({ row }) => {
+        const { name, slug, faviconUrl } = row.original
+
+        return <DataTableLink href={`/admin/tools/${slug}`} image={faviconUrl} title={name} />
+      },
     },
     {
       accessorKey: "tagline",

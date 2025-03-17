@@ -23,7 +23,7 @@ export const searchItems = adminProcedure
       }),
     ])
 
-    console.log("Admin search:", performance.now() - start)
+    console.log(`Admin search: ${Math.round(performance.now() - start)}ms`)
 
     return { tools, categories }
   })

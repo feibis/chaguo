@@ -23,7 +23,7 @@ const UserMenu = async () => {
   if (!session?.user) {
     return (
       <Button size="sm" variant="secondary" asChild>
-        <Link href="/auth/login">Sign in</Link>
+        <Link href="/auth/login">Sign In</Link>
       </Button>
     )
   }
@@ -40,11 +40,11 @@ const UserMenu = async () => {
       </DropdownMenuTrigger>
 
       <DropdownMenuContent side="bottom" align="end">
-        <DropdownMenuLabel className="truncate font-normal leading-relaxed">
+        <DropdownMenuLabel className="max-w-48 truncate font-normal leading-relaxed">
           {session.user.name}
 
           {session.user.name !== session.user.email && (
-            <div className="text-muted-foreground">{session.user.email}</div>
+            <div className="text-muted-foreground truncate">{session.user.email}</div>
           )}
         </DropdownMenuLabel>
 
@@ -75,7 +75,7 @@ const UserMenu = async () => {
 const UserMenuSkeleton = () => {
   return (
     <Button size="sm" variant="secondary" disabled>
-      Sign in
+      Sign In
     </Button>
   )
 }

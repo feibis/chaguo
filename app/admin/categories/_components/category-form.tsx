@@ -67,7 +67,10 @@ export function CategoryForm({
     {
       onSuccess: ({ data }) => {
         toast.success("Category successfully updated")
-        redirect(`/admin/categories/${data.slug}`)
+
+        if (data.slug !== category?.slug) {
+          redirect(`/admin/categories/${data.slug}`)
+        }
       },
 
       onError: ({ err }) => {

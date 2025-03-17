@@ -2,12 +2,12 @@
 
 import { type Values, useQueryStates } from "nuqs"
 import { type PropsWithChildren, createContext, use, useTransition } from "react"
-import { toolsSearchParams } from "~/server/web/tools/schemas"
+import { toolsFilterParamsSchema } from "~/server/web/tools/schemas"
 
 export type FiltersContextType = {
-  filters: Values<typeof toolsSearchParams>
+  filters: Values<typeof toolsFilterParamsSchema>
   isLoading: boolean
-  updateFilters: (values: Partial<Values<typeof toolsSearchParams>>) => void
+  updateFilters: (values: Partial<Values<typeof toolsFilterParamsSchema>>) => void
 }
 
 const FiltersContext = createContext<FiltersContextType>(null!)
@@ -15,13 +15,13 @@ const FiltersContext = createContext<FiltersContextType>(null!)
 const FiltersProvider = ({ children }: PropsWithChildren) => {
   const [isLoading, startTransition] = useTransition()
 
-  const [filters, setFilters] = useQueryStates(toolsSearchParams, {
+  const [filters, setFilters] = useQueryStates(toolsFilterParamsSchema, {
     shallow: false,
     throttleMs: 300,
     startTransition,
   })
 
-  const updateFilters = (values: Partial<Values<typeof toolsSearchParams>>) => {
+  const updateFilters = (values: Partial<Values<typeof toolsFilterParamsSchema>>) => {
     setFilters(prev => ({ ...prev, ...values, page: null }))
   }
 

@@ -9,6 +9,7 @@ import {
   GlobeIcon,
   LayoutDashboardIcon,
   LogOutIcon,
+  UsersIcon,
 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
@@ -73,6 +74,11 @@ export const Sidebar = () => {
             title: "Categories",
             href: "/admin/categories",
             prefix: <GalleryHorizontalEndIcon />,
+          },
+          {
+            title: "Users",
+            href: "/admin/users",
+            prefix: <UsersIcon />,
           },
 
           undefined, // Separator

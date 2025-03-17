@@ -1,11 +1,11 @@
 import { isTruthy } from "@curiousleaf/utils"
 import type { Prisma } from "@prisma/client"
 import { endOfDay, startOfDay } from "date-fns"
-import type { FindCategoriesSchema } from "~/server/admin/categories/schemas"
+import type { CategoriesTableSchema } from "~/server/admin/categories/schemas"
 import { db } from "~/services/db"
 
 export const findCategories = async (
-  search: FindCategoriesSchema,
+  search: CategoriesTableSchema,
   where?: Prisma.CategoryWhereInput,
 ) => {
   const { name, page, perPage, sort, from, to, operator } = search

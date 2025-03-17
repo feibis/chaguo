@@ -4,7 +4,14 @@ import { formatDate } from "@curiousleaf/utils"
 import { type Tool, ToolStatus } from "@prisma/client"
 import type { ColumnDef } from "@tanstack/react-table"
 import { differenceInDays, formatDistanceToNowStrict } from "date-fns"
-import { CircleDashedIcon, CircleDotDashedIcon, CircleIcon, PlusIcon } from "lucide-react"
+import {
+  CircleDashedIcon,
+  CircleDotDashedIcon,
+  CircleIcon,
+  PlusIcon,
+  SparklesIcon,
+} from "lucide-react"
+import { useQueryStates } from "nuqs"
 import { use, useMemo } from "react"
 import { Button } from "~/components/common/button"
 import { Link } from "~/components/common/link"
@@ -12,10 +19,10 @@ import { Stack } from "~/components/common/stack"
 import { DataTable } from "~/components/data-table/data-table"
 import { DataTableColumnHeader } from "~/components/data-table/data-table-column-header"
 import { DataTableLink } from "~/components/data-table/data-table-link"
-import { DataTableThumbnail } from "~/components/data-table/data-table-thumbnail"
 import { DataTableToolbar } from "~/components/data-table/data-table-toolbar"
 import { useDataTable } from "~/hooks/use-data-table"
 import type { findTools } from "~/server/admin/tools/queries"
+import { toolsTableParamsSchema } from "~/server/admin/tools/schemas"
 import type { DataTableFilterField } from "~/types"
 
 type DashboardTableProps = {
@@ -24,6 +31,7 @@ type DashboardTableProps = {
 
 export const DashboardTable = ({ toolsPromise }: DashboardTableProps) => {
   const { tools, pageCount } = use(toolsPromise)
+  const [{ perPage, sort }] = useQueryStates(toolsTableParamsSchema)
 
   // Memoize the columns so they don't re-render on every render
   const columns = useMemo((): ColumnDef<Tool>[] => {
@@ -39,12 +47,7 @@ export const DashboardTable = ({ toolsPromise }: DashboardTableProps) => {
             return <span className="text-muted-foreground font-medium">{name}</span>
           }
 
-          return (
-            <DataTableLink href={`/${slug}`}>
-              {faviconUrl && <DataTableThumbnail src={faviconUrl} />}
-              {name}
-            </DataTableLink>
-          )
+          return <DataTableLink href={`/${slug}`} image={faviconUrl} title={name} />
         },
       },
       {
@@ -57,7 +60,7 @@ export const DashboardTable = ({ toolsPromise }: DashboardTableProps) => {
           switch (status) {
             case ToolStatus.Published:
               return (
-                <Stack size="sm">
+                <Stack size="sm" wrap={false}>
                   <CircleIcon className="stroke-3 text-green-600/75 dark:text-green-500/75" />
                   <span className="text-muted-foreground font-medium">
                     {formatDate(publishedAt!)}
@@ -66,7 +69,7 @@ export const DashboardTable = ({ toolsPromise }: DashboardTableProps) => {
               )
             case ToolStatus.Scheduled:
               return (
-                <Stack size="sm" title={formatDate(publishedAt!)}>
+                <Stack size="sm" wrap={false} title={formatDate(publishedAt!)}>
                   <CircleDotDashedIcon className="stroke-3 text-yellow-700/75 dark:text-yellow-500/75" />
                   <span className="text-muted-foreground font-medium">
                     Scheduled{" "}
@@ -80,7 +83,7 @@ export const DashboardTable = ({ toolsPromise }: DashboardTableProps) => {
               )
             case ToolStatus.Draft:
               return (
-                <Stack size="sm">
+                <Stack size="sm" wrap={false}>
                   <CircleDashedIcon className="stroke-3 text-muted-foreground/75" />
                   <span className="text-muted-foreground/75">Awaiting review</span>
                 </Stack>
@@ -89,7 +92,6 @@ export const DashboardTable = ({ toolsPromise }: DashboardTableProps) => {
               return ""
           }
         },
-        size: 0,
       },
       {
         accessorKey: "createdAt",
@@ -100,7 +102,6 @@ export const DashboardTable = ({ toolsPromise }: DashboardTableProps) => {
             {formatDate(row.getValue<Date>("createdAt"))}
           </span>
         ),
-        size: 0,
       },
       {
         id: "actions",
@@ -118,14 +119,19 @@ export const DashboardTable = ({ toolsPromise }: DashboardTableProps) => {
               )}
 
               {!isFeatured && (
-                <Button size="sm" variant="primary" asChild>
-                  <Link href={`/submit/${slug}`}>Feature</Link>
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  prefix={<SparklesIcon className="text-inherit" />}
+                  className="text-blue-600 dark:text-blue-400"
+                  asChild
+                >
+                  <Link href={`/submit/${slug}`}>Promote</Link>
                 </Button>
               )}
             </Stack>
           )
         },
-        size: 0,
       },
     ]
   }, [])
@@ -147,7 +153,8 @@ export const DashboardTable = ({ toolsPromise }: DashboardTableProps) => {
     shallow: false,
     clearOnDefault: true,
     initialState: {
-      sorting: [{ id: "createdAt", desc: true }],
+      pagination: { pageIndex: 0, pageSize: perPage },
+      sorting: sort,
       columnPinning: { right: ["actions"] },
       columnVisibility: { createdAt: false },
     },
@@ -155,7 +162,7 @@ export const DashboardTable = ({ toolsPromise }: DashboardTableProps) => {
   })
 
   return (
-    <DataTable table={table}>
+    <DataTable table={table} emptyState="No tools found. Submit or claim a tool to get started.">
       <DataTableToolbar table={table} filterFields={filterFields}>
         <Button size="md" variant="primary" prefix={<PlusIcon />} asChild>
           <Link href="/submit">Submit a tool</Link>
