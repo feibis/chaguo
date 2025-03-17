@@ -3,20 +3,32 @@ import { PrismaClient, ToolStatus } from "@prisma/client"
 const prisma = new PrismaClient()
 
 async function main() {
+  const now = new Date()
+
   console.log("Starting seeding...")
 
-  const admin = await prisma.user.create({
-    data: {
-      name: "Admin User",
-      email: "admin@dirstarter.com",
-      emailVerified: true,
-      role: "admin",
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
+  const admin = await prisma.user.createMany({
+    data: [
+      {
+        name: "Admin User",
+        email: "admin@dirstarter.com",
+        emailVerified: true,
+        role: "admin",
+        createdAt: now,
+        updatedAt: now,
+      },
+      {
+        name: "User",
+        email: "user@dirstarter.com",
+        emailVerified: true,
+        role: "user",
+        createdAt: now,
+        updatedAt: now,
+      },
+    ],
   })
 
-  console.log("Created admin user")
+  console.log("Created users")
 
   // Create categories
   const categories = await prisma.category.createMany({
@@ -74,7 +86,7 @@ async function main() {
         "Visual Studio Code is a lightweight but powerful source code editor with support for many programming languages through extensions.",
       isFeatured: true,
       status: ToolStatus.Published,
-      publishedAt: new Date(),
+      publishedAt: now,
       faviconUrl: "https://code.visualstudio.com/favicon.ico",
       screenshotUrl: "https://code.visualstudio.com/opengraphimg/opengraph-home.png",
       categories: ["frontend"],
@@ -89,7 +101,7 @@ async function main() {
         "Next.js gives you the best developer experience with all the features you need for production: hybrid static & server rendering, TypeScript support, smart bundling, route pre-fetching, and more.",
       isFeatured: true,
       status: ToolStatus.Published,
-      publishedAt: new Date(),
+      publishedAt: now,
       faviconUrl: "https://nextjs.org/favicon.ico",
       screenshotUrl: "https://assets.vercel.com/image/upload/front/nextjs/twitter-card.png",
       categories: ["frontend"],
@@ -104,7 +116,7 @@ async function main() {
         "Docker is an open platform for developing, shipping, and running applications in containers.",
       isFeatured: true,
       status: ToolStatus.Published,
-      publishedAt: new Date(),
+      publishedAt: now,
       faviconUrl:
         "https://www.docker.com/wp-content/uploads/2023/04/cropped-Docker-favicon-32x32.png",
       screenshotUrl: "https://www.docker.com/app/uploads/2023/06/meta-image-homepage-1110x580.png",
@@ -120,7 +132,7 @@ async function main() {
         "Figma is a vector graphics editor and prototyping tool, primarily web-based with additional offline features through desktop applications.",
       isFeatured: true,
       status: ToolStatus.Published,
-      publishedAt: new Date(),
+      publishedAt: now,
       faviconUrl: "https://static.figma.com/app/icon/1/favicon.png",
       screenshotUrl:
         "https://cdn.sanity.io/images/599r6htc/regionalized/1adfa5a99040c80af7b4b5e3e2cf845315ea2367-2400x1260.png?w=1200&q=70&fit=max&auto=format",
@@ -135,7 +147,7 @@ async function main() {
       description:
         "Node.js is an open-source, cross-platform JavaScript runtime environment that executes JavaScript code outside a web browser.",
       status: ToolStatus.Published,
-      publishedAt: new Date(),
+      publishedAt: now,
       faviconUrl: "https://nodejs.org/static/images/favicons/favicon.ico",
       screenshotUrl:
         "https://nodejs.org/en/next-data/og/announcement/Node.js%20%E2%80%94%20Run%20JavaScript%20Everywhere",
@@ -150,7 +162,7 @@ async function main() {
       description:
         "GitHub Copilot uses the OpenAI Codex to suggest code and entire functions in real-time, right from your editor.",
       status: ToolStatus.Published,
-      publishedAt: new Date(),
+      publishedAt: now,
       faviconUrl: "https://github.githubassets.com/favicons/favicon.svg",
       screenshotUrl: "https://github.githubassets.com/assets/copilot-2023-83117d7c0b8a.png",
       categories: ["productivity", "ai-tools"],
@@ -164,7 +176,7 @@ async function main() {
       description:
         "Jest is a JavaScript testing framework designed to ensure correctness of any JavaScript codebase.",
       status: ToolStatus.Published,
-      publishedAt: new Date(),
+      publishedAt: now,
       faviconUrl: "https://jestjs.io/img/favicon/favicon.ico",
       screenshotUrl: "https://jestjs.io/img/opengraph.png",
       categories: ["testing"],
@@ -178,7 +190,7 @@ async function main() {
       description:
         "Amazon Web Services offers reliable, scalable, and inexpensive cloud computing services.",
       status: ToolStatus.Published,
-      publishedAt: new Date(),
+      publishedAt: now,
       faviconUrl: "https://a0.awsstatic.com/libra-css/images/site/fav/favicon.ico",
       screenshotUrl: "https://a0.awsstatic.com/libra-css/images/logos/aws_logo_smile_1200x630.png",
       categories: ["devops"],
@@ -192,7 +204,7 @@ async function main() {
       description:
         "MDN Web Docs is an open-source, collaborative project documenting Web platform technologies.",
       status: ToolStatus.Published,
-      publishedAt: new Date(),
+      publishedAt: now,
       faviconUrl: "https://developer.mozilla.org/favicon-48x48.png",
       screenshotUrl: "https://developer.mozilla.org/mdn-social-share.d893525a4fb5fb1f67a2.png",
       categories: ["learning"],
@@ -207,7 +219,7 @@ async function main() {
         "ChatGPT is a large language model developed by OpenAI that can generate human-like text based on the context and prompt it's given.",
       isFeatured: true,
       status: ToolStatus.Published,
-      publishedAt: new Date(),
+      publishedAt: now,
       faviconUrl: "https://cdn.oaistatic.com/assets/favicon-miwirzcw.ico",
       screenshotUrl: "https://cdn.oaistatic.com/assets/chatgpt-share-og-u7j5uyao.webp",
       categories: ["ai-tools", "productivity"],
@@ -221,7 +233,7 @@ async function main() {
       description:
         "Tailwind CSS is a utility-first CSS framework packed with classes that can be composed to build any design, directly in your markup.",
       status: ToolStatus.Published,
-      publishedAt: new Date(),
+      publishedAt: now,
       faviconUrl: "https://tailwindcss.com/favicons/apple-touch-icon.png",
       screenshotUrl: "https://tailwindcss.com/opengraph-image.jpg",
       categories: ["frontend"],
@@ -235,7 +247,7 @@ async function main() {
       description:
         "React is a JavaScript library for building user interfaces, particularly single-page applications.",
       status: ToolStatus.Published,
-      publishedAt: new Date(),
+      publishedAt: now,
       faviconUrl: "https://react.dev/favicon.ico",
       screenshotUrl: "https://react.dev/images/og-home.png",
       categories: ["frontend"],
@@ -249,7 +261,7 @@ async function main() {
       description:
         "Postman is an API platform for developers to design, build, test and iterate their APIs.",
       status: ToolStatus.Published,
-      publishedAt: new Date(),
+      publishedAt: now,
       faviconUrl: "https://www.postman.com/_ar-assets/images/favicon-1-32.png",
       screenshotUrl:
         "https://voyager.postman.com/social-preview/postman-api-platform-social-preview-2.jpeg",
@@ -265,12 +277,51 @@ async function main() {
         "GitHub is a code hosting platform for version control and collaboration, letting you and others work together on projects.",
       isFeatured: true,
       status: ToolStatus.Published,
-      publishedAt: new Date(),
+      publishedAt: now,
       faviconUrl: "https://github.githubassets.com/favicons/favicon.svg",
       screenshotUrl:
         "https://github.githubassets.com/images/modules/site/social-cards/github-social.png",
       categories: ["devops"],
       tags: ["free", "paid", "open-source", "ci-cd"],
+    },
+    {
+      name: "SvelteKit",
+      slug: "sveltekit",
+      websiteUrl: "https://svelte.dev",
+      tagline: "The fastest way to build Svelte apps",
+      description:
+        "SvelteKit is a framework for building web applications of all sizes, with a beautiful development experience and flexible filesystem-based routing.",
+      status: ToolStatus.Draft,
+      faviconUrl: "https://svelte.dev/favicon.png",
+      screenshotUrl: "https://svelte.dev/images/twitter-thumbnail.jpg",
+      categories: ["frontend"],
+      tags: ["svelte", "javascript", "free", "open-source"],
+    },
+    {
+      name: "Rust",
+      slug: "rust",
+      websiteUrl: "https://www.rust-lang.org",
+      tagline: "A language empowering everyone to build reliable and efficient software",
+      description:
+        "Rust is a multi-paradigm, general-purpose programming language designed for performance and safety, especially safe concurrency.",
+      status: ToolStatus.Draft,
+      faviconUrl: "https://www.rust-lang.org/static/images/favicon.svg",
+      screenshotUrl: "https://www.rust-lang.org/static/images/rust-social-wide.jpg",
+      categories: ["backend"],
+      tags: ["rust", "free", "open-source"],
+    },
+    {
+      name: "Kubernetes",
+      slug: "kubernetes",
+      websiteUrl: "https://kubernetes.io",
+      tagline: "Production-Grade Container Orchestration",
+      description:
+        "Kubernetes is an open-source container orchestration platform for automating deployment, scaling, and management of containerized applications.",
+      status: ToolStatus.Draft,
+      faviconUrl: "https://kubernetes.io/icons/favicon-64.png",
+      screenshotUrl: "https://kubernetes.io/images/kubernetes-open-graph.png",
+      categories: ["devops"],
+      tags: ["kubernetes", "free", "open-source"],
     },
   ]
 
