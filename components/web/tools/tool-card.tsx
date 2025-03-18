@@ -20,6 +20,10 @@ type ToolCardProps = ComponentProps<typeof Card> & {
 }
 
 const ToolCard = ({ className, tool, isRelated, ...props }: ToolCardProps) => {
+  const maxCategories = 2
+  const visibleCategories = tool.categories.slice(0, maxCategories)
+  const hiddenCount = tool.categories.length - maxCategories
+
   return (
     <Card asChild {...props}>
       <Link href={`/${tool.slug}`} className="group">
@@ -47,13 +51,15 @@ const ToolCard = ({ className, tool, isRelated, ...props }: ToolCardProps) => {
           >
             {tool.tagline && <CardDescription className="min-h-10">{tool.tagline}</CardDescription>}
 
-            {!!tool.categories.length && (
-              <Stack size="sm" className="mt-auto">
-                {tool.categories.map(category => (
+            {!!visibleCategories.length && (
+              <Stack className="mt-auto gap-1">
+                {visibleCategories.map(category => (
                   <Badge key={category.slug} variant="outline">
                     {category.name}
                   </Badge>
                 ))}
+
+                {hiddenCount > 0 && <Badge variant="outline">+{hiddenCount} more</Badge>}
               </Stack>
             )}
           </Stack>
