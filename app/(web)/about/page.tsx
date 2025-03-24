@@ -7,7 +7,7 @@ import { metadataConfig } from "~/config/metadata"
 
 export const metadata: Metadata = {
   title: "About Us",
-  description: `${config.site.name} is a community driven list of open source alternatives to proprietary software and applications.`,
+  description: `${config.site.name} is a community driven list of tools and resources for developers.`,
   openGraph: { ...metadataConfig.openGraph, url: "/about" },
   alternates: { ...metadataConfig.alternates, canonical: "/about" },
 }
@@ -27,10 +27,9 @@ export default function AboutPage() {
           <Link href="/" title={config.site.tagline}>
             {config.site.name}
           </Link>{" "}
-          is a community driven list of{" "}
-          <strong>open source alternatives to proprietary software</strong> and applications. The
-          goal of the site is to be your first stop when researching for a new open source service
-          to help you grow your business. It will help you find alternatives and reviews of the
+          is a community driven list of <strong>tools and resources for developers</strong>. The
+          goal of the site is to be your first stop when researching for a new tool or resource to
+          help you grow your business. It will help you find alternatives and reviews of the
           products you already use.
         </p>
 
