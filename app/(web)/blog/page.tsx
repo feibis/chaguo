@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 }
 
 export default function BlogPage() {
-  const posts = allPosts.sort((a, b) => b.publishedAt.localeCompare(a.publishedAt))
+  const posts = allPosts.toSorted((a, b) => b.publishedAt.localeCompare(a.publishedAt))
 
   return (
     <>

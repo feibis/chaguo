@@ -108,24 +108,26 @@ export default async function BlogPostPage(props: PageProps) {
           </Section.Content>
 
           <Section.Sidebar>
-            <Stack direction="column">
-              <H6 as="strong" className="text-muted-foreground">
-                Written by
-              </H6>
+            {post.author && (
+              <Stack direction="column">
+                <H6 as="strong" className="text-muted-foreground">
+                  Written by
+                </H6>
 
-              <a
-                href={`https://twitter.com/${post.author.twitterHandle}`}
-                target="_blank"
-                rel="noopener noreferrer nofollow"
-                className="group"
-              >
-                <Author
-                  name={post.author.name}
-                  image={post.author.image}
-                  title={`@${post.author.twitterHandle}`}
-                />
-              </a>
-            </Stack>
+                <a
+                  href={`https://twitter.com/${post.author.twitterHandle}`}
+                  target="_blank"
+                  rel="noopener noreferrer nofollow"
+                  className="group"
+                >
+                  <Author
+                    name={post.author.name}
+                    image={post.author.image}
+                    title={`@${post.author.twitterHandle}`}
+                  />
+                </a>
+              </Stack>
+            )}
 
             {/* <TOC title="On this page" content={post.content} className="flex-1 overflow-y-auto" /> */}
 

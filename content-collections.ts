@@ -18,11 +18,13 @@ const posts = defineCollection({
     image: z.string().optional(),
     publishedAt: z.string(),
     updatedAt: z.string().optional(),
-    author: z.object({
-      name: z.string(),
-      image: z.string(),
-      twitterHandle: z.string(),
-    }),
+    author: z
+      .object({
+        name: z.string(),
+        image: z.string(),
+        twitterHandle: z.string(),
+      })
+      .optional(),
   }),
 
   transform: async (data, context) => {
