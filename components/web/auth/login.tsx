@@ -1,7 +1,7 @@
 import Image from "next/image"
-import { LoginButton } from "~/app/(web)/auth/login/login-button"
-import { LoginForm } from "~/app/(web)/auth/login/login-form"
 import { Stack } from "~/components/common/stack"
+import { LoginButton } from "~/components/web/auth/login-button"
+import { LoginForm } from "~/components/web/auth/login-form"
 import googleIcon from "~/public/google.svg"
 
 export const Login = () => {
