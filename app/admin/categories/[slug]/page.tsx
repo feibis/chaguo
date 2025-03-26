@@ -1,10 +1,10 @@
 import { notFound } from "next/navigation"
 import { CategoryForm } from "~/app/admin/categories/_components/category-form"
-import { UpdateCategoryActions } from "./actions"
 import { Wrapper } from "~/components/admin/wrapper"
 import { H3 } from "~/components/common/heading"
 import { findCategoryBySlug } from "~/server/admin/categories/queries"
 import { findToolList } from "~/server/admin/tools/queries"
+import { UpdateCategoryActions } from "./actions"
 
 type PageProps = {
   params: Promise<{ slug: string }>

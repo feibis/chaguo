@@ -1,10 +1,6 @@
 "use client"
 
-import { isTruthy } from "@curiousleaf/utils"
 import type { Tool } from "@prisma/client"
-import { isFriday } from "date-fns"
-import { addDays, isWednesday } from "date-fns"
-import { isMonday } from "date-fns"
 import { ClockIcon } from "lucide-react"
 import { type ComponentProps, useState } from "react"
 import { toast } from "sonner"
@@ -66,22 +62,7 @@ export const ToolScheduleDialog = ({
           <DialogDescription>This tool will be published on the date you choose.</DialogDescription>
         </DialogHeader>
 
-        <Calendar
-          autoFocus
-          mode="single"
-          selected={publishedAt}
-          onSelect={setPublishedAt}
-          modifiers={{
-            schedulable: Array.from({ length: 365 }, (_, i) => {
-              const date = addDays(new Date(), i)
-              return isMonday(date) || isWednesday(date) || isFriday(date) ? date : undefined
-            }).filter(isTruthy),
-          }}
-          modifiersClassNames={{
-            schedulable:
-              "before:absolute before:bottom-0.5 before:left-1/2 before:z-10 before:size-1 before:rounded-full before:bg-chart-1 before:-translate-x-1/2",
-          }}
-        />
+        <Calendar autoFocus mode="single" selected={publishedAt} onSelect={setPublishedAt} />
 
         <DialogFooter>
           <DialogClose asChild>

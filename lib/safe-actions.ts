@@ -20,7 +20,7 @@ export const userProcedure = createProcedure().handler(async () => {
  */
 export const adminProcedure = createProcedure(userProcedure).handler(async ({ ctx }) => {
   if (ctx.user.role !== "admin") {
-    throw new Error("User not authenticated")
+    throw new Error("User not authorized")
   }
 
   return { user: ctx.user }

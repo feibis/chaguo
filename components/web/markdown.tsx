@@ -1,7 +1,7 @@
 import type { ComponentProps } from "react"
 import ReactMarkdown from "react-markdown"
-import { MDXComponents } from "~/components/web/mdx-components"
 import { Prose } from "~/components/common/prose"
+import { MDXComponents } from "~/components/web/mdx-components"
 
 type MarkdownProps = ComponentProps<typeof Prose> & {
   code: string

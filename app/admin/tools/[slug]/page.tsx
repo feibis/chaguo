@@ -1,10 +1,10 @@
 import { notFound } from "next/navigation"
 import { ToolForm } from "~/app/admin/tools/_components/tool-form"
-import { UpdateToolActions } from "./actions"
 import { Wrapper } from "~/components/admin/wrapper"
 import { H3 } from "~/components/common/heading"
 import { findCategoryList } from "~/server/admin/categories/queries"
 import { findToolBySlug } from "~/server/admin/tools/queries"
+import { UpdateToolActions } from "./actions"
 
 type PageProps = {
   params: Promise<{ slug: string }>
