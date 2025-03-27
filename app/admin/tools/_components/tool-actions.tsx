@@ -1,6 +1,6 @@
 "use client"
 
-import type { Tool } from "@prisma/client"
+import { type Tool, ToolStatus } from "@prisma/client"
 import { EllipsisIcon } from "lucide-react"
 import type { ComponentProps, Dispatch, SetStateAction } from "react"
 import { toast } from "sonner"
@@ -52,11 +52,13 @@ export const ToolActions = ({ className, tool, setRowAction, ...props }: ToolAct
           <Link href={`/admin/tools/${tool.slug}`}>Edit</Link>
         </DropdownMenuItem>
 
-        <DropdownMenuItem asChild>
-          <Link href={`/${tool.slug}`} target="_blank">
-            View
-          </Link>
-        </DropdownMenuItem>
+        {tool.status !== ToolStatus.Draft && (
+          <DropdownMenuItem asChild>
+            <Link href={`/${tool.slug}`} target="_blank">
+              View
+            </Link>
+          </DropdownMenuItem>
+        )}
 
         {!tool.publishedAt && (
           <DropdownMenuItem
