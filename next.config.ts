@@ -16,11 +16,8 @@ const nextConfig: NextConfig = {
   },
 
   images: {
-    loader: "custom",
-    loaderFile: "./lib/image-loader.ts",
-    minimumCacheTTL: 31536000,
-    deviceSizes: [640, 768, 1024],
     remotePatterns: [
+      { hostname: "*.google.com" }, // Used for seed data, can be removed
       { hostname: `${process.env.S3_BUCKET}.s3.${process.env.S3_REGION}.amazonaws.com` },
     ],
   },
