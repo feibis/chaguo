@@ -332,11 +332,21 @@ export function ToolForm({ children, className, tool, categories, ...props }: To
           control={form.control}
           name="faviconUrl"
           render={({ field }) => (
-            <FormItem>
+            <FormItem className="items-stretch">
               <FormLabel>Favicon URL</FormLabel>
-              <FormControl>
-                <Input type="url" {...field} />
-              </FormControl>
+              <Stack size="sm">
+                <FormControl>
+                  <Input type="url" className="flex-1" {...field} />
+                </FormControl>
+
+                {field.value && (
+                  <img
+                    src={field.value}
+                    alt="Favicon"
+                    className="h-8 border box-content rounded-md"
+                  />
+                )}
+              </Stack>
               <FormMessage />
             </FormItem>
           )}
@@ -346,11 +356,21 @@ export function ToolForm({ children, className, tool, categories, ...props }: To
           control={form.control}
           name="screenshotUrl"
           render={({ field }) => (
-            <FormItem>
+            <FormItem className="items-stretch">
               <FormLabel>Screenshot URL</FormLabel>
-              <FormControl>
-                <Input type="url" {...field} />
-              </FormControl>
+              <Stack size="sm">
+                <FormControl>
+                  <Input type="url" className="flex-1" {...field} />
+                </FormControl>
+
+                {field.value && (
+                  <img
+                    src={field.value}
+                    alt="Screenshot"
+                    className="h-8 border box-content rounded-md"
+                  />
+                )}
+              </Stack>
               <FormMessage />
             </FormItem>
           )}
