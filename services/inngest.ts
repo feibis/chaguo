@@ -8,7 +8,6 @@ type Events = {
   "tool.expedited": { data: ToolEventData }
   "tool.featured": { data: ToolEventData }
   "tool.scheduled": { data: ToolEventData }
-  "tool.published": { data: ToolEventData }
 }
 
 const prismaMiddleware = new InngestMiddleware({
