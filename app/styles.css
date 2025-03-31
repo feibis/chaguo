@@ -159,11 +159,11 @@
   }
 
   svg.lucide:not([class*="stroke"]) {
-    @apply !stroke-[1.75];
+    @apply stroke-[1.75]!;
   }
 
   svg.lucide:not([class*="size-"]):not([class*="h-"]) {
-    @apply !size-[1em];
+    @apply size-[1em]!;
   }
 
   [href] svg[class*="arrow-up-right"],
