@@ -38,17 +38,7 @@ const ToolCard = ({ className, tool, isRelated, ...props }: ToolCardProps) => {
         </CardHeader>
 
         <div className="relative size-full flex flex-col">
-          {tool.description && (
-            <div className="absolute inset-0 opacity-0 transition-opacity group-hover:opacity-100">
-              <CardDescription className="line-clamp-3">{tool.description}</CardDescription>
-            </div>
-          )}
-
-          <Stack
-            size="lg"
-            direction="column"
-            className="flex-1 transition-opacity duration-200 group-hover:opacity-0"
-          >
+          <Stack size="lg" direction="column" className="flex-1 duration-200 group-hover:opacity-0">
             {tool.tagline && <CardDescription className="min-h-10">{tool.tagline}</CardDescription>}
 
             {!!visibleCategories.length && (
@@ -63,6 +53,12 @@ const ToolCard = ({ className, tool, isRelated, ...props }: ToolCardProps) => {
               </Stack>
             )}
           </Stack>
+
+          {tool.description && (
+            <div className="absolute inset-0 opacity-0 duration-200 group-hover:opacity-100">
+              <CardDescription className="line-clamp-3">{tool.description}</CardDescription>
+            </div>
+          )}
         </div>
       </Link>
     </Card>

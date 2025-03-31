@@ -15,13 +15,6 @@ const nextConfig: NextConfig = {
     ],
   },
 
-  images: {
-    remotePatterns: [
-      { hostname: "*.google.com" }, // Used for seed data, can be removed
-      { hostname: `${process.env.S3_BUCKET}.s3.${process.env.S3_REGION}.amazonaws.com` },
-    ],
-  },
-
   async rewrites() {
     const posthogUrl = process.env.NEXT_PUBLIC_POSTHOG_HOST
 

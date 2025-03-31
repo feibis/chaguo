@@ -1,4 +1,3 @@
-import Image from "next/image"
 import { Stack } from "~/components/common/stack"
 import { LoginButton } from "~/components/web/auth/login-button"
 import { LoginForm } from "~/components/web/auth/login-form"
@@ -15,7 +14,7 @@ export const Login = () => {
 
       <LoginButton
         provider="google"
-        suffix={<Image src={googleIcon} alt="Google" className="size-4" />}
+        suffix={<img src={googleIcon} alt="Google" className="size-4" />}
       />
     </Stack>
   )

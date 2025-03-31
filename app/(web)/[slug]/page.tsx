@@ -1,6 +1,5 @@
 import { ArrowUpRightIcon, HashIcon } from "lucide-react"
 import type { Metadata } from "next"
-import Image from "next/image"
 import { notFound } from "next/navigation"
 import { Suspense, cache } from "react"
 import { FeaturedTools } from "~/app/(web)/[slug]/featured-tools"
@@ -111,7 +110,7 @@ export default async function ToolPage(props: PageProps) {
                 eventProps={{ url: tool.websiteUrl }}
                 className="group relative rounded-md overflow-clip max-md:order-2"
               >
-                <Image
+                <img
                   src={tool.screenshotUrl}
                   alt={`A screenshot of ${tool.name}`}
                   width={1280}

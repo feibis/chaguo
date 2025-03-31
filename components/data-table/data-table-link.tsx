@@ -1,4 +1,3 @@
-import Image from "next/image"
 import type { ComponentProps } from "react"
 import { Link } from "~/components/common/link"
 import { Stack } from "~/components/common/stack"
@@ -26,12 +25,12 @@ export const DataTableLink = ({
         {...props}
       >
         {image && (
-          <Image
+          <img
             src={image}
             alt=""
+            width={32}
+            height={32}
             loading="lazy"
-            width="64"
-            height="64"
             className="inline-block align-text-bottom mr-2 size-4 rounded"
           />
         )}

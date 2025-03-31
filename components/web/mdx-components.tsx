@@ -1,5 +1,4 @@
 import { ArrowUpRightIcon } from "lucide-react"
-import Image from "next/image"
 import type { ComponentProps } from "react"
 import { Link } from "~/components/common/link"
 import { ExternalLink } from "~/components/web/external-link"
@@ -28,7 +27,7 @@ const img = ({ className, ...props }: ComponentProps<"img">) => {
   }
 
   return (
-    <Image
+    <img
       src={props.src}
       alt={props.alt}
       width={1280}

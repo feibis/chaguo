@@ -1,4 +1,4 @@
-import Image from "next/image"
+import type Image from "next/image"
 import type { ComponentProps } from "react"
 import { cx } from "~/utils/cva"
 
@@ -32,7 +32,7 @@ const FaviconImage = ({ className, src, title, ...props }: FaviconImageProps) =>
   if (!src) return null
 
   return (
-    <Image
+    <img
       src={src}
       alt={title ? `A favicon of ${title}` : ""}
       loading="lazy"

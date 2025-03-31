@@ -95,7 +95,7 @@ export default async function SubmitPackages(props: PageProps) {
 
       {success ? (
         <Image
-          src={"~/3d-heart.webp"}
+          src={"/3d-heart.webp"}
           alt=""
           className="max-w-64 w-2/3 h-auto mx-auto"
           width={256}

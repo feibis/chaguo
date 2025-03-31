@@ -1,4 +1,3 @@
-import Image from "next/image"
 import type { ComponentProps } from "react"
 import { Badge } from "~/components/common/badge"
 import { Box } from "~/components/common/box"
@@ -36,7 +35,7 @@ export const AdBanner = async ({ className, ...props }: ComponentProps<typeof Co
 
           <div className="text-xs leading-tight text-secondary-foreground mr-auto md:text-sm">
             {ad.faviconUrl && (
-              <Image
+              <img
                 src={ad.faviconUrl}
                 alt={ad.name}
                 width={32}
