@@ -1,5 +1,6 @@
 "use client"
 
+import { slugify } from "@curiousleaf/utils"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { ToolStatus } from "@prisma/client"
 import { formatDate } from "date-fns"
@@ -32,6 +33,7 @@ import { Stack } from "~/components/common/stack"
 import { Switch } from "~/components/common/switch"
 import { TextArea } from "~/components/common/textarea"
 import { Markdown } from "~/components/web/markdown"
+import { useComputedField } from "~/hooks/use-computed-field"
 import type { findCategoryList } from "~/server/admin/categories/queries"
 import { createTool, updateTool } from "~/server/admin/tools/actions"
 import type { findToolBySlug } from "~/server/admin/tools/queries"
@@ -65,6 +67,14 @@ export function ToolForm({ children, className, tool, categories, ...props }: To
       publishedAt: tool?.publishedAt ?? undefined,
       categories: tool?.categories.map(c => c.id) ?? [],
     },
+  })
+
+  // Set the slug based on the name
+  useComputedField({
+    form,
+    sourceField: "name",
+    computedField: "slug",
+    callback: slugify,
   })
 
   // Create tool
