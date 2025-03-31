@@ -6,7 +6,7 @@ export const Shell = ({ children }: PropsWithChildren) => {
     <div className="flex items-stretch size-full">
       <Sidebar />
 
-      <div className="grid grid-cols-1 content-start gap-4 p-4 flex-1 sm:px-6">{children}</div>
+      <div className="flex-1 p-4 sm:px-6">{children}</div>
     </div>
   )
 }
