@@ -5,7 +5,7 @@ export default function SitePage() {
     <iframe
       src={siteConfig.url}
       title="Site Preview"
-      className="-m-4 size-[calc(100%+2rem)] sm:-mx-6 sm:w-[calc(100%+4rem)]"
+      className="-m-4 w-[calc(100%+2rem)] h-[calc(100vh)] sm:-mx-6 sm:w-[calc(100%+4rem)]"
     />
   )
 }
