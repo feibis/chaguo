@@ -1,10 +1,8 @@
 "use client"
 
-import { type Tool, ToolStatus } from "@prisma/client"
+import type { Tool } from "@prisma/client"
 import { EllipsisIcon } from "lucide-react"
 import type { ComponentProps, Dispatch, SetStateAction } from "react"
-import { toast } from "sonner"
-import { useServerAction } from "zsa-react"
 import { Button } from "~/components/common/button"
 import {
   DropdownMenu,
@@ -14,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "~/components/common/dropdown-menu"
 import { Link } from "~/components/common/link"
-import { reuploadToolAssets } from "~/server/admin/tools/actions"
+import { isToolVisible } from "~/lib/tools"
 import type { DataTableRowAction } from "~/types"
 import { cx } from "~/utils/cva"
 
@@ -24,16 +22,6 @@ type ToolActionsProps = ComponentProps<typeof Button> & {
 }
 
 export const ToolActions = ({ className, tool, setRowAction, ...props }: ToolActionsProps) => {
-  const { execute: reuploadAssetsAction } = useServerAction(reuploadToolAssets, {
-    onSuccess: () => {
-      toast.success("Tool assets reuploaded")
-    },
-
-    onError: ({ err }) => {
-      toast.error(err.message)
-    },
-  })
-
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
@@ -52,28 +40,13 @@ export const ToolActions = ({ className, tool, setRowAction, ...props }: ToolAct
           <Link href={`/admin/tools/${tool.slug}`}>Edit</Link>
         </DropdownMenuItem>
 
-        {tool.status !== ToolStatus.Draft && (
+        {isToolVisible(tool) && (
           <DropdownMenuItem asChild>
             <Link href={`/${tool.slug}`} target="_blank">
               View
             </Link>
           </DropdownMenuItem>
         )}
-
-        {!tool.publishedAt && (
-          <DropdownMenuItem
-            onSelect={() => setRowAction({ data: tool, type: "schedule" })}
-            className="text-green-600"
-          >
-            Schedule
-          </DropdownMenuItem>
-        )}
-
-        <DropdownMenuItem onSelect={() => reuploadAssetsAction({ id: tool.id })}>
-          Reupload Assets
-        </DropdownMenuItem>
-
-        <DropdownMenuSeparator />
 
         <DropdownMenuItem asChild>
           <Link href={tool.websiteUrl} target="_blank">

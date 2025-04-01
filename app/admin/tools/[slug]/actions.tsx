@@ -2,30 +2,23 @@
 
 import type { Tool } from "@prisma/client"
 import { useRouter } from "next/navigation"
-import { useState } from "react"
+import { type ComponentProps, useState } from "react"
 import { ToolActions } from "~/app/admin/tools/_components/tool-actions"
-import { ToolScheduleDialog } from "~/app/admin/tools/_components/tool-schedule-dialog"
 import { ToolsDeleteDialog } from "~/app/admin/tools/_components/tools-delete-dialog"
+import type { Button } from "~/components/common/button"
 import type { DataTableRowAction } from "~/types"
 
-type UpdateToolActionProps = {
+type UpdateToolActionProps = ComponentProps<typeof Button> & {
   tool: Tool
 }
 
-export const UpdateToolActions = ({ tool }: UpdateToolActionProps) => {
+export const UpdateToolActions = ({ tool, ...props }: UpdateToolActionProps) => {
   const router = useRouter()
   const [rowAction, setRowAction] = useState<DataTableRowAction<Tool> | null>(null)
 
   return (
     <>
-      <ToolActions tool={tool} setRowAction={setRowAction} />
-
-      <ToolScheduleDialog
-        open={rowAction?.type === "schedule"}
-        onOpenChange={() => setRowAction(null)}
-        tool={rowAction?.data}
-        showTrigger={false}
-      />
+      <ToolActions tool={tool} setRowAction={setRowAction} {...props} />
 
       <ToolsDeleteDialog
         open={rowAction?.type === "delete"}

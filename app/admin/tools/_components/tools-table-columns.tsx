@@ -1,11 +1,12 @@
 "use client"
 
 import { formatDate } from "@curiousleaf/utils"
-import type { Tool } from "@prisma/client"
+import { type Tool, ToolStatus } from "@prisma/client"
 import type { ColumnDef } from "@tanstack/react-table"
 import type { Dispatch, SetStateAction } from "react"
 import { ToolActions } from "~/app/admin/tools/_components/tool-actions"
 import { RowCheckbox } from "~/components/admin/row-checkbox"
+import { Badge, type BadgeProps } from "~/components/common/badge"
 import { DataTableColumnHeader } from "~/components/data-table/data-table-column-header"
 import { DataTableLink } from "~/components/data-table/data-table-link"
 import { VerifiedBadge } from "~/components/web/verified-badge"
@@ -16,6 +17,25 @@ type GetColumnsProps = {
 }
 
 export const getColumns = ({ setRowAction }: GetColumnsProps): ColumnDef<Tool>[] => {
+  const statuses: Record<ToolStatus, BadgeProps> = {
+    [ToolStatus.Draft]: {
+      children: "Draft",
+      className: "-my-1 text-gray-600 dark:text-gray-400",
+    },
+
+    [ToolStatus.Scheduled]: {
+      children: "Scheduled",
+      variant: "outline",
+      className: "-my-1 text-blue-600 dark:text-blue-400",
+    },
+
+    [ToolStatus.Published]: {
+      children: "Published",
+      variant: "outline",
+      className: "-my-1 text-lime-600 dark:text-lime-400",
+    },
+  }
+
   return [
     {
       id: "select",
@@ -65,11 +85,17 @@ export const getColumns = ({ setRowAction }: GetColumnsProps): ColumnDef<Tool>[]
       enableSorting: false,
     },
     {
-      accessorKey: "createdAt",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Created At" />,
+      accessorKey: "submitterEmail",
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Submitter" />,
       cell: ({ row }) => (
-        <span className="text-muted-foreground">{formatDate(row.getValue<Date>("createdAt"))}</span>
+        <span className="text-muted-foreground text-sm">{row.getValue("submitterEmail")}</span>
       ),
+      size: 0,
+    },
+    {
+      accessorKey: "status",
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
+      cell: ({ row }) => <Badge {...statuses[row.original.status]} />,
       size: 0,
     },
     {
@@ -86,16 +112,10 @@ export const getColumns = ({ setRowAction }: GetColumnsProps): ColumnDef<Tool>[]
       size: 0,
     },
     {
-      accessorKey: "status",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
-      cell: ({ row }) => <span className="text-muted-foreground">{row.getValue("status")}</span>,
-      size: 0,
-    },
-    {
-      accessorKey: "submitterEmail",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Submitter" />,
+      accessorKey: "createdAt",
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Created At" />,
       cell: ({ row }) => (
-        <span className="text-muted-foreground text-sm">{row.getValue("submitterEmail")}</span>
+        <span className="text-muted-foreground">{formatDate(row.getValue<Date>("createdAt"))}</span>
       ),
       size: 0,
     },

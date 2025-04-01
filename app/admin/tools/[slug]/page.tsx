@@ -1,10 +1,8 @@
 import { notFound } from "next/navigation"
-import { ToolForm } from "~/app/admin/tools/_components/tool-form"
+import { ToolFormUpdate } from "~/app/admin/tools/_components/tool-form-update"
 import { Wrapper } from "~/components/admin/wrapper"
-import { H3 } from "~/components/common/heading"
 import { findCategoryList } from "~/server/admin/categories/queries"
 import { findToolBySlug } from "~/server/admin/tools/queries"
-import { UpdateToolActions } from "./actions"
 
 type PageProps = {
   params: Promise<{ slug: string }>
@@ -20,13 +18,7 @@ export default async function UpdateToolPage({ params }: PageProps) {
 
   return (
     <Wrapper size="md">
-      <div className="flex items-center justify-between gap-4">
-        <H3>Update tool</H3>
-
-        <UpdateToolActions tool={tool} />
-      </div>
-
-      <ToolForm tool={tool} categories={findCategoryList()} />
+      <ToolFormUpdate tool={tool} categories={findCategoryList()} />
     </Wrapper>
   )
 }

@@ -34,5 +34,5 @@ export type DataTableFilterOption<TData> = {
 
 export type DataTableRowAction<TData> = {
   data: TData
-  type: "schedule" | "delete"
+  type: "delete"
 }

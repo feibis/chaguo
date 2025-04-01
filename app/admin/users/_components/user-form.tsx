@@ -72,7 +72,7 @@ export function UserForm({ children, className, user, ...props }: UserFormProps)
     <Form {...form}>
       <form
         onSubmit={onSubmit}
-        className={cx("grid grid-cols-1 gap-4 max-w-3xl sm:grid-cols-2", className)}
+        className={cx("grid gap-4 max-w-3xl sm:grid-cols-2", className)}
         noValidate
         {...props}
       >

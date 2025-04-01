@@ -1,12 +1,11 @@
 "use server"
 
 import { slugify } from "@curiousleaf/utils"
-import { ToolStatus } from "@prisma/client"
 import { revalidatePath, revalidateTag } from "next/cache"
 import { after } from "next/server"
 import { z } from "zod"
 import { isProd } from "~/env"
-import { removeS3Directories, uploadFavicon, uploadScreenshot } from "~/lib/media"
+import { removeS3Directories } from "~/lib/media"
 import { adminProcedure } from "~/lib/safe-actions"
 import { toolSchema } from "~/server/admin/tools/schemas"
 import { db } from "~/services/db"
@@ -70,46 +69,6 @@ export const deleteTools = adminProcedure
     after(async () => {
       await removeS3Directories(tools.map(tool => `tools/${tool.slug}`))
     })
-
-    return true
-  })
-
-export const scheduleTool = adminProcedure
-  .createServerAction()
-  .input(z.object({ id: z.string(), publishedAt: z.coerce.date() }))
-  .handler(async ({ input: { id, publishedAt } }) => {
-    const tool = await db.tool.update({
-      where: { id },
-      data: { status: ToolStatus.Scheduled, publishedAt },
-    })
-
-    revalidateTag("schedule")
-    revalidateTag(`tool-${tool.slug}`)
-
-    // Send an event to the Inngest pipeline
-    isProd && (await inngest.send({ name: "tool.scheduled", data: { slug: tool.slug } }))
-
-    return true
-  })
-
-export const reuploadToolAssets = adminProcedure
-  .createServerAction()
-  .input(z.object({ id: z.string() }))
-  .handler(async ({ input: { id } }) => {
-    const tool = await db.tool.findUniqueOrThrow({ where: { id } })
-
-    const [faviconUrl, screenshotUrl] = await Promise.all([
-      uploadFavicon(tool.websiteUrl, `tools/${tool.slug}/favicon`),
-      uploadScreenshot(tool.websiteUrl, `tools/${tool.slug}/screenshot`),
-    ])
-
-    await db.tool.update({
-      where: { id: tool.id },
-      data: { faviconUrl, screenshotUrl },
-    })
-
-    revalidateTag("tools")
-    revalidateTag(`tool-${tool.slug}`)
 
     return true
   })

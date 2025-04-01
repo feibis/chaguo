@@ -1,10 +1,9 @@
 "use client"
 
 import { type Tool, ToolStatus } from "@prisma/client"
-import { CircleDashedIcon, CircleDotDashedIcon, CircleIcon, PlusIcon } from "lucide-react"
+import { BadgeCheckIcon, CalendarIcon, CircleDashedIcon, PlusIcon } from "lucide-react"
 import { useQueryStates } from "nuqs"
 import { use, useMemo, useState } from "react"
-import { ToolScheduleDialog } from "~/app/admin/tools/_components/tool-schedule-dialog"
 import { ToolsDeleteDialog } from "~/app/admin/tools/_components/tools-delete-dialog"
 import { getColumns } from "~/app/admin/tools/_components/tools-table-columns"
 import { ToolsTableToolbarActions } from "~/app/admin/tools/_components/tools-table-toolbar-actions"
@@ -46,12 +45,12 @@ export function ToolsTable({ toolsPromise }: ToolsTableProps) {
         {
           label: "Published",
           value: ToolStatus.Published,
-          icon: <CircleIcon className="text-lime-500!" />,
+          icon: <BadgeCheckIcon className="text-lime-500!" />,
         },
         {
           label: "Scheduled",
           value: ToolStatus.Scheduled,
-          icon: <CircleDotDashedIcon className="text-yellow-500!" />,
+          icon: <CalendarIcon className="text-blue-500!" />,
         },
         {
           label: "Draft",
@@ -72,7 +71,7 @@ export function ToolsTable({ toolsPromise }: ToolsTableProps) {
     initialState: {
       pagination: { pageIndex: 0, pageSize: perPage },
       sorting: sort,
-      columnVisibility: { status: false, submitterEmail: false },
+      columnVisibility: { submitterEmail: false, createdAt: false },
       columnPinning: { right: ["actions"] },
     },
     getRowId: originalRow => originalRow.id,
@@ -99,13 +98,6 @@ export function ToolsTable({ toolsPromise }: ToolsTableProps) {
           </DataTableToolbar>
         </DataTableHeader>
       </DataTable>
-
-      <ToolScheduleDialog
-        open={rowAction?.type === "schedule"}
-        onOpenChange={() => setRowAction(null)}
-        tool={rowAction?.data}
-        showTrigger={false}
-      />
 
       <ToolsDeleteDialog
         open={rowAction?.type === "delete"}
