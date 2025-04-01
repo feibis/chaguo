@@ -14,6 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/common/select"
+import { Stack } from "~/components/common/stack"
 
 type DataTablePaginationProps<TData> = {
   table: Table<TData>
@@ -25,14 +26,14 @@ export function DataTablePagination<TData>({
   pageSizeOptions = [10, 25, 50],
 }: DataTablePaginationProps<TData>) {
   return (
-    <div className="flex flex-row flex-wrap items-center justify-between gap-4 tabular-nums sm:gap-6 lg:gap-8">
+    <div className="flex flex-wrap items-center justify-between gap-3 tabular-nums sm:gap-4 lg:gap-6">
       <div className="grow whitespace-nowrap text-sm text-muted-foreground max-sm:hidden">
         {table.getFilteredSelectedRowModel().rows.length} of{" "}
         {table.getFilteredRowModel().rows.length} row(s) selected.
       </div>
 
-      <div className="flex items-center space-x-2 max-sm:grow">
-        <p className="text-sm font-medium">Rows per page</p>
+      <Stack className="max-sm:grow">
+        <p className="text-sm font-medium">Per page</p>
 
         <Select
           value={`${table.getState().pagination.pageSize}`}
@@ -52,13 +53,13 @@ export function DataTablePagination<TData>({
             ))}
           </SelectContent>
         </Select>
-      </div>
+      </Stack>
 
       <div className="text-sm font-medium max-sm:hidden">
         Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount() || 1}
       </div>
 
-      <div className="flex items-center gap-2">
+      <Stack size="sm" wrap={false}>
         <Button
           aria-label="Go to first page"
           variant="secondary"
@@ -96,7 +97,7 @@ export function DataTablePagination<TData>({
           disabled={!table.getCanNextPage()}
           suffix={<ChevronsRightIcon />}
         />
-      </div>
+      </Stack>
     </div>
   )
 }

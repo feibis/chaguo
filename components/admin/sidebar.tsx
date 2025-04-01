@@ -100,9 +100,9 @@ export const Sidebar = () => {
                 <Button
                   variant="secondary"
                   onClick={handleOpenSite}
-                  className="-my-0.5 px-1 py-px text-xs/tight rounded-sm"
+                  className="-my-0.5 px-1 py-[0.2em] text-xs/tight rounded-sm"
                 >
-                  <ExternalLinkIcon />
+                  <ExternalLinkIcon className="size-3" />
                 </Button>
               </Tooltip>
             ),

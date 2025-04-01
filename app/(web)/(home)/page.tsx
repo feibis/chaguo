@@ -15,7 +15,7 @@ type PageProps = {
 export default function Home({ searchParams }: PageProps) {
   return (
     <>
-      <section className="flex flex-col gap-y-6 w-full mb-[2vh]">
+      <section className="flex flex-col gap-y-6 w-full mb-6">
         <Intro alignment="center">
           <IntroTitle className="max-w-[45rem] lg:text-5xl/[1.1]!">
             {config.site.tagline}
