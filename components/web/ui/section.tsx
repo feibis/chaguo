@@ -3,10 +3,7 @@ import { cx } from "~/utils/cva"
 
 export const SectionBase = ({ className, ...props }: ComponentProps<"div">) => {
   return (
-    <div
-      className={cx("grid grid-cols-1 items-start gap-6 md:grid-cols-3 lg:gap-8", className)}
-      {...props}
-    />
+    <div className={cx("grid items-start gap-6 md:grid-cols-3 lg:gap-8", className)} {...props} />
   )
 }
 

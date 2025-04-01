@@ -28,7 +28,7 @@ const badgeVariants = cva({
   },
 })
 
-type BadgeProps = Omit<ComponentProps<"span">, "prefix"> &
+export type BadgeProps = Omit<ComponentProps<"span">, "prefix"> &
   VariantProps<typeof badgeVariants> & {
     /**
      * If set to `true`, the button will be rendered as a child within the component.
