@@ -2,8 +2,9 @@ import { ToolStatus } from "@prisma/client"
 import { formatDate } from "date-fns"
 import { BadgeCheckIcon, CalendarIcon, ChevronDownIcon } from "lucide-react"
 import { type ComponentProps, useState } from "react"
-import { ToolScheduleDialog } from "~/app/admin/tools/_components/tool-schedule-dialog"
 import { Button, type ButtonProps } from "~/components/common/button"
+import { Calendar } from "~/components/common/calendar"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "~/components/common/dialog"
 import { H5, H6 } from "~/components/common/heading"
 import { Input } from "~/components/common/input"
 import { Popover, PopoverContent, PopoverTrigger } from "~/components/common/popover"
@@ -208,7 +209,7 @@ export const ToolPublishActions = ({
               </PopoverTrigger>
 
               <PopoverContent align="end" onOpenAutoFocus={e => e.preventDefault()} asChild>
-                <Stack size="lg" direction="column" className="items-stretch min-w-80">
+                <Stack size="lg" direction="column" className="items-stretch gap-5 min-w-80">
                   <H5>{popover.title}</H5>
 
                   <RadioGroup
@@ -245,6 +246,23 @@ export const ToolPublishActions = ({
                                     onChange={e => setSelectedTime(e.target.value)}
                                     className="w-full tabular-nums"
                                   />
+
+                                  <Dialog open={isScheduleOpen} onOpenChange={setIsScheduleOpen}>
+                                    <DialogContent className="max-w-sm">
+                                      <DialogHeader>
+                                        <DialogTitle>Pick a date to publish</DialogTitle>
+                                      </DialogHeader>
+
+                                      <Calendar
+                                        mode="single"
+                                        selected={new Date(selectedDate)}
+                                        onSelect={date => {
+                                          date && setSelectedDate(formatDate(date, "yyyy-MM-dd"))
+                                          setIsScheduleOpen(false)
+                                        }}
+                                      />
+                                    </DialogContent>
+                                  </Dialog>
                                 </Stack>
                               )}
                           </label>
@@ -253,7 +271,7 @@ export const ToolPublishActions = ({
                     ))}
                   </RadioGroup>
 
-                  <Stack className="justify-between mt-2">
+                  <Stack className="justify-between">
                     <Button size="md" variant="secondary" onClick={() => setIsOpen(false)}>
                       Cancel
                     </Button>
@@ -262,16 +280,6 @@ export const ToolPublishActions = ({
                       <Button size="md" isPending={isUpdating} {...popoverButton} />
                     )}
                   </Stack>
-
-                  <ToolScheduleDialog
-                    open={isScheduleOpen}
-                    onOpenChange={setIsScheduleOpen}
-                    date={new Date(selectedDate)}
-                    onDateChange={date => {
-                      setSelectedDate(formatDate(date, "yyyy-MM-dd"))
-                      setIsScheduleOpen(false)
-                    }}
-                  />
                 </Stack>
               </PopoverContent>
             </Popover>

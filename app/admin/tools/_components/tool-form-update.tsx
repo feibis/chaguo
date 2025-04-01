@@ -2,7 +2,7 @@
 
 import { formatDateTime } from "@curiousleaf/utils"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { type Tool, ToolStatus } from "@prisma/client"
+import { ToolStatus } from "@prisma/client"
 import { EyeIcon, PencilIcon, RefreshCwIcon } from "lucide-react"
 import { redirect } from "next/navigation"
 import { type ComponentProps, useState } from "react"
@@ -10,7 +10,6 @@ import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import { useServerAction } from "zsa-react"
 import { generateFavicon, generateScreenshot } from "~/actions/media"
-import { ToolActions } from "~/app/admin/tools/_components/tool-actions"
 import { ToolPublishActions } from "~/app/admin/tools/_components/tool-publish-actions"
 import { RelationSelector } from "~/components/admin/relation-selector"
 import { Button } from "~/components/common/button"
@@ -34,7 +33,6 @@ import type { findCategoryList } from "~/server/admin/categories/queries"
 import { updateTool } from "~/server/admin/tools/actions"
 import type { findToolBySlug } from "~/server/admin/tools/queries"
 import { toolSchema } from "~/server/admin/tools/schemas"
-import type { DataTableRowAction } from "~/types"
 import { cx } from "~/utils/cva"
 
 type ToolFormUpdateProps = ComponentProps<"form"> & {
@@ -51,7 +49,6 @@ export function ToolFormUpdate({
 }: ToolFormUpdateProps) {
   const [isPreviewing, setIsPreviewing] = useState(false)
   const [isStatusChanging, setIsStatusChanging] = useState(false)
-  const [rowAction, setRowAction] = useState<DataTableRowAction<Tool> | null>(null)
 
   const form = useForm({
     resolver: zodResolver(toolSchema),
@@ -161,9 +158,7 @@ export function ToolFormUpdate({
             tool={tool}
             isUpdating={isUpdatingTool}
             onStatusChange={handleStatusChange}
-          >
-            <ToolActions tool={tool} setRowAction={setRowAction} size="md" />
-          </ToolPublishActions>
+          />
 
           {tool.status === ToolStatus.Scheduled && tool.publishedAt && (
             <p className="w-full font-medium text-sm text-blue-600 dark:text-blue-400">
