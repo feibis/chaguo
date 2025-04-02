@@ -1,20 +1,20 @@
-import { headers } from "next/headers"
 import { type NextRequest, NextResponse } from "next/server"
-import { auth } from "~/lib/auth"
+import wretch from "wretch"
+import type { auth } from "~/lib/auth"
 
 export const config = {
-  runtime: "nodejs",
   matcher: ["/admin/:path*", "/dashboard/:path*", "/auth/:path*"],
 }
 
-export default async function ({ url, nextUrl }: NextRequest) {
+export default async function ({ url, nextUrl, headers }: NextRequest) {
   const { pathname, search } = nextUrl
   const homeUrl = new URL("/", url)
   const loginUrl = new URL(`/auth/login?next=${pathname}${search}`, url)
 
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  })
+  const session = await wretch(`${origin}/api/auth/get-session`)
+    .headers({ cookie: headers.get("cookie") || "" })
+    .get()
+    .json<typeof auth.$Infer.Session>()
 
   // If the user is logged in and tries to access the login page, redirect to the home page
   if (pathname.startsWith("/auth") && session) {
