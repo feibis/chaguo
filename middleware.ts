@@ -7,7 +7,7 @@ export const config = {
 }
 
 export default async function ({ url, nextUrl, headers }: NextRequest) {
-  const { pathname, search } = nextUrl
+  const { pathname, search, origin } = nextUrl
   const homeUrl = new URL("/", url)
   const loginUrl = new URL(`/auth/login?next=${pathname}${search}`, url)
 

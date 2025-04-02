@@ -5,6 +5,7 @@ import { AtSignIcon, RssIcon } from "lucide-react"
 import type { ComponentProps } from "react"
 import { H5, H6 } from "~/components/common/heading"
 import { BrandGitHubIcon } from "~/components/common/icons/brand-github"
+import { Note } from "~/components/common/note"
 import { Stack } from "~/components/common/stack"
 import { Tooltip } from "~/components/common/tooltip"
 import { ExternalLink } from "~/components/web/external-link"
@@ -37,10 +38,10 @@ export const Footer = ({ children, className, hideNewsletter, ...props }: Footer
               Subscribe to our newsletter
             </H5>
 
-            <p className="-mt-2 px-0.5 text-sm text-muted-foreground first:mt-0">
+            <Note className="-mt-2 px-0.5 first:mt-0">
               Join {formatNumber(5000, "standard")}+ other members and get updates straight to your
               inbox.
-            </p>
+            </Note>
 
             <NewsletterForm medium="footer_form" />
           </Stack>
@@ -94,12 +95,12 @@ export const Footer = ({ children, className, hideNewsletter, ...props }: Footer
         </Stack>
       </div>
 
-      <Stack size="sm" className="w-full text-sm text-muted-foreground">
-        <span>Built with</span>
+      <Stack size="sm" className="w-full">
+        <Note as="span">Built with</Note>
 
         <ExternalLink
           href={config.links.madeWith}
-          className="contents font-medium text-foreground hover:text-secondary-foreground"
+          className="contents font-medium text-sm text-foreground hover:text-secondary-foreground"
           doFollow
         >
           <LogoSymbol className="h-4 w-auto fill-current" />

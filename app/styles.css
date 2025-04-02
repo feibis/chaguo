@@ -149,6 +149,11 @@
     @apply opacity-10;
   }
 
+  strong {
+    @apply font-medium;
+    @apply text-foreground;
+  }
+
   a,
   button,
   label[for],

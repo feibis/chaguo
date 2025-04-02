@@ -7,6 +7,7 @@ import {
 } from "lucide-react"
 
 import { Button } from "~/components/common/button"
+import { Note } from "~/components/common/note"
 import {
   Select,
   SelectContent,
@@ -27,10 +28,10 @@ export function DataTablePagination<TData>({
 }: DataTablePaginationProps<TData>) {
   return (
     <div className="flex flex-wrap items-center justify-between gap-3 tabular-nums sm:gap-4 lg:gap-6">
-      <div className="grow whitespace-nowrap text-sm text-muted-foreground max-sm:hidden">
+      <Note className="grow whitespace-nowrap max-sm:hidden">
         {table.getFilteredSelectedRowModel().rows.length} of{" "}
         {table.getFilteredRowModel().rows.length} row(s) selected.
-      </div>
+      </Note>
 
       <Stack className="max-sm:grow">
         <p className="text-sm font-medium">Per page</p>
