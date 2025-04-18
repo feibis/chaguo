@@ -21,7 +21,6 @@ export const uploadToS3Storage = async (file: Buffer, key: string) => {
       Key: key,
       Body: file,
       StorageClass: "STANDARD",
-      ACL: "public-read",
     },
     queueSize: 4,
     partSize: 1024 * 1024 * 5,
@@ -108,7 +107,7 @@ export const uploadFavicon = async (url: string, s3Key: string): Promise<string 
 
   if (response.error) {
     console.error("Error fetching favicon:", response.error)
-    return null
+    throw response.error
   }
 
   // Upload to S3
@@ -116,7 +115,7 @@ export const uploadFavicon = async (url: string, s3Key: string): Promise<string 
 
   if (error) {
     console.error("Error uploading favicon:", error)
-    return null
+    throw error
   }
 
   return `${data}?v=${timestamp}`
@@ -159,7 +158,6 @@ export const uploadScreenshot = async (url: string, s3Key: string): Promise<stri
 
     // Storage options
     store: "true",
-    storage_acl: "public-read",
     storage_path: `${s3Key}/screenshot`,
     storage_bucket: env.S3_BUCKET,
     storage_access_key_id: env.S3_ACCESS_KEY,

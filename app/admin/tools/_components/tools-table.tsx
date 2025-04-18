@@ -1,7 +1,7 @@
 "use client"
 
 import { type Tool, ToolStatus } from "@prisma/client"
-import { BadgeCheckIcon, CalendarIcon, CircleDashedIcon, PlusIcon } from "lucide-react"
+import { CircleDashedIcon, CircleDotDashedIcon, CircleDotIcon, PlusIcon } from "lucide-react"
 import { useQueryStates } from "nuqs"
 import { use, useMemo, useState } from "react"
 import { ToolsDeleteDialog } from "~/app/admin/tools/_components/tools-delete-dialog"
@@ -45,17 +45,17 @@ export function ToolsTable({ toolsPromise }: ToolsTableProps) {
         {
           label: "Published",
           value: ToolStatus.Published,
-          icon: <BadgeCheckIcon className="text-lime-500!" />,
+          icon: <CircleDotIcon className="text-green-500/75!" />,
         },
         {
           label: "Scheduled",
           value: ToolStatus.Scheduled,
-          icon: <CalendarIcon className="text-blue-500!" />,
+          icon: <CircleDotDashedIcon className="text-blue-500/75!" />,
         },
         {
           label: "Draft",
           value: ToolStatus.Draft,
-          icon: <CircleDashedIcon className="text-gray-500!" />,
+          icon: <CircleDashedIcon className="text-orange-500/75!" />,
         },
       ],
     },

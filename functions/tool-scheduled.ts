@@ -4,8 +4,6 @@ import { config } from "~/config"
 import EmailToolExpediteReminder from "~/emails/tool-expedite-reminder"
 import EmailToolScheduled from "~/emails/tool-scheduled"
 import { sendEmails } from "~/lib/email"
-import { generateContentWithRelations } from "~/lib/generate-content"
-import { uploadFavicon, uploadScreenshot } from "~/lib/media"
 import { inngest } from "~/services/inngest"
 import { ensureFreeSubmissions } from "~/utils/functions"
 
@@ -18,40 +16,40 @@ export const toolScheduled = inngest.createFunction(
       return db.tool.findUniqueOrThrow({ where: { slug: event.data.slug } })
     })
 
-    // Run steps in parallel
-    await Promise.all([
-      step.run("generate-content", async () => {
-        const { categories, ...content } = await generateContentWithRelations(tool.websiteUrl)
+    // // Run steps in parallel
+    // await Promise.all([
+    //   step.run("generate-content", async () => {
+    //     const { categories, ...content } = await generateContentWithRelations(tool.websiteUrl)
 
-        return await db.tool.update({
-          where: { id: tool.id },
-          data: {
-            ...content,
-            categories: { connect: categories.map(({ id }) => ({ id })) },
-          },
-        })
-      }),
+    //     return await db.tool.update({
+    //       where: { id: tool.id },
+    //       data: {
+    //         ...content,
+    //         categories: { connect: categories.map(({ id }) => ({ id })) },
+    //       },
+    //     })
+    //   }),
 
-      step.run("upload-favicon", async () => {
-        const { id, slug, websiteUrl } = tool
-        const faviconUrl = await uploadFavicon(websiteUrl, `tools/${slug}/favicon`)
+    //   step.run("upload-favicon", async () => {
+    //     const { id, slug, websiteUrl } = tool
+    //     const faviconUrl = await uploadFavicon(websiteUrl, `tools/${slug}/favicon`)
 
-        return await db.tool.update({
-          where: { id },
-          data: { faviconUrl },
-        })
-      }),
+    //     return await db.tool.update({
+    //       where: { id },
+    //       data: { faviconUrl },
+    //     })
+    //   }),
 
-      step.run("upload-screenshot", async () => {
-        const { id, slug, websiteUrl } = tool
-        const screenshotUrl = await uploadScreenshot(websiteUrl, `tools/${slug}/screenshot`)
+    //   step.run("upload-screenshot", async () => {
+    //     const { id, slug, websiteUrl } = tool
+    //     const screenshotUrl = await uploadScreenshot(websiteUrl, `tools/${slug}/screenshot`)
 
-        return await db.tool.update({
-          where: { id },
-          data: { screenshotUrl },
-        })
-      }),
-    ])
+    //     return await db.tool.update({
+    //       where: { id },
+    //       data: { screenshotUrl },
+    //     })
+    //   }),
+    // ])
 
     // Disconnect from DB
     await step.run("disconnect-from-db", async () => {

@@ -35,8 +35,8 @@ export const env = createEnv({
     PLAUSIBLE_API_KEY: z.string().min(1),
     BEEHIIV_API_KEY: z.string().min(1),
     BEEHIIV_PUBLICATION_ID: z.string().min(1),
-    GEMINI_API_KEY: z.string().min(1),
-    FIRECRAWL_API_KEY: z.string().min(1),
+    GOOGLE_GENERATIVE_AI_API_KEY: z.string().min(1),
+    JINA_API_KEY: z.string().optional(),
   },
 
   /**

@@ -3,10 +3,11 @@
 import { formatDate } from "@curiousleaf/utils"
 import { type Tool, ToolStatus } from "@prisma/client"
 import type { ColumnDef } from "@tanstack/react-table"
-import type { Dispatch, SetStateAction } from "react"
+import type { ComponentProps, Dispatch, SetStateAction } from "react"
 import { ToolActions } from "~/app/admin/tools/_components/tool-actions"
 import { RowCheckbox } from "~/components/admin/row-checkbox"
-import { Badge, type BadgeProps } from "~/components/common/badge"
+import { Badge } from "~/components/common/badge"
+import { Note } from "~/components/common/note"
 import { DataTableColumnHeader } from "~/components/data-table/data-table-column-header"
 import { DataTableLink } from "~/components/data-table/data-table-link"
 import { VerifiedBadge } from "~/components/web/verified-badge"
@@ -17,22 +18,17 @@ type GetColumnsProps = {
 }
 
 export const getColumns = ({ setRowAction }: GetColumnsProps): ColumnDef<Tool>[] => {
-  const statuses: Record<ToolStatus, BadgeProps> = {
+  const statusBadges: Record<ToolStatus, ComponentProps<typeof Badge>> = {
     [ToolStatus.Draft]: {
-      children: "Draft",
-      className: "-my-1 text-gray-600 dark:text-gray-400",
+      variant: "warning",
     },
 
     [ToolStatus.Scheduled]: {
-      children: "Scheduled",
-      variant: "outline",
-      className: "-my-1 text-blue-600 dark:text-blue-400",
+      variant: "info",
     },
 
     [ToolStatus.Published]: {
-      children: "Published",
-      variant: "outline",
-      className: "-my-1 text-lime-600 dark:text-lime-400",
+      variant: "success",
     },
   }
 
@@ -79,23 +75,23 @@ export const getColumns = ({ setRowAction }: GetColumnsProps): ColumnDef<Tool>[]
     {
       accessorKey: "tagline",
       header: ({ column }) => <DataTableColumnHeader column={column} title="Tagline" />,
-      cell: ({ row }) => (
-        <div className="max-w-96 truncate text-muted-foreground">{row.getValue("tagline")}</div>
-      ),
+      cell: ({ row }) => <Note className="max-w-96 truncate">{row.getValue("tagline")}</Note>,
       enableSorting: false,
     },
     {
       accessorKey: "submitterEmail",
       header: ({ column }) => <DataTableColumnHeader column={column} title="Submitter" />,
-      cell: ({ row }) => (
-        <span className="text-muted-foreground text-sm">{row.getValue("submitterEmail")}</span>
-      ),
+      cell: ({ row }) => <Note>{row.getValue("submitterEmail")}</Note>,
       size: 0,
     },
     {
       accessorKey: "status",
       header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
-      cell: ({ row }) => <Badge {...statuses[row.original.status]} />,
+      cell: ({ row }) => (
+        <Badge className="-my-0.5" {...statusBadges[row.original.status]}>
+          {row.original.status}
+        </Badge>
+      ),
       size: 0,
     },
     {
@@ -103,20 +99,16 @@ export const getColumns = ({ setRowAction }: GetColumnsProps): ColumnDef<Tool>[]
       header: ({ column }) => <DataTableColumnHeader column={column} title="Published At" />,
       cell: ({ row }) =>
         row.original.publishedAt ? (
-          <span className="text-muted-foreground">
-            {formatDate(row.getValue<Date>("publishedAt"))}
-          </span>
+          <Note>{formatDate(row.getValue<Date>("publishedAt"))}</Note>
         ) : (
-          <span className="text-muted-foreground">—</span>
+          <Note>—</Note>
         ),
       size: 0,
     },
     {
       accessorKey: "createdAt",
       header: ({ column }) => <DataTableColumnHeader column={column} title="Created At" />,
-      cell: ({ row }) => (
-        <span className="text-muted-foreground">{formatDate(row.getValue<Date>("createdAt"))}</span>
-      ),
+      cell: ({ row }) => <Note>{formatDate(row.getValue<Date>("createdAt"))}</Note>,
       size: 0,
     },
     {

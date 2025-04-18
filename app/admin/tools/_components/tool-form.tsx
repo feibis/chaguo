@@ -1,8 +1,8 @@
 "use client"
 
-import { formatDateTime } from "@curiousleaf/utils"
+import { formatDateTime, isValidUrl, slugify } from "@curiousleaf/utils"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { ToolStatus } from "@prisma/client"
+import { type Tool, ToolStatus } from "@prisma/client"
 import { EyeIcon, PencilIcon, RefreshCwIcon } from "lucide-react"
 import { redirect } from "next/navigation"
 import { type ComponentProps, useState } from "react"
@@ -10,6 +10,7 @@ import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import { useServerAction } from "zsa-react"
 import { generateFavicon, generateScreenshot } from "~/actions/media"
+import { ToolGenerateContent } from "~/app/admin/tools/_components/tool-generate-content"
 import { ToolPublishActions } from "~/app/admin/tools/_components/tool-publish-actions"
 import { RelationSelector } from "~/components/admin/relation-selector"
 import { Button } from "~/components/common/button"
@@ -23,90 +24,122 @@ import {
 } from "~/components/common/form"
 import { H3 } from "~/components/common/heading"
 import { Input, inputVariants } from "~/components/common/input"
+import { Note } from "~/components/common/note"
 import { Stack } from "~/components/common/stack"
 import { Switch } from "~/components/common/switch"
 import { TextArea } from "~/components/common/textarea"
 import { ExternalLink } from "~/components/web/external-link"
 import { Markdown } from "~/components/web/markdown"
+import { useComputedField } from "~/hooks/use-computed-field"
 import { isToolVisible } from "~/lib/tools"
 import type { findCategoryList } from "~/server/admin/categories/queries"
-import { updateTool } from "~/server/admin/tools/actions"
+import { createTool, updateTool } from "~/server/admin/tools/actions"
 import type { findToolBySlug } from "~/server/admin/tools/queries"
-import { toolSchema } from "~/server/admin/tools/schemas"
+import { type ToolSchema, toolSchema } from "~/server/admin/tools/schemas"
 import { cx } from "~/utils/cva"
 
-type ToolFormUpdateProps = ComponentProps<"form"> & {
-  tool: NonNullable<Awaited<ReturnType<typeof findToolBySlug>>>
+const ToolStatusChange = ({ tool }: { tool: Tool }) => {
+  return (
+    <>
+      {isToolVisible(tool) ? (
+        <ExternalLink href={`/${tool.slug}`} className="font-semibold underline inline-block">
+          {tool.name}
+        </ExternalLink>
+      ) : (
+        tool.name
+      )}{" "}
+      is now {tool.status.toLowerCase()}.{" "}
+      {tool.status === "Scheduled" && (
+        <>
+          Will be published on {formatDateTime(tool.publishedAt ?? new Date(), "long")} (
+          {Intl.DateTimeFormat().resolvedOptions().timeZone.replace(/^.+\//, "")}).
+        </>
+      )}
+    </>
+  )
+}
+
+type ToolFormProps = ComponentProps<"form"> & {
+  tool?: NonNullable<Awaited<ReturnType<typeof findToolBySlug>>>
   categories: ReturnType<typeof findCategoryList>
 }
 
-export function ToolFormUpdate({
+export function ToolForm({
   children,
   className,
+  title,
   tool,
   categories,
   ...props
-}: ToolFormUpdateProps) {
+}: ToolFormProps) {
   const [isPreviewing, setIsPreviewing] = useState(false)
-  const [isStatusChanging, setIsStatusChanging] = useState(false)
+  const [originalStatus, setOriginalStatus] = useState<ToolStatus>(tool?.status ?? ToolStatus.Draft)
 
   const form = useForm({
     resolver: zodResolver(toolSchema),
     defaultValues: {
-      name: tool.name ?? "",
-      slug: tool.slug ?? "",
-      tagline: tool.tagline ?? "",
-      description: tool.description ?? "",
-      content: tool.content ?? "",
-      websiteUrl: tool.websiteUrl ?? "",
-      faviconUrl: tool.faviconUrl ?? "",
-      screenshotUrl: tool.screenshotUrl ?? "",
-      isFeatured: tool.isFeatured ?? false,
-      submitterName: tool.submitterName ?? "",
-      submitterEmail: tool.submitterEmail ?? "",
-      submitterNote: tool.submitterNote ?? "",
-      status: tool.status ?? ToolStatus.Draft,
-      publishedAt: tool.publishedAt ?? undefined,
-      categories: tool.categories.map(c => c.id) ?? [],
+      name: tool?.name ?? "",
+      slug: tool?.slug ?? "",
+      tagline: tool?.tagline ?? "",
+      description: tool?.description ?? "",
+      content: tool?.content ?? "",
+      websiteUrl: tool?.websiteUrl ?? "",
+      faviconUrl: tool?.faviconUrl ?? "",
+      screenshotUrl: tool?.screenshotUrl ?? "",
+      isFeatured: tool?.isFeatured ?? false,
+      submitterName: tool?.submitterName ?? "",
+      submitterEmail: tool?.submitterEmail ?? "",
+      submitterNote: tool?.submitterNote ?? "",
+      status: tool?.status ?? ToolStatus.Draft,
+      publishedAt: tool?.publishedAt ?? undefined,
+      categories: tool?.categories.map(c => c.id) ?? [],
     },
   })
 
+  // Set the slug based on the name
+  useComputedField({
+    form,
+    sourceField: "name",
+    computedField: "slug",
+    callback: slugify,
+    enabled: !tool,
+  })
+
+  // Keep track of the form values
+  const [websiteUrl, name, description] = form.watch(["websiteUrl", "name", "description"])
+
+  const onSuccess = ({ data }: { data: Tool }) => {
+    // If status has changed, show a status change notification
+    if (data.status !== originalStatus) {
+      toast.success(<ToolStatusChange tool={data} />)
+      setOriginalStatus(data.status)
+    }
+
+    // Otherwise, just show a success message
+    else {
+      toast.success("Tool successfully updated")
+    }
+
+    // If not updating a tool, or slug has changed, redirect to the new tool
+    if (!tool || data.slug !== tool?.slug) {
+      redirect(`/admin/tools/${data.slug}`)
+    }
+  }
+
+  const onError = ({ err }: { err: Error }) => {
+    toast.error(err.message)
+  }
+
   // Update tool
   const { execute: updateToolAction, isPending: isUpdatingTool } = useServerAction(updateTool, {
-    onSuccess: ({ data }) => {
-      toast.success(
-        isStatusChanging ? (
-          <>
-            {isToolVisible(tool) ? (
-              <ExternalLink href={`/${tool.slug}`} className="font-semibold underline inline-block">
-                {tool.name}
-              </ExternalLink>
-            ) : (
-              tool.name
-            )}{" "}
-            is now {tool.status.toLowerCase()}.{" "}
-            {tool.status === "Scheduled" && (
-              <>
-                Will be published on {formatDateTime(tool.publishedAt ?? new Date(), "long")} (
-                {Intl.DateTimeFormat().resolvedOptions().timeZone.replace(/^.+\//, "")}).
-              </>
-            )}
-          </>
-        ) : (
-          "Tool successfully updated"
-        ),
-      )
+    onSuccess,
+    onError,
+  })
 
-      if (data.slug !== tool.slug) {
-        redirect(`/admin/tools/${data.slug}`)
-      }
-
-      setIsStatusChanging(false)
-    },
-
-    onError: ({ err }) => {
-      toast.error(err.message)
-    },
+  // Create tool
+  const { execute: createToolAction, isPending: isCreatingTool } = useServerAction(createTool, {
+    onSuccess,
+    onError,
   })
 
   // Generate favicon
@@ -117,6 +150,7 @@ export function ToolFormUpdate({
         toast.success("Favicon successfully generated. Please save the tool to update.")
         form.setValue("faviconUrl", data)
       },
+      onError,
     },
   )
 
@@ -128,46 +162,33 @@ export function ToolFormUpdate({
         toast.success("Screenshot successfully generated. Please save the tool to update.")
         form.setValue("screenshotUrl", data)
       },
+      onError,
     },
   )
 
-  // Handle status changes from the PublishStatusButton
-  const handleStatusChange = (status: ToolStatus, publishedAt: Date | null) => {
-    setIsStatusChanging(true)
-
-    // Update form values
-    form.setValue("status", status)
-    form.setValue("publishedAt", publishedAt)
-
-    // Update tool
-    updateToolAction({ id: tool.id, ...form.getValues() })
+  const onSubmit = (data: ToolSchema) => {
+    tool ? updateToolAction({ id: tool.id, ...data }) : createToolAction(data)
   }
+
+  const isPending = isCreatingTool || isUpdatingTool
 
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit(data => updateToolAction({ id: tool.id, ...data }))}
+        onSubmit={form.handleSubmit(onSubmit)}
         className={cx("contents", className)}
         noValidate
         {...props}
       >
         <Stack className="justify-between">
-          <H3>Edit {tool.name}</H3>
+          <H3 className="flex-1 truncate">{title}</H3>
 
-          <ToolPublishActions
-            tool={tool}
-            isUpdating={isUpdatingTool}
-            onStatusChange={handleStatusChange}
-          />
-
-          {tool.status === ToolStatus.Scheduled && tool.publishedAt && (
-            <p className="w-full font-medium text-sm text-blue-600 dark:text-blue-400">
-              Will be published on {formatDateTime(tool.publishedAt)}
-            </p>
-          )}
+          <ToolPublishActions tool={tool} isPending={isPending} onFormSubmit={onSubmit}>
+            <ToolGenerateContent />
+          </ToolPublishActions>
         </Stack>
 
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid gap-4 @sm:grid-cols-2">
           <FormField
             control={form.control}
             name="name"
@@ -215,7 +236,11 @@ export function ToolFormUpdate({
             name="tagline"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Tagline</FormLabel>
+                <Stack className="w-full justify-between">
+                  <FormLabel>Tagline</FormLabel>
+                  <Note className="text-xs">Max. 60 chars</Note>
+                </Stack>
+
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -229,7 +254,10 @@ export function ToolFormUpdate({
             name="description"
             render={({ field }) => (
               <FormItem className="col-span-full">
-                <FormLabel>Description</FormLabel>
+                <Stack className="w-full justify-between">
+                  <FormLabel>Description</FormLabel>
+                  <Note className="text-xs">Max. 160 chars</Note>
+                </Stack>
                 <FormControl>
                   <TextArea {...field} />
                 </FormControl>
@@ -250,7 +278,7 @@ export function ToolFormUpdate({
                     <Button
                       type="button"
                       size="sm"
-                      variant="ghost"
+                      variant="secondary"
                       onClick={() => setIsPreviewing(prev => !prev)}
                       prefix={isPreviewing ? <PencilIcon /> : <EyeIcon />}
                       className="-my-1"
@@ -278,7 +306,7 @@ export function ToolFormUpdate({
             )}
           />
 
-          {tool.submitterName && (
+          {tool?.submitterName && (
             <FormField
               control={form.control}
               name="submitterName"
@@ -294,7 +322,7 @@ export function ToolFormUpdate({
             />
           )}
 
-          {tool.submitterEmail && (
+          {tool?.submitterEmail && (
             <FormField
               control={form.control}
               name="submitterEmail"
@@ -310,7 +338,7 @@ export function ToolFormUpdate({
             />
           )}
 
-          {tool.submitterNote && (
+          {tool?.submitterNote && (
             <FormField
               control={form.control}
               name="submitterNote"
@@ -337,12 +365,12 @@ export function ToolFormUpdate({
                   <Button
                     type="button"
                     size="sm"
-                    variant="ghost"
+                    variant="secondary"
                     prefix={<RefreshCwIcon className={cx(isGeneratingFavicon && "animate-spin")} />}
                     className="-my-1"
-                    disabled={isGeneratingFavicon}
+                    disabled={!isValidUrl(websiteUrl) || isGeneratingFavicon}
                     onClick={() => {
-                      generateFaviconAction({ url: tool.websiteUrl, path: `tools/${tool.slug}` })
+                      generateFaviconAction({ url: websiteUrl, path: `tools/${tool?.slug}` })
                     }}
                   >
                     {field.value ? "Regenerate" : "Generate"}
@@ -378,14 +406,17 @@ export function ToolFormUpdate({
                   <Button
                     type="button"
                     size="sm"
-                    variant="ghost"
+                    variant="secondary"
                     prefix={
                       <RefreshCwIcon className={cx(isGeneratingScreenshot && "animate-spin")} />
                     }
                     className="-my-1"
-                    disabled={isGeneratingScreenshot}
+                    disabled={!isValidUrl(websiteUrl) || isGeneratingScreenshot}
                     onClick={() => {
-                      generateScreenshotAction({ url: tool.websiteUrl, path: `tools/${tool.slug}` })
+                      generateScreenshotAction({
+                        url: websiteUrl,
+                        path: `tools/${tool?.slug}`,
+                      })
                     }}
                   >
                     {field.value ? "Regenerate" : "Generate"}
@@ -420,6 +451,15 @@ export function ToolFormUpdate({
                   promise={categories}
                   selectedIds={field.value ?? []}
                   onChange={field.onChange}
+                  prompt={
+                    name &&
+                    description &&
+                    `From the list of available categories below, suggest relevant categories for this link: 
+                    
+                    - URL: ${websiteUrl}
+                    - Meta title: ${name}
+                    - Meta description: ${description}.`
+                  }
                 />
               </FormItem>
             )}

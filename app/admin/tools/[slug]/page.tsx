@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation"
-import { ToolFormUpdate } from "~/app/admin/tools/_components/tool-form-update"
+import { ToolForm } from "~/app/admin/tools/_components/tool-form"
 import { Wrapper } from "~/components/admin/wrapper"
 import { findCategoryList } from "~/server/admin/categories/queries"
 import { findToolBySlug } from "~/server/admin/tools/queries"
@@ -18,7 +18,7 @@ export default async function UpdateToolPage({ params }: PageProps) {
 
   return (
     <Wrapper size="md">
-      <ToolFormUpdate tool={tool} categories={findCategoryList()} />
+      <ToolForm title={`Edit ${tool.name}`} tool={tool} categories={findCategoryList()} />
     </Wrapper>
   )
 }

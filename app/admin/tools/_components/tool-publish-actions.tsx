@@ -1,87 +1,90 @@
+import { formatDateTime } from "@curiousleaf/utils"
 import { ToolStatus } from "@prisma/client"
 import { formatDate } from "date-fns"
-import { BadgeCheckIcon, CalendarIcon, ChevronDownIcon } from "lucide-react"
-import { type ComponentProps, useState } from "react"
+import { BadgeCheckIcon, CalendarIcon } from "lucide-react"
+import { type ComponentProps, type ReactNode, useState } from "react"
+import { useFormContext } from "react-hook-form"
 import { Button, type ButtonProps } from "~/components/common/button"
 import { Calendar } from "~/components/common/calendar"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "~/components/common/dialog"
 import { H5, H6 } from "~/components/common/heading"
 import { Input } from "~/components/common/input"
+import { Note } from "~/components/common/note"
 import { Popover, PopoverContent, PopoverTrigger } from "~/components/common/popover"
 import { RadioGroup, RadioGroupItem } from "~/components/common/radio-group"
 import { Stack } from "~/components/common/stack"
+import { ExternalLink } from "~/components/web/external-link"
+import { siteConfig } from "~/config/site"
 import type { findToolBySlug } from "~/server/admin/tools/queries"
-
-type Tool = NonNullable<Awaited<ReturnType<typeof findToolBySlug>>>
+import type { ToolSchema } from "~/server/admin/tools/schemas"
 
 type ToolPublishActionsProps = ComponentProps<typeof Stack> & {
-  tool: Tool
-  isUpdating: boolean
-  onStatusChange: (status: ToolStatus, publishedAt: Date | null) => void
+  tool?: NonNullable<Awaited<ReturnType<typeof findToolBySlug>>>
+  isPending: boolean
+  onFormSubmit: (data: ToolSchema) => void
 }
 
 type PopoverOption = {
   status: ToolStatus
-  title: string
-  description?: string
+  title: ReactNode
+  description?: ReactNode
   button?: ButtonProps
 }
 
 type ActionConfig = Omit<ButtonProps, "popover"> & {
   popover?: {
-    title: string
+    title: ReactNode
+    description?: ReactNode
     options: PopoverOption[]
   }
 }
 
-type ToolActionsMap = Record<ToolStatus, ActionConfig[]>
-
 export const ToolPublishActions = ({
   tool,
-  onStatusChange,
-  isUpdating,
-  size = "sm",
+  isPending,
+  onFormSubmit,
   children,
   ...props
 }: ToolPublishActionsProps) => {
+  const { watch, setValue, resetField, getValues } = useFormContext<ToolSchema>()
+  const [slug, status, publishedAt] = watch(["slug", "status", "publishedAt"])
+
   const [isOpen, setIsOpen] = useState(false)
   const [isScheduleOpen, setIsScheduleOpen] = useState(false)
-  const [status, setStatus] = useState<ToolStatus>(tool.status)
   const [selectedDate, setSelectedDate] = useState<string>(
-    tool.publishedAt
-      ? formatDate(tool.publishedAt, "yyyy-MM-dd")
-      : formatDate(new Date(), "yyyy-MM-dd"),
+    publishedAt ? formatDate(publishedAt, "yyyy-MM-dd") : formatDate(new Date(), "yyyy-MM-dd"),
   )
   const [selectedTime, setSelectedTime] = useState<string>(
-    tool.publishedAt ? formatDate(tool.publishedAt, "HH:mm") : formatDate(new Date(), "HH:mm"),
+    publishedAt ? formatDate(publishedAt, "HH:mm") : formatDate(new Date(), "HH:mm"),
   )
 
   const handlePublished = () => {
-    onStatusChange(ToolStatus.Published, new Date())
-    setStatus(ToolStatus.Published)
-    setIsOpen(false)
+    handleStatusChange(ToolStatus.Published, new Date())
   }
 
   const handleScheduled = () => {
-    const scheduledDate = new Date(`${selectedDate}T${selectedTime}`)
-    onStatusChange(ToolStatus.Scheduled, scheduledDate)
-    setStatus(ToolStatus.Scheduled)
-    setIsOpen(false)
+    handleStatusChange(ToolStatus.Scheduled, new Date(`${selectedDate}T${selectedTime}`))
   }
 
   const handleDraft = () => {
-    onStatusChange(ToolStatus.Draft, null)
-    setStatus(ToolStatus.Draft)
-    setIsOpen(false)
+    handleStatusChange(ToolStatus.Draft, null)
   }
 
-  const toolActions: ToolActionsMap = {
+  // Handle status changes from the PublishStatusButton
+  const handleStatusChange = (status: ToolStatus, publishedAt: Date | null) => {
+    // Update form values
+    setValue("status", status)
+    setValue("publishedAt", publishedAt)
+
+    // Close the popover
+    setIsOpen(false)
+
+    // Submit tool update
+    onFormSubmit(getValues())
+  }
+
+  const toolActions: Record<ToolStatus, ActionConfig[]> = {
     [ToolStatus.Draft]: [
-      {
-        type: "submit",
-        children: "Save Draft",
-        variant: "primary",
-      },
       {
         type: "button",
         children: "Publish",
@@ -110,7 +113,13 @@ export const ToolPublishActions = ({
           ],
         },
       },
+      {
+        type: "submit",
+        children: "Save Draft",
+        variant: "primary",
+      },
     ],
+
     [ToolStatus.Scheduled]: [
       {
         type: "button",
@@ -119,6 +128,16 @@ export const ToolPublishActions = ({
         prefix: <CalendarIcon />,
         popover: {
           title: "Update tool status",
+          description: (
+            <>
+              Preview:{" "}
+              <ExternalLink href={`/${slug}`} className="text-primary underline">
+                {siteConfig.url}/{slug}
+              </ExternalLink>
+              <br />
+              Will be published on <strong>{formatDateTime(publishedAt ?? new Date())}</strong>
+            </>
+          ),
           options: [
             {
               status: ToolStatus.Draft,
@@ -147,6 +166,7 @@ export const ToolPublishActions = ({
         variant: "primary",
       },
     ],
+
     [ToolStatus.Published]: [
       {
         type: "button",
@@ -155,11 +175,19 @@ export const ToolPublishActions = ({
         prefix: <BadgeCheckIcon />,
         popover: {
           title: "Update tool status",
+          description: (
+            <>
+              View:{" "}
+              <ExternalLink href={`/${slug}`} className="text-primary underline">
+                {siteConfig.url}/{slug}
+              </ExternalLink>
+            </>
+          ),
           options: [
             {
               status: ToolStatus.Draft,
               title: "Unpublished",
-              description: "Revert this tool to a private draft",
+              description: "Revert this tool to a draft",
               button: {
                 onClick: handleDraft,
                 children: "Unpublish",
@@ -182,10 +210,10 @@ export const ToolPublishActions = ({
   }
 
   return (
-    <Stack size={size} {...props}>
+    <Stack size="sm" {...props}>
       {children}
 
-      {toolActions[tool.status].map(({ popover, ...action }) => {
+      {toolActions[tool?.status ?? ToolStatus.Draft].map(({ popover, ...action }) => {
         if (popover) {
           const getCurrentOption = (status: ToolStatus) => {
             return popover.options.find(o => o.status === status) || popover.options[0]
@@ -201,21 +229,30 @@ export const ToolPublishActions = ({
                 setIsOpen(open)
 
                 // Reset temporary UI states when popover is closed
-                if (!open) setTimeout(() => setStatus(tool.status), 250)
+                if (!open) setTimeout(() => resetField("status"), 250)
               }}
             >
               <PopoverTrigger asChild>
-                <Button size="md" suffix={<ChevronDownIcon />} {...action} />
+                <Button size="md" isPending={isPending} {...action} />
               </PopoverTrigger>
 
-              <PopoverContent align="end" onOpenAutoFocus={e => e.preventDefault()} asChild>
+              <PopoverContent
+                align="end"
+                className="w-72"
+                onOpenAutoFocus={e => e.preventDefault()}
+                asChild
+              >
                 <Stack size="lg" direction="column" className="items-stretch gap-5 min-w-80">
-                  <H5>{popover.title}</H5>
+                  <Stack size="sm" direction="column">
+                    <H5>{popover.title}</H5>
+
+                    {popover.description && <Note>{popover.description}</Note>}
+                  </Stack>
 
                   <RadioGroup
-                    defaultValue={getCurrentOption(tool.status).status}
+                    defaultValue={getCurrentOption(status).status}
                     className="contents"
-                    onValueChange={value => setStatus(value as ToolStatus)}
+                    onValueChange={value => setValue("status", value as ToolStatus)}
                   >
                     {popover.options.map(option => (
                       <Stack size="sm" className="items-start" key={option.status}>
@@ -225,7 +262,7 @@ export const ToolPublishActions = ({
                           <label htmlFor={option.status}>
                             <H6>{option.title}</H6>
 
-                            <p className="text-sm text-muted-foreground">{option.description}</p>
+                            {option.description && <Note>{option.description}</Note>}
 
                             {option.status === ToolStatus.Scheduled &&
                               status === ToolStatus.Scheduled && (
@@ -276,9 +313,7 @@ export const ToolPublishActions = ({
                       Cancel
                     </Button>
 
-                    {popoverButton && (
-                      <Button size="md" isPending={isUpdating} {...popoverButton} />
-                    )}
+                    {popoverButton && <Button size="md" {...popoverButton} />}
                   </Stack>
                 </Stack>
               </PopoverContent>
@@ -286,7 +321,7 @@ export const ToolPublishActions = ({
           )
         }
 
-        return <Button key={String(action.children)} size="md" isPending={isUpdating} {...action} />
+        return <Button key={String(action.children)} size="md" isPending={isPending} {...action} />
       })}
     </Stack>
   )
