@@ -6,7 +6,10 @@ import { type ComponentProps, type ReactNode, useState } from "react"
 import { useFormContext } from "react-hook-form"
 import { Button, type ButtonProps } from "~/components/common/button"
 import { Calendar } from "~/components/common/calendar"
+import { Checkbox } from "~/components/common/checkbox"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "~/components/common/dialog"
+import { FormControl, FormField, FormLabel } from "~/components/common/form"
+import { FormItem } from "~/components/common/form"
 import { H5, H6 } from "~/components/common/heading"
 import { Input } from "~/components/common/input"
 import { Note } from "~/components/common/note"
@@ -17,6 +20,7 @@ import { ExternalLink } from "~/components/web/external-link"
 import { siteConfig } from "~/config/site"
 import type { findToolBySlug } from "~/server/admin/tools/queries"
 import type { ToolSchema } from "~/server/admin/tools/schemas"
+import { cx } from "~/utils/cva"
 
 type ToolPublishActionsProps = ComponentProps<typeof Stack> & {
   tool?: NonNullable<Awaited<ReturnType<typeof findToolBySlug>>>
@@ -48,11 +52,13 @@ export const ToolPublishActions = ({
   children,
   ...props
 }: ToolPublishActionsProps) => {
-  const { watch, setValue, resetField } = useFormContext<ToolSchema>()
-  const [slug, status, publishedAt] = watch(["slug", "status", "publishedAt"])
-  const publishedAtDate = publishedAt ? new Date(publishedAt) : new Date()
+  const { control, watch, resetField } = useFormContext<ToolSchema>()
+  const formValues = watch(["slug", "status", "submitterEmail", "publishedAt"])
+  const [slug, status, submitterEmail, publishedAt] = formValues
+  const publishedAtDate = new Date(publishedAt ?? new Date())
 
   const [isOpen, setIsOpen] = useState(false)
+  const [currentStatus, setCurrentStatus] = useState(status)
   const [isScheduleOpen, setIsScheduleOpen] = useState(false)
   const [selectedDate, setSelectedDate] = useState(formatDate(publishedAtDate, "yyyy-MM-dd"))
   const [selectedTime, setSelectedTime] = useState(formatDate(publishedAtDate, "HH:mm"))
@@ -84,8 +90,8 @@ export const ToolPublishActions = ({
           options: [
             {
               status: ToolStatus.Published,
-              title: "Set it live now",
-              description: "Publish this tool immediately",
+              title: "Publish now",
+              description: "Set this tool live immediately",
               button: {
                 onClick: handlePublished,
                 children: "Publish",
@@ -145,6 +151,15 @@ export const ToolPublishActions = ({
               button: {
                 onClick: handleScheduled,
                 children: "Reschedule",
+              },
+            },
+            {
+              status: ToolStatus.Published,
+              title: "Publish now",
+              description: "Set this tool live immediately",
+              button: {
+                onClick: handlePublished,
+                children: "Publish",
               },
             },
           ],
@@ -209,7 +224,8 @@ export const ToolPublishActions = ({
             return popover.options.find(o => o.status === status) || popover.options[0]
           }
 
-          const popoverButton = getCurrentOption(status).button
+          const popoverStatus = getCurrentOption(currentStatus).status
+          const popoverButton = getCurrentOption(currentStatus).button
 
           return (
             <Popover
@@ -240,9 +256,9 @@ export const ToolPublishActions = ({
                   </Stack>
 
                   <RadioGroup
-                    defaultValue={getCurrentOption(status).status}
+                    defaultValue={popoverStatus}
                     className="contents"
-                    onValueChange={value => setValue("status", value as ToolStatus)}
+                    onValueChange={value => setCurrentStatus(value as ToolStatus)}
                   >
                     {popover.options.map(option => (
                       <Stack size="sm" className="items-start" key={option.status}>
@@ -255,7 +271,7 @@ export const ToolPublishActions = ({
                             {option.description && <Note>{option.description}</Note>}
 
                             {option.status === ToolStatus.Scheduled &&
-                              status === ToolStatus.Scheduled && (
+                              currentStatus === ToolStatus.Scheduled && (
                                 <Stack size="sm" wrap={false} className="mt-2 items-stretch w-full">
                                   <Button
                                     size="md"
@@ -297,6 +313,31 @@ export const ToolPublishActions = ({
                       </Stack>
                     ))}
                   </RadioGroup>
+
+                  {submitterEmail &&
+                    status !== ToolStatus.Published &&
+                    [ToolStatus.Published, ToolStatus.Scheduled].some(s => s === popoverStatus) && (
+                      <FormField
+                        control={control}
+                        name="notifySubmitter"
+                        render={({ field }) => (
+                          <FormItem size="sm" direction="row">
+                            <FormControl>
+                              <Checkbox
+                                checked={field.value}
+                                onCheckedChange={() => field.onChange(!field.value)}
+                              />
+                            </FormControl>
+
+                            <FormLabel
+                              className={cx(!field.value && "font-normal text-muted-foreground")}
+                            >
+                              Notify submitter via email
+                            </FormLabel>
+                          </FormItem>
+                        )}
+                      />
+                    )}
 
                   <Stack className="justify-between">
                     <Button size="md" variant="secondary" onClick={() => setIsOpen(false)}>

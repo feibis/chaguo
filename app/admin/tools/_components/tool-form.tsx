@@ -74,7 +74,7 @@ export function ToolForm({
 }: ToolFormProps) {
   const [isPreviewing, setIsPreviewing] = useState(false)
   const [isStatusPending, setIsStatusPending] = useState(false)
-  const [originalStatus, setOriginalStatus] = useState<ToolStatus>(tool?.status ?? ToolStatus.Draft)
+  const [originalStatus, setOriginalStatus] = useState(tool?.status ?? ToolStatus.Draft)
 
   const form = useForm({
     resolver: zodResolver(toolSchema),
@@ -94,6 +94,7 @@ export function ToolForm({
       status: tool?.status ?? ToolStatus.Draft,
       publishedAt: tool?.publishedAt ?? undefined,
       categories: tool?.categories.map(c => c.id) ?? [],
+      notifySubmitter: true,
     },
   })
 
@@ -303,52 +304,50 @@ export function ToolForm({
             )}
           />
 
-          {tool?.submitterName && (
-            <FormField
-              control={form.control}
-              name="submitterName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Submitter Name</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          )}
-
           {tool?.submitterEmail && (
-            <FormField
-              control={form.control}
-              name="submitterEmail"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Submitter Email</FormLabel>
-                  <FormControl>
-                    <Input type="email" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          )}
+            <>
+              <FormField
+                control={form.control}
+                name="submitterName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Submitter Name</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-          {tool?.submitterNote && (
-            <FormField
-              control={form.control}
-              name="submitterNote"
-              render={({ field }) => (
-                <FormItem className="col-span-full">
-                  <FormLabel>Submitter Note</FormLabel>
-                  <FormControl>
-                    <TextArea {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+              <FormField
+                control={form.control}
+                name="submitterEmail"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Submitter Email</FormLabel>
+                    <FormControl>
+                      <Input type="email" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="submitterNote"
+                render={({ field }) => (
+                  <FormItem className="col-span-full">
+                    <FormLabel>Submitter Note</FormLabel>
+                    <FormControl>
+                      <TextArea {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </>
           )}
 
           <FormField

@@ -40,6 +40,7 @@ export const toolSchema = z.object({
   publishedAt: z.coerce.date().nullish(),
   status: z.nativeEnum(ToolStatus).default("Draft"),
   categories: z.array(z.string()).optional(),
+  notifySubmitter: z.boolean().default(true),
 })
 
 export type ToolSchema = z.infer<typeof toolSchema>

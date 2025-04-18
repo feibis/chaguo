@@ -14,7 +14,7 @@ import { db } from "~/services/db"
 export const upsertTool = adminProcedure
   .createServerAction()
   .input(toolSchema)
-  .handler(async ({ input: { id, categories, ...input } }) => {
+  .handler(async ({ input: { id, categories, notifySubmitter, ...input } }) => {
     const categoryIds = categories?.map(id => ({ id }))
 
     const tool = id
@@ -40,16 +40,18 @@ export const upsertTool = adminProcedure
     revalidateTag("tools")
     revalidateTag(`tool-${tool.slug}`)
 
-    // Revalidate the schedule if the tool is scheduled
     if (tool.status === ToolStatus.Scheduled) {
+      // Revalidate the schedule if the tool is scheduled
       revalidateTag("schedule")
     }
 
-    // Notify the submitter of the tool published
-    after(async () => await notifySubmitterOfToolPublished(tool))
+    if (notifySubmitter) {
+      // Notify the submitter of the tool published
+      after(async () => await notifySubmitterOfToolPublished(tool))
 
-    // Notify the submitter of the tool scheduled for publication
-    after(async () => await notifySubmitterOfToolScheduled(tool))
+      // Notify the submitter of the tool scheduled for publication
+      after(async () => await notifySubmitterOfToolScheduled(tool))
+    }
 
     return tool
   })
