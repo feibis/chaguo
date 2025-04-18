@@ -1,10 +1,11 @@
 import { AdType } from "@prisma/client"
 import { revalidateTag } from "next/cache"
+import { after } from "next/server"
 import type Stripe from "stripe"
 import { z } from "zod"
-import { env, isProd } from "~/env"
+import { env } from "~/env"
+import { notifyAdminOfPremiumTool, notifySubmitterOfPremiumTool } from "~/lib/notifications"
 import { db } from "~/services/db"
-import { inngest } from "~/services/inngest"
 import { stripe } from "~/services/stripe"
 
 export const POST = async (req: Request) => {
@@ -39,8 +40,14 @@ export const POST = async (req: Request) => {
             where: { slug: metadata.tool },
           })
 
-          // Send an event to the Inngest pipeline
-          isProd && (await inngest.send({ name: "tool.expedited", data: { slug: tool.slug } }))
+          // Revalidate the tools
+          revalidateTag("tools")
+
+          // Notify the submitter of the premium tool
+          after(async () => await notifySubmitterOfPremiumTool(tool))
+
+          // Notify the admin of the premium tool
+          after(async () => await notifyAdminOfPremiumTool(tool))
         }
 
         // Handle sponsoring/ads payment
@@ -87,9 +94,15 @@ export const POST = async (req: Request) => {
           data: { isFeatured: subscription.status === "active" },
         })
 
+        // Revalidate the tools
+        revalidateTag("tools")
+
         if (event.type === "customer.subscription.created") {
-          // Send an event to the Inngest pipeline
-          isProd && (await inngest.send({ name: "tool.featured", data: { slug: tool.slug } }))
+          // Notify the submitter of the premium tool
+          after(async () => await notifySubmitterOfPremiumTool(tool))
+
+          // Notify the admin of the premium tool
+          after(async () => await notifyAdminOfPremiumTool(tool))
         }
 
         if (event.type === "customer.subscription.deleted") {

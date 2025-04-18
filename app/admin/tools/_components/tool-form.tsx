@@ -33,7 +33,7 @@ import { Markdown } from "~/components/web/markdown"
 import { useComputedField } from "~/hooks/use-computed-field"
 import { isToolVisible } from "~/lib/tools"
 import type { findCategoryList } from "~/server/admin/categories/queries"
-import { createTool, updateTool } from "~/server/admin/tools/actions"
+import { upsertTool } from "~/server/admin/tools/actions"
 import type { findToolBySlug } from "~/server/admin/tools/queries"
 import { toolSchema } from "~/server/admin/tools/schemas"
 import { cx } from "~/utils/cva"
@@ -109,39 +109,27 @@ export function ToolForm({
   // Keep track of the form values
   const [websiteUrl, name, description] = form.watch(["websiteUrl", "name", "description"])
 
-  const onSuccess = ({ data }: { data: Tool }) => {
-    // If status has changed, show a status change notification
-    if (data.status !== originalStatus) {
-      toast.success(<ToolStatusChange tool={data} />)
-      setOriginalStatus(data.status)
-    }
+  // Upsert tool
+  const { execute, isPending } = useServerAction(upsertTool, {
+    onSuccess: ({ data }) => {
+      // If status has changed, show a status change notification
+      if (data.status !== originalStatus) {
+        toast.success(<ToolStatusChange tool={data} />)
+        setOriginalStatus(data.status)
+      }
 
-    // Otherwise, just show a success message
-    else {
-      toast.success("Tool successfully updated")
-    }
+      // Otherwise, just show a success message
+      else {
+        toast.success("Tool successfully updated")
+      }
 
-    // If not updating a tool, or slug has changed, redirect to the new tool
-    if (!tool || data.slug !== tool?.slug) {
-      redirect(`/admin/tools/${data.slug}`)
-    }
-  }
+      // If not updating a tool, or slug has changed, redirect to the new tool
+      if (!tool || data.slug !== tool?.slug) {
+        redirect(`/admin/tools/${data.slug}`)
+      }
+    },
 
-  const onError = ({ err }: { err: Error }) => {
-    toast.error(err.message)
-  }
-
-  // Update tool
-  const { execute: updateToolAction, isPending: isUpdatingTool } = useServerAction(updateTool, {
-    onSuccess,
-    onError,
-    onFinish: () => setIsStatusPending(false),
-  })
-
-  // Create tool
-  const { execute: createToolAction, isPending: isCreatingTool } = useServerAction(createTool, {
-    onSuccess,
-    onError,
+    onError: ({ err }) => toast.error(err.message),
     onFinish: () => setIsStatusPending(false),
   })
 
@@ -153,7 +141,8 @@ export function ToolForm({
         toast.success("Favicon successfully generated. Please save the tool to update.")
         form.setValue("faviconUrl", data)
       },
-      onError,
+
+      onError: ({ err }) => toast.error(err.message),
     },
   )
 
@@ -165,12 +154,13 @@ export function ToolForm({
         toast.success("Screenshot successfully generated. Please save the tool to update.")
         form.setValue("screenshotUrl", data)
       },
-      onError,
+
+      onError: ({ err }) => toast.error(err.message),
     },
   )
 
-  const onSubmit = form.handleSubmit(data => {
-    tool ? updateToolAction({ id: tool.id, ...data }) : createToolAction(data)
+  const handleSubmit = form.handleSubmit(data => {
+    execute({ id: tool?.id, ...data })
   })
 
   const handleStatusSubmit = (status: ToolStatus, publishedAt: Date | null) => {
@@ -182,14 +172,12 @@ export function ToolForm({
     setIsStatusPending(true)
 
     // Submit the form with updated values
-    onSubmit()
+    handleSubmit()
   }
-
-  const isPending = isCreatingTool || isUpdatingTool
 
   return (
     <Form {...form}>
-      <form onSubmit={onSubmit} className={cx("contents", className)} noValidate {...props}>
+      <form onSubmit={handleSubmit} className={cx("contents", className)} noValidate {...props}>
         <Stack className="justify-between">
           <H3 className="flex-1 truncate">{title}</H3>
 

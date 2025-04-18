@@ -1,16 +1,15 @@
 import type { Tool } from "@prisma/client"
 import { Text } from "@react-email/components"
-import type { Jsonify } from "inngest/helpers/jsonify"
 import { config } from "~/config"
 import { EmailButton } from "~/emails/components/button"
 import { EmailFeatureNudge } from "~/emails/components/feature-nudge"
 import { EmailWrapper, type EmailWrapperProps } from "~/emails/components/wrapper"
 
 export type EmailProps = EmailWrapperProps & {
-  tool: Tool | Jsonify<Tool>
+  tool: Tool
 }
 
-const EmailToolPublished = ({ tool, ...props }: EmailProps) => {
+const EmailSubmissionPublished = ({ tool, ...props }: EmailProps) => {
   return (
     <EmailWrapper {...props}>
       <Text>Hey {tool.submitterName}!</Text>
@@ -38,4 +37,4 @@ const EmailToolPublished = ({ tool, ...props }: EmailProps) => {
   )
 }
 
-export default EmailToolPublished
+export default EmailSubmissionPublished

@@ -28,19 +28,17 @@ const prepareEmail = async (email: EmailParams): Promise<CreateEmailOptions> => 
 }
 
 /**
- * Sends emails to the given recipients using Resend
- * @param emails - The email/emails to send
+ * Sends an email to the given recipient using Resend
+ * @param email - The email to send
  * @returns The response from Resend
  */
-export const sendEmails = async (emails: EmailParams | EmailParams[]) => {
-  const emailArray = await Promise.all(
-    (Array.isArray(emails) ? emails : [emails]).map(prepareEmail),
-  )
+export const sendEmail = async (email: EmailParams) => {
+  const preparedEmail = await prepareEmail(email)
 
   if (!isProd) {
-    console.log(emailArray)
+    console.log(preparedEmail)
     return
   }
 
-  return resend.batch.send(emailArray)
+  return resend.emails.send(preparedEmail)
 }

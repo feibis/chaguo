@@ -1,50 +1,54 @@
 "use server"
 
 import { slugify } from "@curiousleaf/utils"
+import { ToolStatus } from "@prisma/client"
 import { revalidatePath, revalidateTag } from "next/cache"
 import { after } from "next/server"
 import { z } from "zod"
-import { isProd } from "~/env"
 import { removeS3Directories } from "~/lib/media"
+import { notifySubmitterOfToolPublished, notifySubmitterOfToolScheduled } from "~/lib/notifications"
 import { adminProcedure } from "~/lib/safe-actions"
 import { toolSchema } from "~/server/admin/tools/schemas"
 import { db } from "~/services/db"
-import { inngest } from "~/services/inngest"
 
-export const createTool = adminProcedure
+export const upsertTool = adminProcedure
   .createServerAction()
-  .input(toolSchema)
-  .handler(async ({ input: { categories, ...input } }) => {
-    const tool = await db.tool.create({
-      data: {
-        ...input,
-        slug: input.slug || slugify(input.name),
-        categories: { connect: categories?.map(id => ({ id })) },
-      },
-    })
-
-    // Send an event to the Inngest pipeline
-    if (tool.publishedAt) {
-      isProd && (await inngest.send({ name: "tool.scheduled", data: { slug: tool.slug } }))
-    }
-
-    return tool
-  })
-
-export const updateTool = adminProcedure
-  .createServerAction()
-  .input(toolSchema.extend({ id: z.string() }))
+  .input(toolSchema.extend({ id: z.string().optional() }))
   .handler(async ({ input: { id, categories, ...input } }) => {
-    const tool = await db.tool.update({
-      where: { id },
-      data: {
-        ...input,
-        categories: { set: categories?.map(id => ({ id })) },
-      },
-    })
+    const categoryIds = categories?.map(id => ({ id }))
 
+    const tool = id
+      ? // If the tool exists, update it
+        await db.tool.update({
+          where: { id },
+          data: {
+            ...input,
+            categories: { set: categoryIds },
+          },
+        })
+      : // Otherwise, create it
+        await db.tool.create({
+          data: {
+            ...input,
+            slug: input.slug || slugify(input.name),
+            categories: { connect: categoryIds },
+          },
+        })
+
+    // Revalidate the tools
     revalidateTag("tools")
     revalidateTag(`tool-${tool.slug}`)
+
+    // Revalidate the schedule if the tool is scheduled
+    if (tool.status === ToolStatus.Scheduled) {
+      revalidateTag("schedule")
+    }
+
+    // Notify the submitter of the tool published
+    after(async () => await notifySubmitterOfToolPublished(tool))
+
+    // Notify the submitter of the tool scheduled for publication
+    after(async () => await notifySubmitterOfToolScheduled(tool))
 
     return tool
   })
@@ -66,9 +70,7 @@ export const deleteTools = adminProcedure
     revalidateTag("tools")
 
     // Remove the tool images from S3 asynchronously
-    after(async () => {
-      await removeS3Directories(tools.map(tool => `tools/${tool.slug}`))
-    })
+    after(async () => await removeS3Directories(tools.map(({ slug }) => `tools/${slug}`)))
 
     return true
   })

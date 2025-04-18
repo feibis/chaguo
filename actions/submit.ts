@@ -2,14 +2,14 @@
 
 import { getUrlHostname, slugify } from "@curiousleaf/utils"
 import { headers } from "next/headers"
+import { after } from "next/server"
 import { createServerAction } from "zsa"
 import { subscribeToNewsletter } from "~/actions/subscribe"
-import { isProd } from "~/env"
 import { auth } from "~/lib/auth"
+import { notifySubmitterOfToolSubmitted } from "~/lib/notifications"
 import { getIP, isRateLimited } from "~/lib/rate-limiter"
 import { submitToolSchema } from "~/server/web/shared/schemas"
 import { db } from "~/services/db"
-import { inngest } from "~/services/inngest"
 import { isDisposableEmail } from "~/utils/helpers"
 
 /**
@@ -86,8 +86,8 @@ export const submitTool = createServerAction()
       data: { ...data, slug, ownerId },
     })
 
-    // Send an event to the Inngest pipeline
-    isProd && (await inngest.send({ name: "tool.submitted", data: { slug } }))
+    // Notify the submitter of the tool submitted
+    after(async () => await notifySubmitterOfToolSubmitted(tool))
 
     return tool
   })

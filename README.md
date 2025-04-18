@@ -23,7 +23,6 @@ Dirstarter uses the following third-party services:
 - Database: [Postgres](https://postgres.org)
 - Analytics: [Plausible](https://plausible.io), [PostHog](https://posthog.com)
 - Newsletter: [Beehiiv](https://kulp.in/beehiiv)
-- Background Jobs: [Inngest](https://inngest.com)
 - Scraping: [Firecrawl](https://kulp.in/firecrawl)
 - File Storage: [AWS S3](https://aws.amazon.com/s3)
 - Payments: [Stripe](https://stripe.com)

@@ -4,7 +4,7 @@ import { admin, magicLink } from "better-auth/plugins"
 import { config } from "~/config"
 import EmailLoginLink from "~/emails/login-link"
 import { env } from "~/env"
-import { sendEmails } from "~/lib/email"
+import { sendEmail } from "~/lib/email"
 import { db } from "~/services/db"
 
 export const auth = betterAuth({
@@ -33,7 +33,7 @@ export const auth = betterAuth({
         const to = email
         const subject = `Your ${config.site.name} Login Link`
 
-        await sendEmails({ to, subject, react: EmailLoginLink({ to, subject, url }) })
+        await sendEmail({ to, subject, react: EmailLoginLink({ to, subject, url }) })
       },
     }),
 

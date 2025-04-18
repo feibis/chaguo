@@ -60,7 +60,7 @@ export const getProducts = (products: Stripe.Product[], isPublished: boolean) =>
  * @param coupon - The coupon to check against.
  * @returns Whether the product is eligible for the discount.
  */
-export const isProductDiscounted = (productId: string, coupon?: Stripe.Coupon) => {
+const isProductDiscounted = (productId: string, coupon?: Stripe.Coupon) => {
   return !coupon?.applies_to || coupon.applies_to.products.includes(productId)
 }
 
@@ -71,14 +71,8 @@ export const isProductDiscounted = (productId: string, coupon?: Stripe.Coupon) =
  * @param coupon - The coupon to check against.
  * @returns The index of the last discounted product, or -1 if none are discounted.
  */
-export const getLastDiscountedProductIndex = (
-  products: Stripe.Product[],
-  coupon?: Stripe.Coupon,
-) => {
-  return products.reduce(
-    (lastIdx, product, idx) => (isProductDiscounted(product.id, coupon) ? idx : lastIdx),
-    -1,
-  )
+const getLastDiscountedProductIndex = (products: Stripe.Product[], coupon?: Stripe.Coupon) => {
+  return products.reduce((lastId, p, id) => (isProductDiscounted(p.id, coupon) ? id : lastId), -1)
 }
 
 /**
@@ -90,7 +84,7 @@ export const getLastDiscountedProductIndex = (
  * @param isDiscounted - Whether the product is eligible for a discount.
  * @returns Whether the product should be featured.
  */
-export const isProductFeatured = (
+const isProductFeatured = (
   index: number,
   products: Stripe.Product[],
   coupon?: Stripe.Coupon,

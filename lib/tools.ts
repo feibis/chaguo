@@ -1,5 +1,6 @@
-import type { Jsonify } from "inngest/helpers/jsonify"
-import type { ToolOne } from "~/server/web/tools/payloads"
+import type { Tool } from "@prisma/client"
+import { differenceInDays } from "date-fns"
+import { config } from "~/config"
 
 /**
  * Check if a tool is publicly available to be viewed.
@@ -7,7 +8,7 @@ import type { ToolOne } from "~/server/web/tools/payloads"
  * @param tool - The tool to check.
  * @returns Whether the tool is public.
  */
-export const isToolVisible = (tool: Pick<ToolOne | Jsonify<ToolOne>, "status">) => {
+export const isToolVisible = (tool: Pick<Tool, "status">) => {
   return ["Scheduled", "Published"].includes(tool.status)
 }
 
@@ -17,6 +18,18 @@ export const isToolVisible = (tool: Pick<ToolOne | Jsonify<ToolOne>, "status">) 
  * @param tool - The tool to check.
  * @returns Whether the tool is published.
  */
-export const isToolPublished = (tool: Pick<ToolOne | Jsonify<ToolOne>, "status">) => {
+export const isToolPublished = (tool: Pick<Tool, "status">) => {
   return ["Published"].includes(tool.status)
+}
+
+/**
+ * Check if a tool is within the expedite threshold.
+ *
+ * @param tool - The tool to check.
+ * @returns Whether the tool is within the expedite threshold.
+ */
+export const isToolWithinExpediteThreshold = (tool: Pick<Tool, "publishedAt">) => {
+  const threshold = config.submissions.expediteThresholdDays
+
+  return tool.publishedAt && differenceInDays(tool.publishedAt, new Date()) < threshold
 }

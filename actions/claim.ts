@@ -8,7 +8,7 @@ import { after } from "next/server"
 import { z } from "zod"
 import { claimsConfig } from "~/config/claims"
 import EmailToolClaimOtp from "~/emails/tool-claim-otp"
-import { sendEmails } from "~/lib/email"
+import { sendEmail } from "~/lib/email"
 import { getIP, isRateLimited } from "~/lib/rate-limiter"
 import { userProcedure } from "~/lib/safe-actions"
 import { db } from "~/services/db"
@@ -69,7 +69,7 @@ export const sendToolClaimOtp = userProcedure
 
     // Send OTP email
     after(async () => {
-      await sendEmails({
+      await sendEmail({
         to,
         subject,
         react: EmailToolClaimOtp({ tool, otp, to, subject }),
