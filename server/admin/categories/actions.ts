@@ -7,35 +7,28 @@ import { adminProcedure } from "~/lib/safe-actions"
 import { categorySchema } from "~/server/admin/categories/schemas"
 import { db } from "~/services/db"
 
-export const createCategory = adminProcedure
+export const upsertCategory = adminProcedure
   .createServerAction()
   .input(categorySchema)
-  .handler(async ({ input: { tools, ...input } }) => {
-    const category = await db.category.create({
-      data: {
-        ...input,
-        slug: input.slug || slugify(input.name),
-        tools: { connect: tools?.map(id => ({ id })) },
-      },
-    })
-
-    revalidateTag("categories")
-
-    return category
-  })
-
-export const updateCategory = adminProcedure
-  .createServerAction()
-  .input(categorySchema.extend({ id: z.string() }))
   .handler(async ({ input: { id, tools, ...input } }) => {
-    const category = await db.category.update({
-      where: { id },
-      data: {
-        ...input,
-        slug: input.slug || slugify(input.name),
-        tools: { set: tools?.map(id => ({ id })) },
-      },
-    })
+    const toolIds = tools?.map(id => ({ id }))
+
+    const category = id
+      ? await db.category.update({
+          where: { id },
+          data: {
+            ...input,
+            slug: input.slug || slugify(input.name),
+            tools: { set: toolIds },
+          },
+        })
+      : await db.category.create({
+          data: {
+            ...input,
+            slug: input.slug || slugify(input.name),
+            tools: { connect: toolIds },
+          },
+        })
 
     revalidateTag("categories")
     revalidateTag(`category-${category.slug}`)

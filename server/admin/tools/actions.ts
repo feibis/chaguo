@@ -13,7 +13,7 @@ import { db } from "~/services/db"
 
 export const upsertTool = adminProcedure
   .createServerAction()
-  .input(toolSchema.extend({ id: z.string().optional() }))
+  .input(toolSchema)
   .handler(async ({ input: { id, categories, ...input } }) => {
     const categoryIds = categories?.map(id => ({ id }))
 
@@ -23,6 +23,7 @@ export const upsertTool = adminProcedure
           where: { id },
           data: {
             ...input,
+            slug: input.slug || slugify(input.name),
             categories: { set: categoryIds },
           },
         })

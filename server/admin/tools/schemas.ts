@@ -24,6 +24,7 @@ export const toolsTableParamsCache = createSearchParamsCache(toolsTableParamsSch
 export type ToolsTableSchema = Awaited<ReturnType<typeof toolsTableParamsCache.parse>>
 
 export const toolSchema = z.object({
+  id: z.string().optional(),
   name: z.string().min(1, "Name is required"),
   slug: z.string().optional(),
   websiteUrl: z.string().min(1, "Website is required").url(),

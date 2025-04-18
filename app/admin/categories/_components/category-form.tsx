@@ -20,7 +20,7 @@ import {
 import { Input } from "~/components/common/input"
 import { Link } from "~/components/common/link"
 import { useComputedField } from "~/hooks/use-computed-field"
-import { createCategory, updateCategory } from "~/server/admin/categories/actions"
+import { upsertCategory } from "~/server/admin/categories/actions"
 import type { findCategoryBySlug } from "~/server/admin/categories/queries"
 import { categorySchema } from "~/server/admin/categories/schemas"
 import type { findToolList } from "~/server/admin/tools/queries"
@@ -66,49 +66,28 @@ export function CategoryForm({
     enabled: !category,
   })
 
-  // Create category
-  const { execute: createCategoryAction, isPending: isCreatingCategory } = useServerAction(
-    createCategory,
-    {
-      onSuccess: ({ data }) => {
-        toast.success("Category successfully created")
+  // Upsert category
+  const { execute, isPending } = useServerAction(upsertCategory, {
+    onSuccess: ({ data }) => {
+      toast.success(category ? "Category successfully updated" : "Category successfully created")
+
+      // If not updating a category, or slug has changed, redirect to the new category
+      if (!category || data.slug !== category?.slug) {
         redirect(`/admin/categories/${data.slug}`)
-      },
-
-      onError: ({ err }) => {
-        toast.error(err.message)
-      },
+      }
     },
-  )
 
-  // Update category
-  const { execute: updateCategoryAction, isPending: isUpdatingCategory } = useServerAction(
-    updateCategory,
-    {
-      onSuccess: ({ data }) => {
-        toast.success("Category successfully updated")
-
-        if (data.slug !== category?.slug) {
-          redirect(`/admin/categories/${data.slug}`)
-        }
-      },
-
-      onError: ({ err }) => {
-        toast.error(err.message)
-      },
-    },
-  )
-
-  const onSubmit = form.handleSubmit(data => {
-    category ? updateCategoryAction({ id: category.id, ...data }) : createCategoryAction(data)
+    onError: ({ err }) => toast.error(err.message),
   })
 
-  const isPending = isCreatingCategory || isUpdatingCategory
+  const handleSubmit = form.handleSubmit(data => {
+    execute({ id: category?.id, ...data })
+  })
 
   return (
     <Form {...form}>
       <form
-        onSubmit={onSubmit}
+        onSubmit={handleSubmit}
         className={cx("grid gap-4 max-w-3xl sm:grid-cols-2", className)}
         noValidate
         {...props}
