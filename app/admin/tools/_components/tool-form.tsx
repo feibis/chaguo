@@ -35,7 +35,7 @@ import { isToolVisible } from "~/lib/tools"
 import type { findCategoryList } from "~/server/admin/categories/queries"
 import { createTool, updateTool } from "~/server/admin/tools/actions"
 import type { findToolBySlug } from "~/server/admin/tools/queries"
-import { type ToolSchema, toolSchema } from "~/server/admin/tools/schemas"
+import { toolSchema } from "~/server/admin/tools/schemas"
 import { cx } from "~/utils/cva"
 
 const ToolStatusChange = ({ tool }: { tool: Tool }) => {
@@ -73,6 +73,7 @@ export function ToolForm({
   ...props
 }: ToolFormProps) {
   const [isPreviewing, setIsPreviewing] = useState(false)
+  const [isStatusPending, setIsStatusPending] = useState(false)
   const [originalStatus, setOriginalStatus] = useState<ToolStatus>(tool?.status ?? ToolStatus.Draft)
 
   const form = useForm({
@@ -134,12 +135,14 @@ export function ToolForm({
   const { execute: updateToolAction, isPending: isUpdatingTool } = useServerAction(updateTool, {
     onSuccess,
     onError,
+    onFinish: () => setIsStatusPending(false),
   })
 
   // Create tool
   const { execute: createToolAction, isPending: isCreatingTool } = useServerAction(createTool, {
     onSuccess,
     onError,
+    onFinish: () => setIsStatusPending(false),
   })
 
   // Generate favicon
@@ -166,24 +169,36 @@ export function ToolForm({
     },
   )
 
-  const onSubmit = (data: ToolSchema) => {
+  const onSubmit = form.handleSubmit(data => {
     tool ? updateToolAction({ id: tool.id, ...data }) : createToolAction(data)
+  })
+
+  const handleStatusSubmit = (status: ToolStatus, publishedAt: Date | null) => {
+    // Update form values
+    form.setValue("status", status)
+    form.setValue("publishedAt", publishedAt)
+
+    // Set status pending
+    setIsStatusPending(true)
+
+    // Submit the form with updated values
+    onSubmit()
   }
 
   const isPending = isCreatingTool || isUpdatingTool
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className={cx("contents", className)}
-        noValidate
-        {...props}
-      >
+      <form onSubmit={onSubmit} className={cx("contents", className)} noValidate {...props}>
         <Stack className="justify-between">
           <H3 className="flex-1 truncate">{title}</H3>
 
-          <ToolPublishActions tool={tool} isPending={isPending} onFormSubmit={onSubmit}>
+          <ToolPublishActions
+            tool={tool}
+            isPending={!isStatusPending && isPending}
+            isStatusPending={isStatusPending}
+            onStatusSubmit={handleStatusSubmit}
+          >
             <ToolGenerateContent />
           </ToolPublishActions>
         </Stack>
@@ -382,7 +397,7 @@ export function ToolForm({
                     <img
                       src={field.value}
                       alt="Favicon"
-                      className="h-8 border box-content rounded-md"
+                      className="h-8 max-w-32 border box-content rounded-md object-contain"
                     />
                   )}
 
@@ -428,7 +443,7 @@ export function ToolForm({
                     <img
                       src={field.value}
                       alt="Screenshot"
-                      className="h-8 border box-content rounded-md"
+                      className="h-8 max-w-32 border box-content rounded-md object-contain"
                     />
                   )}
 

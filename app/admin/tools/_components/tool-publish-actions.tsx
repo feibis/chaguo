@@ -21,7 +21,8 @@ import type { ToolSchema } from "~/server/admin/tools/schemas"
 type ToolPublishActionsProps = ComponentProps<typeof Stack> & {
   tool?: NonNullable<Awaited<ReturnType<typeof findToolBySlug>>>
   isPending: boolean
-  onFormSubmit: (data: ToolSchema) => void
+  isStatusPending: boolean
+  onStatusSubmit: (status: ToolStatus, publishedAt: Date | null) => void
 }
 
 type PopoverOption = {
@@ -42,45 +43,34 @@ type ActionConfig = Omit<ButtonProps, "popover"> & {
 export const ToolPublishActions = ({
   tool,
   isPending,
-  onFormSubmit,
+  isStatusPending,
+  onStatusSubmit,
   children,
   ...props
 }: ToolPublishActionsProps) => {
-  const { watch, setValue, resetField, getValues } = useFormContext<ToolSchema>()
+  const { watch, setValue, resetField } = useFormContext<ToolSchema>()
   const [slug, status, publishedAt] = watch(["slug", "status", "publishedAt"])
+  const publishedAtDate = publishedAt ? new Date(publishedAt) : new Date()
 
   const [isOpen, setIsOpen] = useState(false)
   const [isScheduleOpen, setIsScheduleOpen] = useState(false)
-  const [selectedDate, setSelectedDate] = useState<string>(
-    publishedAt ? formatDate(publishedAt, "yyyy-MM-dd") : formatDate(new Date(), "yyyy-MM-dd"),
-  )
-  const [selectedTime, setSelectedTime] = useState<string>(
-    publishedAt ? formatDate(publishedAt, "HH:mm") : formatDate(new Date(), "HH:mm"),
-  )
+  const [selectedDate, setSelectedDate] = useState(formatDate(publishedAtDate, "yyyy-MM-dd"))
+  const [selectedTime, setSelectedTime] = useState(formatDate(publishedAtDate, "HH:mm"))
 
   const handlePublished = () => {
-    handleStatusChange(ToolStatus.Published, new Date())
+    onStatusSubmit(ToolStatus.Published, new Date())
+    setIsOpen(false)
   }
 
   const handleScheduled = () => {
-    handleStatusChange(ToolStatus.Scheduled, new Date(`${selectedDate}T${selectedTime}`))
+    const scheduledDate = new Date(`${selectedDate}T${selectedTime}`)
+    onStatusSubmit(ToolStatus.Scheduled, scheduledDate)
+    setIsOpen(false)
   }
 
   const handleDraft = () => {
-    handleStatusChange(ToolStatus.Draft, null)
-  }
-
-  // Handle status changes from the PublishStatusButton
-  const handleStatusChange = (status: ToolStatus, publishedAt: Date | null) => {
-    // Update form values
-    setValue("status", status)
-    setValue("publishedAt", publishedAt)
-
-    // Close the popover
+    onStatusSubmit(ToolStatus.Draft, null)
     setIsOpen(false)
-
-    // Submit tool update
-    onFormSubmit(getValues())
   }
 
   const toolActions: Record<ToolStatus, ActionConfig[]> = {
@@ -233,7 +223,7 @@ export const ToolPublishActions = ({
               }}
             >
               <PopoverTrigger asChild>
-                <Button size="md" isPending={isPending} {...action} />
+                <Button size="md" isPending={isStatusPending} {...action} />
               </PopoverTrigger>
 
               <PopoverContent
@@ -313,7 +303,9 @@ export const ToolPublishActions = ({
                       Cancel
                     </Button>
 
-                    {popoverButton && <Button size="md" {...popoverButton} />}
+                    {popoverButton && (
+                      <Button size="md" isPending={isStatusPending} {...popoverButton} />
+                    )}
                   </Stack>
                 </Stack>
               </PopoverContent>
