@@ -110,7 +110,7 @@ export function ToolForm({
   const [websiteUrl, name, description] = form.watch(["websiteUrl", "name", "description"])
 
   // Upsert tool
-  const { execute, isPending } = useServerAction(upsertTool, {
+  const upsertAction = useServerAction(upsertTool, {
     onSuccess: ({ data }) => {
       // If status has changed, show a status change notification
       if (data.status !== originalStatus) {
@@ -120,7 +120,7 @@ export function ToolForm({
 
       // Otherwise, just show a success message
       else {
-        toast.success("Tool successfully updated")
+        toast.success(`Tool successfully ${tool ? "updated" : "created"}`)
       }
 
       // If not updating a tool, or slug has changed, redirect to the new tool
@@ -134,33 +134,27 @@ export function ToolForm({
   })
 
   // Generate favicon
-  const { execute: generateFaviconAction, isPending: isGeneratingFavicon } = useServerAction(
-    generateFavicon,
-    {
-      onSuccess: ({ data }) => {
-        toast.success("Favicon successfully generated. Please save the tool to update.")
-        form.setValue("faviconUrl", data)
-      },
-
-      onError: ({ err }) => toast.error(err.message),
+  const faviconAction = useServerAction(generateFavicon, {
+    onSuccess: ({ data }) => {
+      toast.success("Favicon successfully generated. Please save the tool to update.")
+      form.setValue("faviconUrl", data)
     },
-  )
+
+    onError: ({ err }) => toast.error(err.message),
+  })
 
   // Generate screenshot
-  const { execute: generateScreenshotAction, isPending: isGeneratingScreenshot } = useServerAction(
-    generateScreenshot,
-    {
-      onSuccess: ({ data }) => {
-        toast.success("Screenshot successfully generated. Please save the tool to update.")
-        form.setValue("screenshotUrl", data)
-      },
-
-      onError: ({ err }) => toast.error(err.message),
+  const screenshotAction = useServerAction(generateScreenshot, {
+    onSuccess: ({ data }) => {
+      toast.success("Screenshot successfully generated. Please save the tool to update.")
+      form.setValue("screenshotUrl", data)
     },
-  )
+
+    onError: ({ err }) => toast.error(err.message),
+  })
 
   const handleSubmit = form.handleSubmit(data => {
-    execute({ id: tool?.id, ...data })
+    upsertAction.execute({ id: tool?.id, ...data })
   })
 
   const handleStatusSubmit = (status: ToolStatus, publishedAt: Date | null) => {
@@ -183,7 +177,7 @@ export function ToolForm({
 
           <ToolPublishActions
             tool={tool}
-            isPending={!isStatusPending && isPending}
+            isPending={!isStatusPending && upsertAction.isPending}
             isStatusPending={isStatusPending}
             onStatusSubmit={handleStatusSubmit}
           >
@@ -369,11 +363,16 @@ export function ToolForm({
                     type="button"
                     size="sm"
                     variant="secondary"
-                    prefix={<RefreshCwIcon className={cx(isGeneratingFavicon && "animate-spin")} />}
+                    prefix={
+                      <RefreshCwIcon className={cx(faviconAction.isPending && "animate-spin")} />
+                    }
                     className="-my-1"
-                    disabled={!isValidUrl(websiteUrl) || isGeneratingFavicon}
+                    disabled={!isValidUrl(websiteUrl) || faviconAction.isPending}
                     onClick={() => {
-                      generateFaviconAction({ url: websiteUrl, path: `tools/${tool?.slug}` })
+                      faviconAction.execute({
+                        url: websiteUrl,
+                        path: `tools/${tool?.slug}`,
+                      })
                     }}
                   >
                     {field.value ? "Regenerate" : "Generate"}
@@ -411,12 +410,12 @@ export function ToolForm({
                     size="sm"
                     variant="secondary"
                     prefix={
-                      <RefreshCwIcon className={cx(isGeneratingScreenshot && "animate-spin")} />
+                      <RefreshCwIcon className={cx(screenshotAction.isPending && "animate-spin")} />
                     }
                     className="-my-1"
-                    disabled={!isValidUrl(websiteUrl) || isGeneratingScreenshot}
+                    disabled={!isValidUrl(websiteUrl) || screenshotAction.isPending}
                     onClick={() => {
-                      generateScreenshotAction({
+                      screenshotAction.execute({
                         url: websiteUrl,
                         path: `tools/${tool?.slug}`,
                       })

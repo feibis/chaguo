@@ -67,9 +67,9 @@ export function CategoryForm({
   })
 
   // Upsert category
-  const { execute, isPending } = useServerAction(upsertCategory, {
+  const upsertAction = useServerAction(upsertCategory, {
     onSuccess: ({ data }) => {
-      toast.success(category ? "Category successfully updated" : "Category successfully created")
+      toast.success(`Category successfully ${category ? "updated" : "created"}`)
 
       // If not updating a category, or slug has changed, redirect to the new category
       if (!category || data.slug !== category?.slug) {
@@ -81,7 +81,7 @@ export function CategoryForm({
   })
 
   const handleSubmit = form.handleSubmit(data => {
-    execute({ id: category?.id, ...data })
+    upsertAction.execute({ id: category?.id, ...data })
   })
 
   return (
@@ -152,11 +152,11 @@ export function CategoryForm({
         />
 
         <div className="flex justify-between gap-4 col-span-full">
-          <Button variant="secondary" asChild>
+          <Button size="md" variant="secondary" asChild>
             <Link href="/admin/categories">Cancel</Link>
           </Button>
 
-          <Button variant="primary" isPending={isPending}>
+          <Button size="md" isPending={upsertAction.isPending}>
             {category ? "Update category" : "Create category"}
           </Button>
         </div>

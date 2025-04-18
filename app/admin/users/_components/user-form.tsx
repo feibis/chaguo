@@ -39,7 +39,7 @@ export function UserForm({ children, className, user, ...props }: UserFormProps)
   })
 
   // Update user
-  const { execute: updateUserAction, isPending: isUpdating } = useServerAction(updateUser, {
+  const updateAction = useServerAction(updateUser, {
     onSuccess: () => {
       toast.success("User successfully updated")
     },
@@ -49,29 +49,27 @@ export function UserForm({ children, className, user, ...props }: UserFormProps)
     },
   })
 
-  const { execute: uploadUserImageAction, isPending: isUploading } = useServerAction(
-    uploadUserImage,
-    {
-      onSuccess: ({ data }) => {
-        console.log("data", data)
-        toast.success("User image successfully uploaded")
-        form.setValue("image", data)
-      },
-      onError: ({ err }) => {
-        console.log(err)
-        toast.error(JSON.parse(err.message)[0]?.message)
-      },
+  // Upload user image
+  const uploadAction = useServerAction(uploadUserImage, {
+    onSuccess: ({ data }) => {
+      toast.success("User image successfully uploaded")
+      form.setValue("image", data)
     },
-  )
 
-  const onSubmit = form.handleSubmit(data => {
-    updateUserAction({ id: user.id, ...data })
+    onError: ({ err }) => {
+      console.log(err)
+      toast.error(JSON.parse(err.message)[0]?.message)
+    },
+  })
+
+  const handleSubmit = form.handleSubmit(data => {
+    updateAction.execute({ id: user.id, ...data })
   })
 
   return (
     <Form {...form}>
       <form
-        onSubmit={onSubmit}
+        onSubmit={handleSubmit}
         className={cx("grid gap-4 max-w-3xl sm:grid-cols-2", className)}
         noValidate
         {...props}
@@ -132,7 +130,7 @@ export function UserForm({ children, className, user, ...props }: UserFormProps)
                       hover
                       onChange={e => {
                         const file = e.target.files?.[0]
-                        if (file) uploadUserImageAction({ id: user.id, file })
+                        if (file) uploadAction.execute({ id: user.id, file })
                       }}
                     />
                   </FormControl>
@@ -149,7 +147,7 @@ export function UserForm({ children, className, user, ...props }: UserFormProps)
             <Link href="/admin/users">Cancel</Link>
           </Button>
 
-          <Button size="md" variant="primary" isPending={isUpdating || isUploading}>
+          <Button size="md" isPending={updateAction.isPending || uploadAction.isPending}>
             Update user
           </Button>
         </div>
