@@ -39,7 +39,7 @@ export const CategoryActions = ({
         />
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent align="end">
+      <DropdownMenuContent align="end" sideOffset={8}>
         <DropdownMenuItem asChild>
           <Link href={`/admin/categories/${category.slug}`}>Edit</Link>
         </DropdownMenuItem>

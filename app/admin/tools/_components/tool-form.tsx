@@ -4,14 +4,17 @@ import { formatDateTime, isValidUrl, slugify } from "@curiousleaf/utils"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { type Tool, ToolStatus } from "@prisma/client"
 import { EyeIcon, PencilIcon, RefreshCwIcon } from "lucide-react"
-import { redirect } from "next/navigation"
+import Link from "next/link"
+import { redirect, useRouter } from "next/navigation"
 import { type ComponentProps, useState } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import { useServerAction } from "zsa-react"
 import { generateFavicon, generateScreenshot } from "~/actions/media"
+import { ToolActions } from "~/app/admin/tools/_components/tool-actions"
 import { ToolGenerateContent } from "~/app/admin/tools/_components/tool-generate-content"
 import { ToolPublishActions } from "~/app/admin/tools/_components/tool-publish-actions"
+import { ToolsDeleteDialog } from "~/app/admin/tools/_components/tools-delete-dialog"
 import { RelationSelector } from "~/components/admin/relation-selector"
 import { Button } from "~/components/common/button"
 import {
@@ -36,6 +39,7 @@ import type { findCategoryList } from "~/server/admin/categories/queries"
 import { upsertTool } from "~/server/admin/tools/actions"
 import type { findToolBySlug } from "~/server/admin/tools/queries"
 import { toolSchema } from "~/server/admin/tools/schemas"
+import type { DataTableRowAction } from "~/types"
 import { cx } from "~/utils/cva"
 
 const ToolStatusChange = ({ tool }: { tool: Tool }) => {
@@ -72,6 +76,8 @@ export function ToolForm({
   categories,
   ...props
 }: ToolFormProps) {
+  const router = useRouter()
+  const [rowAction, setRowAction] = useState<DataTableRowAction<Tool> | null>(null)
   const [isPreviewing, setIsPreviewing] = useState(false)
   const [isStatusPending, setIsStatusPending] = useState(false)
   const [originalStatus, setOriginalStatus] = useState(tool?.status ?? ToolStatus.Draft)
@@ -164,6 +170,7 @@ export function ToolForm({
     form.setValue("publishedAt", publishedAt)
 
     // Set status pending
+    // TODO: This is runing infinitely, if there's a validation error in the form
     setIsStatusPending(true)
 
     // Submit the form with updated values
@@ -176,14 +183,22 @@ export function ToolForm({
         <Stack className="justify-between">
           <H3 className="flex-1 truncate">{title}</H3>
 
-          <ToolPublishActions
-            tool={tool}
-            isPending={!isStatusPending && upsertAction.isPending}
-            isStatusPending={isStatusPending}
-            onStatusSubmit={handleStatusSubmit}
-          >
+          <Stack size="sm">
             <ToolGenerateContent />
-          </ToolPublishActions>
+            {tool && (
+              <>
+                <ToolActions tool={tool} setRowAction={setRowAction} size="md" />
+
+                <ToolsDeleteDialog
+                  open={rowAction?.type === "delete"}
+                  onOpenChange={() => setRowAction(null)}
+                  tools={rowAction?.data ? [rowAction?.data] : []}
+                  showTrigger={false}
+                  onSuccess={() => router.push("/admin/tools")}
+                />
+              </>
+            )}
+          </Stack>
         </Stack>
 
         <div className="grid gap-4 @sm:grid-cols-2">
@@ -478,6 +493,19 @@ export function ToolForm({
                 <FormMessage />
               </FormItem>
             )}
+          />
+        </div>
+
+        <div className="flex justify-between gap-4 col-span-full">
+          <Button size="md" variant="secondary" asChild>
+            <Link href="/admin/tools">Cancel</Link>
+          </Button>
+
+          <ToolPublishActions
+            tool={tool}
+            isPending={!isStatusPending && upsertAction.isPending}
+            isStatusPending={isStatusPending}
+            onStatusSubmit={handleStatusSubmit}
           />
         </div>
       </form>

@@ -1,7 +1,9 @@
 "use client"
 
+import { isValidUrl } from "@curiousleaf/utils"
 import type { Tool } from "@prisma/client"
 import { EllipsisIcon } from "lucide-react"
+import { usePathname } from "next/navigation"
 import type { ComponentProps, Dispatch, SetStateAction } from "react"
 import { Button } from "~/components/common/button"
 import {
@@ -22,6 +24,8 @@ type ToolActionsProps = ComponentProps<typeof Button> & {
 }
 
 export const ToolActions = ({ className, tool, setRowAction, ...props }: ToolActionsProps) => {
+  const pathname = usePathname()
+
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
@@ -35,10 +39,12 @@ export const ToolActions = ({ className, tool, setRowAction, ...props }: ToolAct
         />
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem asChild>
-          <Link href={`/admin/tools/${tool.slug}`}>Edit</Link>
-        </DropdownMenuItem>
+      <DropdownMenuContent align="end" sideOffset={8}>
+        {pathname !== `/admin/tools/${tool.slug}` && (
+          <DropdownMenuItem asChild>
+            <Link href={`/admin/tools/${tool.slug}`}>Edit</Link>
+          </DropdownMenuItem>
+        )}
 
         {isToolVisible(tool) && (
           <DropdownMenuItem asChild>
@@ -48,11 +54,13 @@ export const ToolActions = ({ className, tool, setRowAction, ...props }: ToolAct
           </DropdownMenuItem>
         )}
 
-        <DropdownMenuItem asChild>
-          <Link href={tool.websiteUrl} target="_blank">
-            Visit website
-          </Link>
-        </DropdownMenuItem>
+        {isValidUrl(tool.websiteUrl) && (
+          <DropdownMenuItem asChild>
+            <Link href={tool.websiteUrl} target="_blank">
+              Visit website
+            </Link>
+          </DropdownMenuItem>
+        )}
 
         <DropdownMenuSeparator />
 

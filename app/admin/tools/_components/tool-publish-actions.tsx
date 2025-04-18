@@ -220,30 +220,19 @@ export const ToolPublishActions = ({
 
       {toolActions[tool?.status ?? ToolStatus.Draft].map(({ popover, ...action }) => {
         if (popover) {
-          const getCurrentOption = (status: ToolStatus) => {
-            return popover.options.find(o => o.status === status) || popover.options[0]
-          }
-
-          const popoverStatus = getCurrentOption(currentStatus).status
-          const popoverButton = getCurrentOption(currentStatus).button
+          const opts = popover.options
+          const currentOption = opts.find(o => o.status === currentStatus) || opts[0]
 
           return (
-            <Popover
-              key={String(action.children)}
-              open={isOpen}
-              onOpenChange={open => {
-                setIsOpen(open)
-
-                // Reset temporary UI states when popover is closed
-                if (!open) setTimeout(() => resetField("status"), 250)
-              }}
-            >
+            <Popover key={String(action.children)} open={isOpen} onOpenChange={setIsOpen}>
               <PopoverTrigger asChild>
                 <Button size="md" isPending={isStatusPending} {...action} />
               </PopoverTrigger>
 
               <PopoverContent
-                align="end"
+                align="center"
+                side="top"
+                sideOffset={8}
                 className="w-72"
                 onOpenAutoFocus={e => e.preventDefault()}
                 asChild
@@ -256,11 +245,11 @@ export const ToolPublishActions = ({
                   </Stack>
 
                   <RadioGroup
-                    defaultValue={popoverStatus}
+                    defaultValue={currentOption.status}
                     className="contents"
                     onValueChange={value => setCurrentStatus(value as ToolStatus)}
                   >
-                    {popover.options.map(option => (
+                    {opts.map(option => (
                       <Stack size="sm" className="items-start" key={option.status}>
                         <RadioGroupItem id={option.status} value={option.status} />
 
@@ -316,7 +305,8 @@ export const ToolPublishActions = ({
 
                   {submitterEmail &&
                     status !== ToolStatus.Published &&
-                    [ToolStatus.Published, ToolStatus.Scheduled].some(s => s === popoverStatus) && (
+                    (currentOption.status === ToolStatus.Published ||
+                      currentOption.status === ToolStatus.Scheduled) && (
                       <FormField
                         control={control}
                         name="notifySubmitter"
@@ -344,8 +334,8 @@ export const ToolPublishActions = ({
                       Cancel
                     </Button>
 
-                    {popoverButton && (
-                      <Button size="md" isPending={isStatusPending} {...popoverButton} />
+                    {currentOption.button && (
+                      <Button size="md" isPending={isStatusPending} {...currentOption.button} />
                     )}
                   </Stack>
                 </Stack>
@@ -354,7 +344,15 @@ export const ToolPublishActions = ({
           )
         }
 
-        return <Button key={String(action.children)} size="md" isPending={isPending} {...action} />
+        return (
+          <Button
+            key={String(action.children)}
+            size="md"
+            isPending={isPending}
+            className="lg:min-w-24"
+            {...action}
+          />
+        )
       })}
     </Stack>
   )

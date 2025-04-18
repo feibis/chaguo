@@ -54,7 +54,7 @@ export const UserActions = ({ user, setRowAction, className, ...props }: UserAct
         />
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent align="end">
+      <DropdownMenuContent align="end" sideOffset={8}>
         <DropdownMenuItem asChild>
           <Link href={`/admin/users/${user.id}`}>Edit</Link>
         </DropdownMenuItem>
