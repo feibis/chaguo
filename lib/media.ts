@@ -21,6 +21,7 @@ export const uploadToS3Storage = async (file: Buffer, key: string) => {
       Key: key,
       Body: file,
       StorageClass: "STANDARD",
+      ACL: "public-read",
     },
     queueSize: 4,
     partSize: 1024 * 1024 * 5,
@@ -158,6 +159,7 @@ export const uploadScreenshot = async (url: string, s3Key: string): Promise<stri
 
     // Storage options
     store: "true",
+    storage_acl: "public-read",
     storage_path: `${s3Key}/screenshot`,
     storage_bucket: env.S3_BUCKET,
     storage_access_key_id: env.S3_ACCESS_KEY,

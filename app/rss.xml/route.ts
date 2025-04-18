@@ -4,7 +4,7 @@ import { config } from "~/config"
 import { db } from "~/services/db"
 import { addSearchParams } from "~/utils/search-params"
 
-export async function GET() {
+export const GET = async () => {
   const { url, domain, name, tagline } = config.site
   const rssSearchParams = { utm_source: domain, utm_medium: "rss" }
 

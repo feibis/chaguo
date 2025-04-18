@@ -7,9 +7,9 @@ import { db } from "~/services/db"
 import { inngest } from "~/services/inngest"
 import { stripe } from "~/services/stripe"
 
-export async function POST(request: Request) {
-  const body = await request.text()
-  const signature = request.headers.get("stripe-signature") as string
+export const POST = async (req: Request) => {
+  const body = await req.text()
+  const signature = req.headers.get("stripe-signature") as string
   const webhookSecret = env.STRIPE_WEBHOOK_SECRET
   let event: Stripe.Event
 

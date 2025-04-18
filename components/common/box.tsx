@@ -3,11 +3,11 @@ import type { ComponentProps } from "react"
 import { type VariantProps, cva, cx } from "~/utils/cva"
 
 const boxVariants = cva({
-  base: "border",
+  base: "border duration-100 ease-out",
 
   variants: {
     hover: {
-      true: "cursor-pointer hover:ring-[3px] hover:ring-border/40 hover:border-ring",
+      true: "not-disabled:cursor-pointer hover:not-disabled:ring-[3px] hover:not-disabled:ring-border/50 hover:not-disabled:border-ring",
     },
     focus: {
       true: "focus-visible:outline-hidden focus-visible:ring-[3px] focus-visible:ring-border/40 focus-visible:border-ring",
