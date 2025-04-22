@@ -106,7 +106,7 @@ const Plan = ({
 }: PlanProps) => {
   const router = useRouter()
   const { isSubscription, currentPrice, price, fullPrice, discount, interval, setInterval } =
-    usePlanPrices(prices ?? [], coupon)
+    usePlanPrices(prices, coupon)
 
   const { execute, isPending } = useServerAction(createStripeToolCheckout, {
     onSuccess: ({ data }) => {

@@ -35,22 +35,50 @@ const removeSymbol = (featureName?: string, type?: SymbolType) => {
  * @param isPublished - Whether the tool is published.
  * @returns The products for pricing.
  */
-export const getProducts = (products: Stripe.Product[], isPublished: boolean) => {
+export const getProducts = (
+  products: Stripe.Product[],
+  coupon: Stripe.Coupon | undefined,
+  isPublished: boolean,
+) => {
+  const getPriceAmount = (price?: Stripe.Price | string | null) => {
+    return typeof price === "object" && price !== null ? (price.unit_amount ?? 0) : 0
+  }
+
   return (
     products
       // Sort by price
-      .sort((a, b) => {
-        const aPrice = a.default_price as Stripe.Price
-        const bPrice = b.default_price as Stripe.Price
-        return (aPrice.unit_amount ?? 0) - (bPrice.unit_amount ?? 0)
-      })
+      .sort((a, b) => getPriceAmount(a.default_price) - getPriceAmount(b.default_price))
 
       // Filter out expedited products if the tool is published
-      .filter(product => !isPublished || !product.name.includes("Expedited"))
+      .filter(({ name }) => !isPublished || !name.includes("Expedited"))
+
+      // Filter out products that are not eligible for the coupon
+      .filter(product => isProductDiscounted(product.id, coupon) || product.name.includes("Free"))
 
       // Clean up the name
       .map(({ name, ...product }) => ({ ...product, name: name.replace("Listing", "").trim() }))
   )
+}
+
+/**
+ * Determine if a product should be featured in the UI.
+ *
+ * @param index - The index of the product in the list.
+ * @param products - The list of all products.
+ * @param coupon - The coupon being applied, if any.
+ * @param isDiscounted - Whether the product is eligible for a discount.
+ * @returns Whether the product should be featured.
+ */
+const isProductFeatured = (
+  index: number,
+  products: Stripe.Product[],
+  coupon?: Stripe.Coupon,
+  isDiscounted = true,
+) => {
+  if (!coupon) return index === products.length - 1
+
+  const lastDiscountedIndex = getLastDiscountedProductIndex(products, coupon)
+  return isDiscounted && index === lastDiscountedIndex
 }
 
 /**
@@ -73,27 +101,6 @@ const isProductDiscounted = (productId: string, coupon?: Stripe.Coupon) => {
  */
 const getLastDiscountedProductIndex = (products: Stripe.Product[], coupon?: Stripe.Coupon) => {
   return products.reduce((lastId, p, id) => (isProductDiscounted(p.id, coupon) ? id : lastId), -1)
-}
-
-/**
- * Determine if a product should be featured in the UI.
- *
- * @param index - The index of the product in the list.
- * @param products - The list of all products.
- * @param coupon - The coupon being applied, if any.
- * @param isDiscounted - Whether the product is eligible for a discount.
- * @returns Whether the product should be featured.
- */
-const isProductFeatured = (
-  index: number,
-  products: Stripe.Product[],
-  coupon?: Stripe.Coupon,
-  isDiscounted = true,
-) => {
-  if (!coupon) return index === products.length - 1
-
-  const lastDiscountedIndex = getLastDiscountedProductIndex(products, coupon)
-  return isDiscounted && index === lastDiscountedIndex
 }
 
 /**
