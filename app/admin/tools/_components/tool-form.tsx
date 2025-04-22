@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { type Tool, ToolStatus } from "@prisma/client"
 import { EyeIcon, PencilIcon, RefreshCwIcon } from "lucide-react"
 import Link from "next/link"
-import { redirect, useRouter } from "next/navigation"
+import { redirect } from "next/navigation"
 import { type ComponentProps, useState } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
@@ -14,7 +14,6 @@ import { generateFavicon, generateScreenshot } from "~/actions/media"
 import { ToolActions } from "~/app/admin/tools/_components/tool-actions"
 import { ToolGenerateContent } from "~/app/admin/tools/_components/tool-generate-content"
 import { ToolPublishActions } from "~/app/admin/tools/_components/tool-publish-actions"
-import { ToolsDeleteDialog } from "~/app/admin/tools/_components/tools-delete-dialog"
 import { RelationSelector } from "~/components/admin/relation-selector"
 import { Button } from "~/components/common/button"
 import {
@@ -39,7 +38,6 @@ import type { findCategoryList } from "~/server/admin/categories/queries"
 import { upsertTool } from "~/server/admin/tools/actions"
 import type { findToolBySlug } from "~/server/admin/tools/queries"
 import { toolSchema } from "~/server/admin/tools/schemas"
-import type { DataTableRowAction } from "~/types"
 import { cx } from "~/utils/cva"
 
 const ToolStatusChange = ({ tool }: { tool: Tool }) => {
@@ -76,8 +74,6 @@ export function ToolForm({
   categories,
   ...props
 }: ToolFormProps) {
-  const router = useRouter()
-  const [rowAction, setRowAction] = useState<DataTableRowAction<Tool> | null>(null)
   const [isPreviewing, setIsPreviewing] = useState(false)
   const [isStatusPending, setIsStatusPending] = useState(false)
   const [originalStatus, setOriginalStatus] = useState(tool?.status ?? ToolStatus.Draft)
@@ -179,322 +175,314 @@ export function ToolForm({
 
   return (
     <Form {...form}>
-      <form onSubmit={handleSubmit} className={cx("contents", className)} noValidate {...props}>
-        <Stack className="justify-between">
-          <H3 className="flex-1 truncate">{title}</H3>
+      <Stack className="justify-between">
+        <H3 className="flex-1 truncate">{title}</H3>
 
-          <Stack size="sm">
-            <ToolGenerateContent />
-            {tool && (
-              <>
-                <ToolActions tool={tool} setRowAction={setRowAction} size="md" />
+        <Stack size="sm" className="-my-0.5">
+          <ToolGenerateContent />
 
-                <ToolsDeleteDialog
-                  open={rowAction?.type === "delete"}
-                  onOpenChange={() => setRowAction(null)}
-                  tools={rowAction?.data ? [rowAction?.data] : []}
-                  showTrigger={false}
-                  onSuccess={() => router.push("/admin/tools")}
-                />
-              </>
-            )}
-          </Stack>
+          {tool && <ToolActions tool={tool} size="md" />}
         </Stack>
+      </Stack>
 
-        <div className="grid gap-4 @sm:grid-cols-2">
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Name</FormLabel>
-                <FormControl>
-                  <Input data-1p-ignore {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="slug"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Slug</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="websiteUrl"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Website URL</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="tagline"
-            render={({ field }) => (
-              <FormItem>
-                <Stack className="w-full justify-between">
-                  <FormLabel>Tagline</FormLabel>
-                  <Note className="text-xs">Max. 60 chars</Note>
-                </Stack>
-
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="description"
-            render={({ field }) => (
-              <FormItem className="col-span-full">
-                <Stack className="w-full justify-between">
-                  <FormLabel>Description</FormLabel>
-                  <Note className="text-xs">Max. 160 chars</Note>
-                </Stack>
-                <FormControl>
-                  <TextArea {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="content"
-            render={({ field }) => (
-              <FormItem className="col-span-full items-stretch">
-                <Stack className="justify-between">
-                  <FormLabel>Content</FormLabel>
-
-                  {field.value && (
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant="secondary"
-                      onClick={() => setIsPreviewing(prev => !prev)}
-                      prefix={isPreviewing ? <PencilIcon /> : <EyeIcon />}
-                      className="-my-1"
-                    >
-                      {isPreviewing ? "Edit" : "Preview"}
-                    </Button>
-                  )}
-                </Stack>
-
-                <FormControl>
-                  {field.value && isPreviewing ? (
-                    <Markdown
-                      code={field.value}
-                      className={cx(
-                        inputVariants(),
-                        "max-w-none min-h-18 bg-card border leading-normal",
-                      )}
-                    />
-                  ) : (
-                    <TextArea className="min-h-18" {...field} />
-                  )}
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          {tool?.submitterEmail && (
-            <>
-              <FormField
-                control={form.control}
-                name="submitterName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Submitter Name</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="submitterEmail"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Submitter Email</FormLabel>
-                    <FormControl>
-                      <Input type="email" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="submitterNote"
-                render={({ field }) => (
-                  <FormItem className="col-span-full">
-                    <FormLabel>Submitter Note</FormLabel>
-                    <FormControl>
-                      <TextArea {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </>
+      <form
+        onSubmit={handleSubmit}
+        className={cx("grid gap-4 @sm:grid-cols-2", className)}
+        noValidate
+        {...props}
+      >
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Name</FormLabel>
+              <FormControl>
+                <Input data-1p-ignore {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
           )}
+        />
 
-          <FormField
-            control={form.control}
-            name="faviconUrl"
-            render={({ field }) => (
-              <FormItem className="items-stretch">
-                <Stack className="justify-between">
-                  <FormLabel>Favicon URL</FormLabel>
+        <FormField
+          control={form.control}
+          name="slug"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Slug</FormLabel>
+              <FormControl>
+                <Input {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
+        <FormField
+          control={form.control}
+          name="websiteUrl"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Website URL</FormLabel>
+              <FormControl>
+                <Input {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="tagline"
+          render={({ field }) => (
+            <FormItem>
+              <Stack className="w-full justify-between">
+                <FormLabel>Tagline</FormLabel>
+                <Note className="text-xs">Max. 60 chars</Note>
+              </Stack>
+
+              <FormControl>
+                <Input {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="description"
+          render={({ field }) => (
+            <FormItem className="col-span-full">
+              <Stack className="w-full justify-between">
+                <FormLabel>Description</FormLabel>
+                <Note className="text-xs">Max. 160 chars</Note>
+              </Stack>
+              <FormControl>
+                <TextArea {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="content"
+          render={({ field }) => (
+            <FormItem className="col-span-full items-stretch">
+              <Stack className="justify-between">
+                <FormLabel>Content</FormLabel>
+
+                {field.value && (
                   <Button
                     type="button"
                     size="sm"
                     variant="secondary"
-                    prefix={
-                      <RefreshCwIcon className={cx(faviconAction.isPending && "animate-spin")} />
-                    }
+                    onClick={() => setIsPreviewing(prev => !prev)}
+                    prefix={isPreviewing ? <PencilIcon /> : <EyeIcon />}
                     className="-my-1"
-                    disabled={!isValidUrl(websiteUrl) || faviconAction.isPending}
-                    onClick={() => {
-                      faviconAction.execute({
-                        url: websiteUrl,
-                        path: `tools/${tool?.slug}`,
-                      })
-                    }}
                   >
-                    {field.value ? "Regenerate" : "Generate"}
+                    {isPreviewing ? "Edit" : "Preview"}
                   </Button>
-                </Stack>
+                )}
+              </Stack>
 
-                <Stack size="sm">
-                  {field.value && (
-                    <img
-                      src={field.value}
-                      alt="Favicon"
-                      className="h-8 max-w-32 border box-content rounded-md object-contain"
-                    />
-                  )}
+              <FormControl>
+                {field.value && isPreviewing ? (
+                  <Markdown
+                    code={field.value}
+                    className={cx(
+                      inputVariants(),
+                      "max-w-none min-h-18 bg-card border leading-normal",
+                    )}
+                  />
+                ) : (
+                  <TextArea className="min-h-18" {...field} />
+                )}
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
+        {tool?.submitterEmail && (
+          <>
+            <FormField
+              control={form.control}
+              name="submitterName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Submitter Name</FormLabel>
                   <FormControl>
-                    <Input type="url" className="flex-1" {...field} />
+                    <Input {...field} />
                   </FormControl>
-                </Stack>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <FormField
-            control={form.control}
-            name="screenshotUrl"
-            render={({ field }) => (
-              <FormItem className="items-stretch">
-                <Stack className="justify-between">
-                  <FormLabel>Screenshot URL</FormLabel>
-
-                  <Button
-                    type="button"
-                    size="sm"
-                    variant="secondary"
-                    prefix={
-                      <RefreshCwIcon className={cx(screenshotAction.isPending && "animate-spin")} />
-                    }
-                    className="-my-1"
-                    disabled={!isValidUrl(websiteUrl) || screenshotAction.isPending}
-                    onClick={() => {
-                      screenshotAction.execute({
-                        url: websiteUrl,
-                        path: `tools/${tool?.slug}`,
-                      })
-                    }}
-                  >
-                    {field.value ? "Regenerate" : "Generate"}
-                  </Button>
-                </Stack>
-
-                <Stack size="sm">
-                  {field.value && (
-                    <img
-                      src={field.value}
-                      alt="Screenshot"
-                      className="h-8 max-w-32 border box-content rounded-md object-contain"
-                    />
-                  )}
-
+            <FormField
+              control={form.control}
+              name="submitterEmail"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Submitter Email</FormLabel>
                   <FormControl>
-                    <Input type="url" className="flex-1" {...field} />
+                    <Input type="email" {...field} />
                   </FormControl>
-                </Stack>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <FormField
-            control={form.control}
-            name="categories"
-            render={({ field }) => (
-              <FormItem className="col-span-full">
-                <FormLabel>Categories</FormLabel>
-                <RelationSelector
-                  promise={categories}
-                  selectedIds={field.value ?? []}
-                  onChange={field.onChange}
-                  prompt={
-                    name &&
-                    description &&
-                    `From the list of available categories below, suggest relevant categories for this link: 
+            <FormField
+              control={form.control}
+              name="submitterNote"
+              render={({ field }) => (
+                <FormItem className="col-span-full">
+                  <FormLabel>Submitter Note</FormLabel>
+                  <FormControl>
+                    <TextArea {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </>
+        )}
+
+        <FormField
+          control={form.control}
+          name="faviconUrl"
+          render={({ field }) => (
+            <FormItem className="items-stretch">
+              <Stack className="justify-between">
+                <FormLabel>Favicon URL</FormLabel>
+
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="secondary"
+                  prefix={
+                    <RefreshCwIcon className={cx(faviconAction.isPending && "animate-spin")} />
+                  }
+                  className="-my-1"
+                  disabled={!isValidUrl(websiteUrl) || faviconAction.isPending}
+                  onClick={() => {
+                    faviconAction.execute({
+                      url: websiteUrl,
+                      path: `tools/${tool?.slug}`,
+                    })
+                  }}
+                >
+                  {field.value ? "Regenerate" : "Generate"}
+                </Button>
+              </Stack>
+
+              <Stack size="sm">
+                {field.value && (
+                  <img
+                    src={field.value}
+                    alt="Favicon"
+                    className="h-8 max-w-32 border box-content rounded-md object-contain"
+                  />
+                )}
+
+                <FormControl>
+                  <Input type="url" className="flex-1" {...field} />
+                </FormControl>
+              </Stack>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="screenshotUrl"
+          render={({ field }) => (
+            <FormItem className="items-stretch">
+              <Stack className="justify-between">
+                <FormLabel>Screenshot URL</FormLabel>
+
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="secondary"
+                  prefix={
+                    <RefreshCwIcon className={cx(screenshotAction.isPending && "animate-spin")} />
+                  }
+                  className="-my-1"
+                  disabled={!isValidUrl(websiteUrl) || screenshotAction.isPending}
+                  onClick={() => {
+                    screenshotAction.execute({
+                      url: websiteUrl,
+                      path: `tools/${tool?.slug}`,
+                    })
+                  }}
+                >
+                  {field.value ? "Regenerate" : "Generate"}
+                </Button>
+              </Stack>
+
+              <Stack size="sm">
+                {field.value && (
+                  <img
+                    src={field.value}
+                    alt="Screenshot"
+                    className="h-8 max-w-32 border box-content rounded-md object-contain"
+                  />
+                )}
+
+                <FormControl>
+                  <Input type="url" className="flex-1" {...field} />
+                </FormControl>
+              </Stack>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="categories"
+          render={({ field }) => (
+            <FormItem className="col-span-full">
+              <FormLabel>Categories</FormLabel>
+              <RelationSelector
+                promise={categories}
+                selectedIds={field.value ?? []}
+                onChange={field.onChange}
+                prompt={
+                  name &&
+                  description &&
+                  `From the list of available categories below, suggest relevant categories for this link: 
                     
                     - URL: ${websiteUrl}
                     - Meta title: ${name}
                     - Meta description: ${description}.`
-                  }
-                />
-              </FormItem>
-            )}
-          />
+                }
+              />
+            </FormItem>
+          )}
+        />
 
-          <FormField
-            control={form.control}
-            name="isFeatured"
-            render={({ field }) => (
-              <FormItem direction="row">
-                <FormControl>
-                  <Switch onCheckedChange={field.onChange} checked={field.value} />
-                </FormControl>
-                <FormLabel>Feature this tool</FormLabel>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
+        <FormField
+          control={form.control}
+          name="isFeatured"
+          render={({ field }) => (
+            <FormItem direction="row">
+              <FormControl>
+                <Switch onCheckedChange={field.onChange} checked={field.value} />
+              </FormControl>
+              <FormLabel>Feature this tool</FormLabel>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
         <div className="flex justify-between gap-4 col-span-full">
           <Button size="md" variant="secondary" asChild>

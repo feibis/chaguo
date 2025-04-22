@@ -5,6 +5,7 @@ import type { ComponentProps } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import { useServerAction } from "zsa-react"
+import { UserActions } from "~/app/admin/users/_components/user-actions"
 import { Avatar, AvatarImage } from "~/components/common/avatar"
 import { Button } from "~/components/common/button"
 import {
@@ -15,6 +16,7 @@ import {
   FormLabel,
   FormMessage,
 } from "~/components/common/form"
+import { H3 } from "~/components/common/heading"
 import { Input } from "~/components/common/input"
 import { Link } from "~/components/common/link"
 import { Stack } from "~/components/common/stack"
@@ -28,7 +30,7 @@ type UserFormProps = ComponentProps<"form"> & {
   user: NonNullable<Awaited<ReturnType<typeof findUserById>>>
 }
 
-export function UserForm({ children, className, user, ...props }: UserFormProps) {
+export function UserForm({ children, className, title, user, ...props }: UserFormProps) {
   const form = useForm({
     resolver: zodResolver(userSchema),
     defaultValues: {
@@ -68,9 +70,17 @@ export function UserForm({ children, className, user, ...props }: UserFormProps)
 
   return (
     <Form {...form}>
+      <Stack className="justify-between">
+        <H3 className="flex-1 truncate">{title}</H3>
+
+        <Stack size="sm" className="-my-0.5">
+          <UserActions user={user} size="md" />
+        </Stack>
+      </Stack>
+
       <form
         onSubmit={handleSubmit}
-        className={cx("grid gap-4 max-w-3xl sm:grid-cols-2", className)}
+        className={cx("grid gap-4 @sm:grid-cols-2", className)}
         noValidate
         {...props}
       >

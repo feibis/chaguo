@@ -3,8 +3,9 @@
 import { isValidUrl } from "@curiousleaf/utils"
 import type { Tool } from "@prisma/client"
 import { EllipsisIcon } from "lucide-react"
-import { usePathname } from "next/navigation"
-import type { ComponentProps, Dispatch, SetStateAction } from "react"
+import { usePathname, useRouter } from "next/navigation"
+import { type ComponentProps, useState } from "react"
+import { ToolsDeleteDialog } from "~/app/admin/tools/_components/tools-delete-dialog"
 import { Button } from "~/components/common/button"
 import {
   DropdownMenu,
@@ -15,16 +16,16 @@ import {
 } from "~/components/common/dropdown-menu"
 import { Link } from "~/components/common/link"
 import { isToolVisible } from "~/lib/tools"
-import type { DataTableRowAction } from "~/types"
 import { cx } from "~/utils/cva"
 
 type ToolActionsProps = ComponentProps<typeof Button> & {
   tool: Tool
-  setRowAction: Dispatch<SetStateAction<DataTableRowAction<Tool> | null>>
 }
 
-export const ToolActions = ({ className, tool, setRowAction, ...props }: ToolActionsProps) => {
+export const ToolActions = ({ className, tool, ...props }: ToolActionsProps) => {
   const pathname = usePathname()
+  const router = useRouter()
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false)
 
   return (
     <DropdownMenu modal={false}>
@@ -64,13 +65,18 @@ export const ToolActions = ({ className, tool, setRowAction, ...props }: ToolAct
 
         <DropdownMenuSeparator />
 
-        <DropdownMenuItem
-          onSelect={() => setRowAction({ data: tool, type: "delete" })}
-          className="text-red-500"
-        >
+        <DropdownMenuItem onSelect={() => setIsDeleteOpen(true)} className="text-red-500">
           Delete
         </DropdownMenuItem>
       </DropdownMenuContent>
+
+      <ToolsDeleteDialog
+        open={isDeleteOpen}
+        onOpenChange={() => setIsDeleteOpen(false)}
+        tools={[tool]}
+        showTrigger={false}
+        onSuccess={() => router.push("/admin/tools")}
+      />
     </DropdownMenu>
   )
 }

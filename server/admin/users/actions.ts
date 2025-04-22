@@ -27,7 +27,7 @@ export const deleteUsers = adminProcedure
   .input(z.object({ ids: z.array(z.string()) }))
   .handler(async ({ input: { ids } }) => {
     await db.user.deleteMany({
-      where: { id: { in: ids } },
+      where: { id: { in: ids }, role: { not: "admin" } },
     })
 
     revalidatePath("/admin/users")

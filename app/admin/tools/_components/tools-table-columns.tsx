@@ -3,7 +3,7 @@
 import { formatDate } from "@curiousleaf/utils"
 import { type Tool, ToolStatus } from "@prisma/client"
 import type { ColumnDef } from "@tanstack/react-table"
-import type { ComponentProps, Dispatch, SetStateAction } from "react"
+import type { ComponentProps } from "react"
 import { ToolActions } from "~/app/admin/tools/_components/tool-actions"
 import { RowCheckbox } from "~/components/admin/row-checkbox"
 import { Badge } from "~/components/common/badge"
@@ -11,13 +11,8 @@ import { Note } from "~/components/common/note"
 import { DataTableColumnHeader } from "~/components/data-table/data-table-column-header"
 import { DataTableLink } from "~/components/data-table/data-table-link"
 import { VerifiedBadge } from "~/components/web/verified-badge"
-import type { DataTableRowAction } from "~/types"
 
-type GetColumnsProps = {
-  setRowAction: Dispatch<SetStateAction<DataTableRowAction<Tool> | null>>
-}
-
-export const getColumns = ({ setRowAction }: GetColumnsProps): ColumnDef<Tool>[] => {
+export const getColumns = (): ColumnDef<Tool>[] => {
   const statusBadges: Record<ToolStatus, ComponentProps<typeof Badge>> = {
     [ToolStatus.Draft]: {
       variant: "warning",
@@ -113,13 +108,7 @@ export const getColumns = ({ setRowAction }: GetColumnsProps): ColumnDef<Tool>[]
     },
     {
       id: "actions",
-      cell: ({ row }) => (
-        <ToolActions
-          tool={row.original}
-          setRowAction={setRowAction}
-          className="float-right -my-1"
-        />
-      ),
+      cell: ({ row }) => <ToolActions tool={row.original} className="float-right -my-1" />,
       size: 0,
     },
   ]

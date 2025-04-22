@@ -3,19 +3,13 @@
 import { formatDate } from "@curiousleaf/utils"
 import type { Category } from "@prisma/client"
 import type { ColumnDef } from "@tanstack/react-table"
-import type { Dispatch, SetStateAction } from "react"
 import { CategoryActions } from "~/app/admin/categories/_components/category-actions"
 import { RowCheckbox } from "~/components/admin/row-checkbox"
 import { Note } from "~/components/common/note"
 import { DataTableColumnHeader } from "~/components/data-table/data-table-column-header"
 import { DataTableLink } from "~/components/data-table/data-table-link"
-import type { DataTableRowAction } from "~/types"
 
-type GetColumnsProps = {
-  setRowAction: Dispatch<SetStateAction<DataTableRowAction<Category> | null>>
-}
-
-export const getColumns = ({ setRowAction }: GetColumnsProps): ColumnDef<Category>[] => {
+export const getColumns = (): ColumnDef<Category>[] => {
   return [
     {
       id: "select",
@@ -63,13 +57,7 @@ export const getColumns = ({ setRowAction }: GetColumnsProps): ColumnDef<Categor
     },
     {
       id: "actions",
-      cell: ({ row }) => (
-        <CategoryActions
-          category={row.original}
-          setRowAction={setRowAction}
-          className="float-right -my-1"
-        />
-      ),
+      cell: ({ row }) => <CategoryActions category={row.original} className="float-right -my-1" />,
       size: 0,
     },
   ]

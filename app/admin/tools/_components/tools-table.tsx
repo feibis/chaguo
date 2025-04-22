@@ -3,8 +3,7 @@
 import { type Tool, ToolStatus } from "@prisma/client"
 import { CircleDashedIcon, CircleDotDashedIcon, CircleDotIcon, PlusIcon } from "lucide-react"
 import { useQueryStates } from "nuqs"
-import { use, useMemo, useState } from "react"
-import { ToolsDeleteDialog } from "~/app/admin/tools/_components/tools-delete-dialog"
+import { use, useMemo } from "react"
 import { getColumns } from "~/app/admin/tools/_components/tools-table-columns"
 import { ToolsTableToolbarActions } from "~/app/admin/tools/_components/tools-table-toolbar-actions"
 import { DateRangePicker } from "~/components/admin/date-range-picker"
@@ -17,7 +16,7 @@ import { DataTableViewOptions } from "~/components/data-table/data-table-view-op
 import { useDataTable } from "~/hooks/use-data-table"
 import type { findTools } from "~/server/admin/tools/queries"
 import { toolsTableParamsSchema } from "~/server/admin/tools/schemas"
-import type { DataTableFilterField, DataTableRowAction } from "~/types"
+import type { DataTableFilterField } from "~/types"
 
 type ToolsTableProps = {
   toolsPromise: ReturnType<typeof findTools>
@@ -26,10 +25,9 @@ type ToolsTableProps = {
 export function ToolsTable({ toolsPromise }: ToolsTableProps) {
   const { tools, toolsTotal, pageCount } = use(toolsPromise)
   const [{ perPage, sort }] = useQueryStates(toolsTableParamsSchema)
-  const [rowAction, setRowAction] = useState<DataTableRowAction<Tool> | null>(null)
 
   // Memoize the columns so they don't re-render on every render
-  const columns = useMemo(() => getColumns({ setRowAction }), [])
+  const columns = useMemo(() => getColumns(), [])
 
   // Search filters
   const filterFields: DataTableFilterField<Tool>[] = [
@@ -98,14 +96,6 @@ export function ToolsTable({ toolsPromise }: ToolsTableProps) {
           </DataTableToolbar>
         </DataTableHeader>
       </DataTable>
-
-      <ToolsDeleteDialog
-        open={rowAction?.type === "delete"}
-        onOpenChange={() => setRowAction(null)}
-        tools={rowAction?.data ? [rowAction?.data] : []}
-        showTrigger={false}
-        onSuccess={() => table.toggleAllRowsSelected(false)}
-      />
     </>
   )
 }

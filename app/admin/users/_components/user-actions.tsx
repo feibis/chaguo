@@ -2,9 +2,10 @@
 
 import type { User } from "@prisma/client"
 import { EllipsisIcon } from "lucide-react"
-import { useRouter } from "next/navigation"
-import { type ComponentProps, type Dispatch, type SetStateAction, useTransition } from "react"
+import { usePathname, useRouter } from "next/navigation"
+import { type ComponentProps, useState, useTransition } from "react"
 import { toast } from "sonner"
+import { UsersDeleteDialog } from "~/app/admin/users/_components/users-delete-dialog"
 import { Button } from "~/components/common/button"
 import {
   DropdownMenu,
@@ -22,19 +23,18 @@ import { Link } from "~/components/common/link"
 import { admin, useSession } from "~/lib/auth-client"
 import { getErrorMessage } from "~/lib/handle-error"
 import { updateUser } from "~/server/admin/users/actions"
-import type { DataTableRowAction } from "~/types"
 import { cx } from "~/utils/cva"
 
 type UserActionsProps = ComponentProps<typeof Button> & {
   user: User
-  setRowAction: Dispatch<SetStateAction<DataTableRowAction<User> | null>>
 }
 
-export const UserActions = ({ user, setRowAction, className, ...props }: UserActionsProps) => {
+export const UserActions = ({ user, className, ...props }: UserActionsProps) => {
   const { data: session } = useSession()
-  const [isUpdatePending, startUpdateTransition] = useTransition()
+  const pathname = usePathname()
   const router = useRouter()
-
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false)
+  const [isUpdatePending, startUpdateTransition] = useTransition()
   const roles = ["admin", "user"] as const
 
   if (user.id === session?.user.id) {
@@ -55,9 +55,11 @@ export const UserActions = ({ user, setRowAction, className, ...props }: UserAct
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end" sideOffset={8}>
-        <DropdownMenuItem asChild>
-          <Link href={`/admin/users/${user.id}`}>Edit</Link>
-        </DropdownMenuItem>
+        {pathname !== `/admin/users/${user.id}` && (
+          <DropdownMenuItem asChild>
+            <Link href={`/admin/users/${user.id}`}>Edit</Link>
+          </DropdownMenuItem>
+        )}
 
         <DropdownMenuSub>
           <DropdownMenuSubTrigger>Role</DropdownMenuSubTrigger>
@@ -151,13 +153,18 @@ export const UserActions = ({ user, setRowAction, className, ...props }: UserAct
 
         <DropdownMenuSeparator />
 
-        <DropdownMenuItem
-          onSelect={() => setRowAction({ data: user, type: "delete" })}
-          className="text-red-500"
-        >
+        <DropdownMenuItem onSelect={() => setIsDeleteOpen(true)} className="text-red-500">
           Delete
         </DropdownMenuItem>
       </DropdownMenuContent>
+
+      <UsersDeleteDialog
+        open={isDeleteOpen}
+        onOpenChange={() => setIsDeleteOpen(false)}
+        users={[user]}
+        showTrigger={false}
+        onSuccess={() => router.push("/admin/users")}
+      />
     </DropdownMenu>
   )
 }

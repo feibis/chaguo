@@ -2,8 +2,7 @@
 
 import type { User } from "@prisma/client"
 import { useQueryStates } from "nuqs"
-import { use, useMemo, useState } from "react"
-import { UsersDeleteDialog } from "~/app/admin/users/_components/users-delete-dialog"
+import { use, useMemo } from "react"
 import { DateRangePicker } from "~/components/admin/date-range-picker"
 import { DataTable } from "~/components/data-table/data-table"
 import { DataTableHeader } from "~/components/data-table/data-table-header"
@@ -12,7 +11,7 @@ import { DataTableViewOptions } from "~/components/data-table/data-table-view-op
 import { useDataTable } from "~/hooks/use-data-table"
 import type { findUsers } from "~/server/admin/users/queries"
 import { usersTableParamsSchema } from "~/server/admin/users/schemas"
-import type { DataTableFilterField, DataTableRowAction } from "~/types"
+import type { DataTableFilterField } from "~/types"
 import { getColumns } from "./users-table-columns"
 import { UsersTableToolbarActions } from "./users-table-toolbar-actions"
 
@@ -23,10 +22,9 @@ type UsersTableProps = {
 export function UsersTable({ usersPromise }: UsersTableProps) {
   const { users, usersTotal, pageCount } = use(usersPromise)
   const [{ perPage, sort }] = useQueryStates(usersTableParamsSchema)
-  const [rowAction, setRowAction] = useState<DataTableRowAction<User> | null>(null)
 
   // Memoize the columns so they don't re-render on every render
-  const columns = useMemo(() => getColumns({ setRowAction }), [])
+  const columns = useMemo(() => getColumns(), [])
 
   // Search filters
   const filterFields: DataTableFilterField<User>[] = [
@@ -63,14 +61,6 @@ export function UsersTable({ usersPromise }: UsersTableProps) {
           </DataTableToolbar>
         </DataTableHeader>
       </DataTable>
-
-      <UsersDeleteDialog
-        open={rowAction?.type === "delete"}
-        onOpenChange={() => setRowAction(null)}
-        users={rowAction?.data ? [rowAction?.data] : []}
-        showTrigger={false}
-        onSuccess={() => table.toggleAllRowsSelected(false)}
-      />
     </>
   )
 }

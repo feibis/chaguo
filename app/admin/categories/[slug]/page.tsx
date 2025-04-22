@@ -1,10 +1,8 @@
 import { notFound } from "next/navigation"
 import { CategoryForm } from "~/app/admin/categories/_components/category-form"
 import { Wrapper } from "~/components/admin/wrapper"
-import { H3 } from "~/components/common/heading"
 import { findCategoryBySlug } from "~/server/admin/categories/queries"
 import { findToolList } from "~/server/admin/tools/queries"
-import { UpdateCategoryActions } from "./actions"
 
 type PageProps = {
   params: Promise<{ slug: string }>
@@ -20,13 +18,7 @@ export default async function UpdateCategoryPage({ params }: PageProps) {
 
   return (
     <Wrapper size="md">
-      <div className="flex items-center justify-between gap-4">
-        <H3>Update category</H3>
-
-        <UpdateCategoryActions category={category} />
-      </div>
-
-      <CategoryForm category={category} tools={findToolList()} />
+      <CategoryForm title="Update category" category={category} tools={findToolList()} />
     </Wrapper>
   )
 }

@@ -7,6 +7,7 @@ import type { ComponentProps } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import { useServerAction } from "zsa-react"
+import { CategoryActions } from "~/app/admin/categories/_components/category-actions"
 import { RelationSelector } from "~/components/admin/relation-selector"
 import { Button } from "~/components/common/button"
 import {
@@ -17,8 +18,10 @@ import {
   FormLabel,
   FormMessage,
 } from "~/components/common/form"
+import { H3 } from "~/components/common/heading"
 import { Input } from "~/components/common/input"
 import { Link } from "~/components/common/link"
+import { Stack } from "~/components/common/stack"
 import { useComputedField } from "~/hooks/use-computed-field"
 import { upsertCategory } from "~/server/admin/categories/actions"
 import type { findCategoryBySlug } from "~/server/admin/categories/queries"
@@ -34,6 +37,7 @@ type CategoryFormProps = ComponentProps<"form"> & {
 export function CategoryForm({
   children,
   className,
+  title,
   category,
   tools,
   ...props
@@ -86,9 +90,17 @@ export function CategoryForm({
 
   return (
     <Form {...form}>
+      <Stack className="justify-between">
+        <H3 className="flex-1 truncate">{title}</H3>
+
+        <Stack size="sm" className="-my-0.5">
+          {category && <CategoryActions category={category} size="md" />}
+        </Stack>
+      </Stack>
+
       <form
         onSubmit={handleSubmit}
-        className={cx("grid gap-4 max-w-3xl sm:grid-cols-2", className)}
+        className={cx("grid gap-4 @sm:grid-cols-2", className)}
         noValidate
         {...props}
       >

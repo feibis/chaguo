@@ -4,20 +4,14 @@ import { formatDate } from "@curiousleaf/utils"
 import type { User } from "@prisma/client"
 import type { ColumnDef } from "@tanstack/react-table"
 import { BanIcon, ShieldIcon } from "lucide-react"
-import type { Dispatch, SetStateAction } from "react"
 import { UserActions } from "~/app/admin/users/_components/user-actions"
 import { RowCheckbox } from "~/components/admin/row-checkbox"
 import { Badge } from "~/components/common/badge"
 import { Note } from "~/components/common/note"
 import { DataTableColumnHeader } from "~/components/data-table/data-table-column-header"
 import { DataTableLink } from "~/components/data-table/data-table-link"
-import type { DataTableRowAction } from "~/types"
 
-type GetColumnsProps = {
-  setRowAction: Dispatch<SetStateAction<DataTableRowAction<User> | null>>
-}
-
-export const getColumns = ({ setRowAction }: GetColumnsProps): ColumnDef<User>[] => {
+export const getColumns = (): ColumnDef<User>[] => {
   return [
     {
       id: "select",
@@ -38,6 +32,7 @@ export const getColumns = ({ setRowAction }: GetColumnsProps): ColumnDef<User>[]
         <RowCheckbox
           checked={row.getIsSelected()}
           onChange={e => row.toggleSelected(e.target.checked)}
+          disabled={row.original.role === "admin"}
           aria-label="Select row"
         />
       ),
@@ -78,13 +73,7 @@ export const getColumns = ({ setRowAction }: GetColumnsProps): ColumnDef<User>[]
     },
     {
       id: "actions",
-      cell: ({ row }) => (
-        <UserActions
-          user={row.original}
-          setRowAction={setRowAction}
-          className="float-right -my-1"
-        />
-      ),
+      cell: ({ row }) => <UserActions user={row.original} className="float-right -my-1" />,
       size: 0,
     },
   ]
