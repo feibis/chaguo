@@ -347,6 +347,7 @@ export const ToolPublishActions = ({
         return (
           <Button
             key={String(action.children)}
+            name="submit"
             size="md"
             isPending={isPending}
             className="lg:min-w-24"

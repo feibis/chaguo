@@ -156,7 +156,14 @@ export function ToolForm({
     onError: ({ err }) => toast.error(err.message),
   })
 
-  const handleSubmit = form.handleSubmit(data => {
+  const handleSubmit = form.handleSubmit((data, event) => {
+    const submitter = (event?.nativeEvent as SubmitEvent)?.submitter
+    const isStatusChange = submitter?.getAttribute("name") !== "submit"
+
+    if (isStatusChange) {
+      setIsStatusPending(true)
+    }
+
     upsertAction.execute({ id: tool?.id, ...data })
   })
 
@@ -164,10 +171,6 @@ export function ToolForm({
     // Update form values
     form.setValue("status", status)
     form.setValue("publishedAt", publishedAt)
-
-    // Set status pending
-    // TODO: This is runing infinitely, if there's a validation error in the form
-    setIsStatusPending(true)
 
     // Submit the form with updated values
     handleSubmit()
