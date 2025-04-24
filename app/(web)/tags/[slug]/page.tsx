@@ -38,7 +38,7 @@ export const generateStaticParams = async () => {
   return tags.map(({ slug }) => ({ slug }))
 }
 
-export const generateMetadata = async (props: PageProps) => {
+export const generateMetadata = async (props: PageProps): Promise<Metadata> => {
   const tag = await getTag(props)
   const url = `/tags/${tag.slug}`
 
