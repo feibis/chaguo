@@ -137,10 +137,6 @@ export const Header = ({ children, className, ...props }: ComponentProps<typeof 
         <NavLink href="/about" className="text-base">
           About
         </NavLink>
-
-        <Suspense fallback={<SearchIcon className="size-4 sm:hidden" />}>
-          <SearchForm className="sm:hidden" />
-        </Suspense>
       </nav>
     </Container>
   )
