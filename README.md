@@ -22,11 +22,10 @@ Dirstarter uses the following third-party services:
 
 - Database: [Postgres](https://postgres.org)
 - Analytics: [Plausible](https://plausible.io), [PostHog](https://posthog.com)
-- Newsletter: [Beehiiv](https://kulp.in/beehiiv)
+- Marketing & Transactional Email: [Resend](https://resend.com)
 - Scraping: [Jina](https://jina.ai)
 - File Storage: [AWS S3](https://aws.amazon.com/s3)
 - Payments: [Stripe](https://stripe.com)
-- Email: [Resend](https://resend.com)
 - Screenshots: [ScreenshotOne](https://kulp.in/screenshotone)
 
 Make sure to set up accounts with these services and have the credentials ready.
