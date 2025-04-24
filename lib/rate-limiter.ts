@@ -5,31 +5,30 @@ import { headers } from "next/headers"
 import { redis } from "~/services/redis"
 import { tryCatch } from "~/utils/helpers"
 
-const limiters = {
-  submission: new Ratelimit({
-    redis,
-    analytics: true,
-    limiter: Ratelimit.slidingWindow(3, "24 h"), // 3 submissions per day
-  }),
-
-  report: new Ratelimit({
-    redis,
-    analytics: true,
-    limiter: Ratelimit.slidingWindow(3, "1 h"), // 3 submissions per hour
-  }),
-
-  newsletter: new Ratelimit({
-    redis,
-    analytics: true,
-    limiter: Ratelimit.slidingWindow(3, "24 h"), // 3 attempts per day
-  }),
-
-  claim: new Ratelimit({
-    redis,
-    analytics: true,
-    limiter: Ratelimit.slidingWindow(5, "1 h"), // 5 attempts per hour
-  }),
-}
+const limiters = redis
+  ? {
+      submission: new Ratelimit({
+        redis,
+        analytics: true,
+        limiter: Ratelimit.slidingWindow(3, "24 h"), // 3 attempts per day
+      }),
+      report: new Ratelimit({
+        redis,
+        analytics: true,
+        limiter: Ratelimit.slidingWindow(3, "1 h"), // 3 attempts per hour
+      }),
+      newsletter: new Ratelimit({
+        redis,
+        analytics: true,
+        limiter: Ratelimit.slidingWindow(3, "24 h"), // 3 attempts per day
+      }),
+      claim: new Ratelimit({
+        redis,
+        analytics: true,
+        limiter: Ratelimit.slidingWindow(5, "1 h"), // 5 attempts per hour
+      }),
+    }
+  : null
 
 /**
  * Get the IP address of the client
@@ -53,7 +52,9 @@ export const getIP = async () => {
  * @param action - The action to check
  * @returns True if the user is rate limited, false otherwise
  */
-export const isRateLimited = async (id: string, action: keyof typeof limiters) => {
+export const isRateLimited = async (id: string, action: keyof NonNullable<typeof limiters>) => {
+  if (!limiters) return false
+
   const { data, error } = await tryCatch(limiters[action].limit(id))
 
   if (error) {
