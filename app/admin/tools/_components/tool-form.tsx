@@ -37,7 +37,7 @@ import { isToolVisible } from "~/lib/tools"
 import type { findCategoryList } from "~/server/admin/categories/queries"
 import { upsertTool } from "~/server/admin/tools/actions"
 import type { findToolBySlug } from "~/server/admin/tools/queries"
-import { toolSchema } from "~/server/admin/tools/schemas"
+import { toolSchema } from "~/server/admin/tools/schema"
 import { cx } from "~/utils/cva"
 
 const ToolStatusChange = ({ tool }: { tool: Tool }) => {

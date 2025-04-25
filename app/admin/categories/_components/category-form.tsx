@@ -25,7 +25,7 @@ import { Stack } from "~/components/common/stack"
 import { useComputedField } from "~/hooks/use-computed-field"
 import { upsertCategory } from "~/server/admin/categories/actions"
 import type { findCategoryBySlug } from "~/server/admin/categories/queries"
-import { categorySchema } from "~/server/admin/categories/schemas"
+import { categorySchema } from "~/server/admin/categories/schema"
 import type { findToolList } from "~/server/admin/tools/queries"
 import { cx } from "~/utils/cva"
 

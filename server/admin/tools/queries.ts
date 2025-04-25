@@ -1,7 +1,7 @@
 import { isTruthy } from "@curiousleaf/utils"
 import { type Prisma, ToolStatus } from "@prisma/client"
 import { endOfDay, startOfDay } from "date-fns"
-import type { ToolsTableSchema } from "~/server/admin/tools/schemas"
+import type { ToolsTableSchema } from "~/server/admin/tools/schema"
 import { db } from "~/services/db"
 
 export const findTools = async (search: ToolsTableSchema, where?: Prisma.ToolWhereInput) => {

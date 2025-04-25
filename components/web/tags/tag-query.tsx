@@ -2,7 +2,7 @@ import type { SearchParams } from "nuqs"
 import { Pagination } from "~/components/web/pagination"
 import { TagList } from "~/components/web/tags/tag-list"
 import { searchTags } from "~/server/web/tags/queries"
-import { tagsSearchParamsCache } from "~/server/web/tags/schemas"
+import { tagsSearchParamsCache } from "~/server/web/tags/schema"
 
 type TagQueryProps = {
   searchParams: Promise<SearchParams>

@@ -24,7 +24,7 @@ import { DataTableToolbar } from "~/components/data-table/data-table-toolbar"
 import { VerifiedBadge } from "~/components/web/verified-badge"
 import { useDataTable } from "~/hooks/use-data-table"
 import type { findTools } from "~/server/admin/tools/queries"
-import { toolsTableParamsSchema } from "~/server/admin/tools/schemas"
+import { toolsTableParamsSchema } from "~/server/admin/tools/schema"
 import type { DataTableFilterField } from "~/types"
 
 type DashboardTableProps = {

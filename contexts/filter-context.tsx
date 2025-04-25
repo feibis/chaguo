@@ -2,7 +2,7 @@
 
 import { type Values, useQueryStates } from "nuqs"
 import { type PropsWithChildren, createContext, use, useTransition } from "react"
-import { toolsFilterParamsSchema } from "~/server/web/tools/schemas"
+import { toolsFilterParamsSchema } from "~/server/web/tools/schema"
 
 export type FiltersContextType = {
   filters: Values<typeof toolsFilterParamsSchema>

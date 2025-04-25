@@ -1,6 +1,5 @@
 import { ReportType } from "@prisma/client"
 import { z } from "zod"
-import { config } from "~/config"
 
 export const submitToolSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -14,13 +13,9 @@ export const submitToolSchema = z.object({
 export const newsletterSchema = z.object({
   captcha: z.literal("").optional(),
   value: z.string().email("Please enter a valid email address"),
-  referring_site: z.string().optional().default(config.site.url),
-  utm_source: z.string().optional().default(config.site.name),
-  utm_medium: z.string().optional().default("subscribe_form"),
-  utm_campaign: z.string().optional().default("organic"),
-  double_opt_override: z.string().optional(),
-  reactivate_existing: z.boolean().optional(),
-  send_welcome_email: z.boolean().optional(),
+  unsubscribed: z.boolean().default(false),
+  firstName: z.string().optional(),
+  lastName: z.string().optional(),
 })
 
 export const reportSchema = z.object({

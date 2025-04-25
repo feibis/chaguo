@@ -10,7 +10,7 @@ export type EmailProps = EmailWrapperProps & {
 const EmailSubmissionPremium = ({ tool, ...props }: EmailProps) => {
   return (
     <EmailWrapper {...props}>
-      <Text>Hey {tool.submitterName}!</Text>
+      <Text>Hey {tool.submitterName?.trim()}!</Text>
 
       {tool.isFeatured ? (
         tool.publishedAt && tool.status === ToolStatus.Published ? (

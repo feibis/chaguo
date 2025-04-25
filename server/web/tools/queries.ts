@@ -3,7 +3,7 @@ import { getRandomElement } from "@curiousleaf/utils"
 import { type Prisma, ToolStatus } from "@prisma/client"
 import { unstable_cacheLife as cacheLife, unstable_cacheTag as cacheTag } from "next/cache"
 import { toolManyPayload, toolOnePayload } from "~/server/web/tools/payloads"
-import type { ToolsFiltersSchema } from "~/server/web/tools/schemas"
+import type { ToolsFiltersSchema } from "~/server/web/tools/schema"
 import { db } from "~/services/db"
 
 export const searchTools = async (search: ToolsFiltersSchema, where?: Prisma.ToolWhereInput) => {

@@ -3,7 +3,7 @@
 import { z } from "zod"
 import { getIP, isRateLimited } from "~/lib/rate-limiter"
 import { userProcedure } from "~/lib/safe-actions"
-import { reportSchema } from "~/server/web/shared/schemas"
+import { reportSchema } from "~/server/web/shared/schema"
 import { db } from "~/services/db"
 import { tryCatch } from "~/utils/helpers"
 

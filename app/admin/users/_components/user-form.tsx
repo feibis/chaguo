@@ -22,7 +22,7 @@ import { Link } from "~/components/common/link"
 import { Stack } from "~/components/common/stack"
 import { updateUser } from "~/server/admin/users/actions"
 import type { findUserById } from "~/server/admin/users/queries"
-import { userSchema } from "~/server/admin/users/schemas"
+import { userSchema } from "~/server/admin/users/schema"
 import { uploadUserImage } from "~/server/web/users/actions"
 import { cx } from "~/utils/cva"
 

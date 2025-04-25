@@ -17,7 +17,7 @@ import {
 } from "~/components/common/dialog"
 import { siteConfig } from "~/config/site"
 import { contentSchema } from "~/server/admin/shared/schema"
-import type { ToolSchema } from "~/server/admin/tools/schemas"
+import type { ToolSchema } from "~/server/admin/tools/schema"
 
 export const ToolGenerateContent = () => {
   const key = siteConfig.name.toLowerCase()

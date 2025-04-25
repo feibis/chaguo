@@ -5,7 +5,7 @@ import { after } from "next/server"
 import { z } from "zod"
 import { removeS3Directories } from "~/lib/media"
 import { adminProcedure } from "~/lib/safe-actions"
-import { userSchema } from "~/server/admin/users/schemas"
+import { userSchema } from "~/server/admin/users/schema"
 import { db } from "~/services/db"
 
 export const updateUser = adminProcedure

@@ -24,7 +24,7 @@ import { Input } from "~/components/common/input"
 import { TextArea } from "~/components/common/textarea"
 import { FeatureNudge } from "~/components/web/feature-nudge"
 import { useSession } from "~/lib/auth-client"
-import { type SubmitToolSchema, submitToolSchema } from "~/server/web/shared/schemas"
+import { type SubmitToolSchema, submitToolSchema } from "~/server/web/shared/schema"
 import { cx } from "~/utils/cva"
 
 export const SubmitForm = ({ className, ...props }: ComponentProps<"form">) => {

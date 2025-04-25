@@ -8,7 +8,7 @@ import { z } from "zod"
 import { removeS3Directories } from "~/lib/media"
 import { notifySubmitterOfToolPublished, notifySubmitterOfToolScheduled } from "~/lib/notifications"
 import { adminProcedure } from "~/lib/safe-actions"
-import { toolSchema } from "~/server/admin/tools/schemas"
+import { toolSchema } from "~/server/admin/tools/schema"
 import { db } from "~/services/db"
 
 export const upsertTool = adminProcedure

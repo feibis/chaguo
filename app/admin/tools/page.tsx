@@ -3,7 +3,7 @@ import { Suspense } from "react"
 import { ToolsTable } from "~/app/admin/tools/_components/tools-table"
 import { DataTableSkeleton } from "~/components/data-table/data-table-skeleton"
 import { findTools } from "~/server/admin/tools/queries"
-import { toolsTableParamsCache } from "~/server/admin/tools/schemas"
+import { toolsTableParamsCache } from "~/server/admin/tools/schema"
 
 type ToolsPageProps = {
   searchParams: Promise<SearchParams>

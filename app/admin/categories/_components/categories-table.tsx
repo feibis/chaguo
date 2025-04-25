@@ -15,7 +15,7 @@ import { DataTableToolbar } from "~/components/data-table/data-table-toolbar"
 import { DataTableViewOptions } from "~/components/data-table/data-table-view-options"
 import { useDataTable } from "~/hooks/use-data-table"
 import type { findCategories } from "~/server/admin/categories/queries"
-import { categoriesTableParamsSchema } from "~/server/admin/categories/schemas"
+import { categoriesTableParamsSchema } from "~/server/admin/categories/schema"
 import type { DataTableFilterField } from "~/types"
 
 type CategoriesTableProps = {

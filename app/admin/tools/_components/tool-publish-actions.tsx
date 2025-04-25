@@ -19,7 +19,7 @@ import { Stack } from "~/components/common/stack"
 import { ExternalLink } from "~/components/web/external-link"
 import { siteConfig } from "~/config/site"
 import type { findToolBySlug } from "~/server/admin/tools/queries"
-import type { ToolSchema } from "~/server/admin/tools/schemas"
+import type { ToolSchema } from "~/server/admin/tools/schema"
 import { cx } from "~/utils/cva"
 
 type ToolPublishActionsProps = ComponentProps<typeof Stack> & {

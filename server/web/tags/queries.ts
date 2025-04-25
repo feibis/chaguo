@@ -1,7 +1,7 @@
 import { type Prisma, ToolStatus } from "@prisma/client"
 import { unstable_cacheLife as cacheLife, unstable_cacheTag as cacheTag } from "next/cache"
 import { tagManyPayload, tagOnePayload } from "~/server/web/tags/payloads"
-import type { TagsSearchParams } from "~/server/web/tags/schemas"
+import type { TagsSearchParams } from "~/server/web/tags/schema"
 import { db } from "~/services/db"
 
 export const searchTags = async (search: TagsSearchParams, where?: Prisma.TagWhereInput) => {

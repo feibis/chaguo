@@ -9,6 +9,7 @@ export type EmailParams = {
   to: string
   subject: string
   react: ReactElement
+  replyTo?: string
 }
 
 /**
@@ -19,7 +20,7 @@ export type EmailParams = {
 const prepareEmail = async (email: EmailParams): Promise<CreateEmailOptions> => {
   return {
     from: `${config.site.name} <${env.RESEND_SENDER_EMAIL}>`,
-    replyTo: config.site.email,
+    replyTo: email.replyTo ?? (email.to !== config.site.email ? email.to : undefined),
     to: email.to,
     subject: email.subject,
     react: email.react,

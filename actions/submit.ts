@@ -8,7 +8,7 @@ import { subscribeToNewsletter } from "~/actions/subscribe"
 import { auth } from "~/lib/auth"
 import { notifySubmitterOfToolSubmitted } from "~/lib/notifications"
 import { getIP, isRateLimited } from "~/lib/rate-limiter"
-import { submitToolSchema } from "~/server/web/shared/schemas"
+import { submitToolSchema } from "~/server/web/shared/schema"
 import { db } from "~/services/db"
 import { isDisposableEmail } from "~/utils/helpers"
 
@@ -58,8 +58,7 @@ export const submitTool = createServerAction()
     if (newsletterOptIn) {
       await subscribeToNewsletter({
         value: data.submitterEmail,
-        utm_medium: "submit_form",
-        send_welcome_email: false,
+        firstName: data.submitterName,
       })
     }
 

@@ -43,7 +43,7 @@ export const Footer = ({ children, className, hideNewsletter, ...props }: Footer
               inbox.
             </Note>
 
-            <NewsletterForm medium="footer_form" />
+            <NewsletterForm />
           </Stack>
 
           <Stack className="text-sm/normal">

@@ -3,7 +3,7 @@ import type { SearchParams } from "nuqs"
 import { ToolListing } from "~/components/web/tools/tool-listing"
 import { findCategories } from "~/server/web/categories/queries"
 import { searchTools } from "~/server/web/tools/queries"
-import { toolsFilterParamsCache } from "~/server/web/tools/schemas"
+import { toolsFilterParamsCache } from "~/server/web/tools/schema"
 
 type ToolQueryProps = {
   searchParams: Promise<SearchParams>

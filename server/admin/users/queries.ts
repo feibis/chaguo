@@ -2,7 +2,7 @@ import { isTruthy } from "@curiousleaf/utils"
 import type { Prisma } from "@prisma/client"
 import { endOfDay, startOfDay } from "date-fns"
 import { db } from "~/services/db"
-import type { UsersTableSchema } from "./schemas"
+import type { UsersTableSchema } from "./schema"
 
 export const findUsers = async (search: UsersTableSchema) => {
   const { name, page, perPage, sort, from, to, operator } = search

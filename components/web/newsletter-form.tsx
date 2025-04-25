@@ -11,14 +11,13 @@ import { Button } from "~/components/common/button"
 import { Form, FormControl, FormField } from "~/components/common/form"
 import { Hint } from "~/components/common/hint"
 import { Input } from "~/components/common/input"
-import { type NewsletterSchema, newsletterSchema } from "~/server/web/shared/schemas"
+import { type NewsletterSchema, newsletterSchema } from "~/server/web/shared/schema"
 import { cx } from "~/utils/cva"
 
 type ButtonProps = ComponentProps<typeof Button>
 type InputProps = ComponentProps<typeof Input>
 
 type NewsletterFormProps = ComponentProps<"form"> & {
-  medium?: string
   placeholder?: string
   size?: InputProps["size"]
   buttonProps?: ButtonProps
@@ -27,7 +26,6 @@ type NewsletterFormProps = ComponentProps<"form"> & {
 export const NewsletterForm = ({
   children,
   className,
-  medium = "subscribe_form",
   placeholder = "Enter your email",
   size = "md",
   buttonProps = { size: "sm", children: "Subscribe" },
@@ -35,7 +33,7 @@ export const NewsletterForm = ({
 }: NewsletterFormProps) => {
   const form = useForm<NewsletterSchema>({
     resolver: zodResolver(newsletterSchema),
-    defaultValues: { captcha: "", value: "", utm_medium: medium },
+    defaultValues: { captcha: "", value: "" },
   })
 
   const { data, error, isPending, execute } = useServerAction(subscribeToNewsletter, {

@@ -109,6 +109,7 @@ export const notifyAdminOfPremiumTool = async (tool: Tool) => {
   return await sendEmail({
     to,
     subject,
+    replyTo: tool.submitterEmail ?? undefined,
     react: EmailAdminSubmissionPremium({ to, subject, tool }),
   })
 }

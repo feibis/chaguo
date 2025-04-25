@@ -3,7 +3,7 @@
 import { createServerAction } from "zsa"
 import { env } from "~/env"
 import { getIP, isRateLimited } from "~/lib/rate-limiter"
-import { newsletterSchema } from "~/server/web/shared/schemas"
+import { newsletterSchema } from "~/server/web/shared/schema"
 import { resend } from "~/services/resend"
 import { isDisposableEmail } from "~/utils/helpers"
 
@@ -14,7 +14,8 @@ import { isDisposableEmail } from "~/utils/helpers"
  */
 export const subscribeToNewsletter = createServerAction()
   .input(newsletterSchema)
-  .handler(async ({ input: { value: email, ...input } }) => {
+  .handler(async ({ input: { value: email, captcha, ...payload } }) => {
+    const audienceId = env.RESEND_AUDIENCE_ID
     const ip = await getIP()
     const rateLimitKey = `newsletter:${ip}`
 
@@ -28,12 +29,7 @@ export const subscribeToNewsletter = createServerAction()
       throw new Error("Invalid email address, please use a real one")
     }
 
-    const { error } = await resend.contacts.create({
-      email,
-      audienceId: env.RESEND_AUDIENCE_ID,
-      unsubscribed: false,
-      ...input,
-    })
+    const { error } = await resend.contacts.create({ audienceId, email, ...payload })
 
     if (error) {
       throw new Error("Failed to subscribe to newsletter. Please try again later.")
