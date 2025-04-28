@@ -1,6 +1,6 @@
 import { useCompletion } from "@ai-sdk/react"
 import { isTruthy } from "@curiousleaf/utils"
-import { MousePointerClickIcon } from "lucide-react"
+import { MousePointerClickIcon, SparklesIcon } from "lucide-react"
 import { use, useEffect, useState } from "react"
 import { AnimatedContainer } from "~/components/common/animated-container"
 import { Badge } from "~/components/common/badge"
@@ -17,6 +17,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "~/components/common/pop
 import { Separator } from "~/components/common/separator"
 import { Stack } from "~/components/common/stack"
 import { Tooltip } from "~/components/common/tooltip"
+import { cx } from "~/utils/cva"
 
 type Relation = {
   id: string
@@ -105,22 +106,25 @@ export const RelationSelector = ({
         <PopoverContent className="p-0" align="start">
           <Command>
             <CommandInput placeholder="Search..." />
-            <CommandList>
+
+            <CommandList className="min-w-72 w-[var(--radix-popper-anchor-width)]">
               <CommandEmpty>No results found.</CommandEmpty>
               <CommandGroup>
-                {relations.map(alt => {
-                  const isSelected = selectedIds.includes(alt.id)
+                {relations.map(relation => {
+                  const isSelected = selectedIds.includes(relation.id)
+                  const isSuggested = suggestedRelations.find(r => r.id === relation.id)
 
                   return (
                     <CommandItem
-                      key={alt.id}
+                      key={relation.id}
                       onSelect={() => {
                         const newSelected = isSelected
-                          ? selectedIds.filter(id => id !== alt.id)
-                          : [...selectedIds, alt.id]
+                          ? selectedIds.filter(id => id !== relation.id)
+                          : [...selectedIds, relation.id]
                         onChange(newSelected)
+                        setSuggestedRelations(rel => rel.filter(({ id }) => id !== relation.id))
                       }}
-                      className="gap-2"
+                      className={cx("gap-2", isSuggested && "bg-orange-50 dark:bg-orange-950")}
                     >
                       <input
                         type="checkbox"
@@ -128,20 +132,25 @@ export const RelationSelector = ({
                         readOnly
                         className="pointer-events-none"
                       />
-                      <span>{alt.name}</span>
+
+                      <span className="flex-1 truncate">{relation.name}</span>
+
+                      {isSuggested && (
+                        <SparklesIcon className="text-orange-800 dark:text-orange-100" />
+                      )}
                     </CommandItem>
                   )
                 })}
               </CommandGroup>
-            </CommandList>
 
-            {!!selectedIds.length && (
-              <div className="p-1 border-t">
-                <Button variant="ghost" onClick={() => onChange([])} className="w-full">
-                  Clear selection
-                </Button>
-              </div>
-            )}
+              {!!selectedIds.length && (
+                <div className="p-1 border-t sticky -bottom-px bg-background">
+                  <Button size="md" variant="ghost" onClick={() => onChange([])} className="w-full">
+                    Clear selection
+                  </Button>
+                </div>
+              )}
+            </CommandList>
           </Command>
         </PopoverContent>
       </Popover>
