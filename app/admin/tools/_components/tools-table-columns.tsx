@@ -83,9 +83,7 @@ export const getColumns = (): ColumnDef<Tool>[] => {
       accessorKey: "status",
       header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
       cell: ({ row }) => (
-        <Badge className="-my-0.5" {...statusBadges[row.original.status]}>
-          {row.original.status}
-        </Badge>
+        <Badge {...statusBadges[row.original.status]}>{row.original.status}</Badge>
       ),
       size: 0,
     },
@@ -108,7 +106,7 @@ export const getColumns = (): ColumnDef<Tool>[] => {
     },
     {
       id: "actions",
-      cell: ({ row }) => <ToolActions tool={row.original} className="float-right -my-1" />,
+      cell: ({ row }) => <ToolActions tool={row.original} className="float-right" />,
       size: 0,
     },
   ]
