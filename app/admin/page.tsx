@@ -2,9 +2,10 @@ import { AnalyticsCard } from "~/app/admin/_components/analytics-card"
 import { ScheduledCard } from "~/app/admin/_components/scheduled-card"
 import { StatsCard } from "~/app/admin/_components/stats-card"
 import { SubscribersCard } from "~/app/admin/_components/subscribers-card"
+import { withAdminPage } from "~/components/admin/auth-hoc"
 import { H3 } from "~/components/common/heading"
 
-export default function DashboardPage() {
+const DashboardPage = () => {
   return (
     <>
       <H3>Dashboard</H3>
@@ -26,3 +27,5 @@ export default function DashboardPage() {
     </>
   )
 }
+
+export default withAdminPage(DashboardPage)

@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation"
 import { UserForm } from "~/app/admin/users/_components/user-form"
+import { withAdminPage } from "~/components/admin/auth-hoc"
 import { Wrapper } from "~/components/admin/wrapper"
 import { findUserById } from "~/server/admin/users/queries"
 
@@ -7,7 +8,7 @@ type PageProps = {
   params: Promise<{ id: string }>
 }
 
-export default async function UpdateUserPage({ params }: PageProps) {
+const UpdateUserPage = async ({ params }: PageProps) => {
   const { id } = await params
   const user = await findUserById(id)
 
@@ -21,3 +22,5 @@ export default async function UpdateUserPage({ params }: PageProps) {
     </Wrapper>
   )
 }
+
+export default withAdminPage(UpdateUserPage)
