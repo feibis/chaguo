@@ -2,7 +2,7 @@
 
 import { slugify } from "@curiousleaf/utils"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { redirect } from "next/navigation"
+import { useRouter } from "next/navigation"
 import type { ComponentProps } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
@@ -42,6 +42,8 @@ export function CategoryForm({
   tools,
   ...props
 }: CategoryFormProps) {
+  const router = useRouter()
+
   const form = useForm({
     resolver: zodResolver(categorySchema),
     defaultValues: {
@@ -77,7 +79,7 @@ export function CategoryForm({
 
       // If not updating a category, or slug has changed, redirect to the new category
       if (!category || data.slug !== category?.slug) {
-        redirect(`/admin/categories/${data.slug}`)
+        router.push(`/admin/categories/${data.slug}`)
       }
     },
 
@@ -104,7 +106,7 @@ export function CategoryForm({
         noValidate
         {...props}
       >
-        <div className="flex flex-col gap-4 sm:flex-row">
+        <div className="grid gap-4 @sm:grid-cols-2">
           <FormField
             control={form.control}
             name="name"

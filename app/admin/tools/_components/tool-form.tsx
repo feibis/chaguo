@@ -1,11 +1,11 @@
 "use client"
 
-import { formatDateTime, isValidUrl, slugify } from "@curiousleaf/utils"
+import { formatDateTime, getRandomString, isValidUrl, slugify } from "@curiousleaf/utils"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { type Tool, ToolStatus } from "@prisma/client"
 import { EyeIcon, PencilIcon, RefreshCwIcon } from "lucide-react"
 import Link from "next/link"
-import { redirect } from "next/navigation"
+import { useRouter } from "next/navigation"
 import { type ComponentProps, useState } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
@@ -74,6 +74,7 @@ export function ToolForm({
   categories,
   ...props
 }: ToolFormProps) {
+  const router = useRouter()
   const [isPreviewing, setIsPreviewing] = useState(false)
   const [isStatusPending, setIsStatusPending] = useState(false)
   const [originalStatus, setOriginalStatus] = useState(tool?.status ?? ToolStatus.Draft)
@@ -110,7 +111,12 @@ export function ToolForm({
   })
 
   // Keep track of the form values
-  const [websiteUrl, name, description] = form.watch(["websiteUrl", "name", "description"])
+  const [name, slug, websiteUrl, description] = form.watch([
+    "name",
+    "slug",
+    "websiteUrl",
+    "description",
+  ])
 
   // Upsert tool
   const upsertAction = useServerAction(upsertTool, {
@@ -128,7 +134,7 @@ export function ToolForm({
 
       // If not updating a tool, or slug has changed, redirect to the new tool
       if (!tool || data.slug !== tool?.slug) {
-        redirect(`/admin/tools/${data.slug}`)
+        router.push(`/admin/tools/${data.slug}`)
       }
     },
 
@@ -363,7 +369,7 @@ export function ToolForm({
           render={({ field }) => (
             <FormItem className="items-stretch">
               <Stack className="justify-between">
-                <FormLabel>Favicon URL</FormLabel>
+                <FormLabel className="flex-1">Favicon URL</FormLabel>
 
                 <Button
                   type="button"
@@ -377,7 +383,7 @@ export function ToolForm({
                   onClick={() => {
                     faviconAction.execute({
                       url: websiteUrl,
-                      path: `tools/${tool?.slug}`,
+                      path: `tools/${slug || getRandomString(12)}`,
                     })
                   }}
                 >
@@ -409,7 +415,7 @@ export function ToolForm({
           render={({ field }) => (
             <FormItem className="items-stretch">
               <Stack className="justify-between">
-                <FormLabel>Screenshot URL</FormLabel>
+                <FormLabel className="flex-1">Screenshot URL</FormLabel>
 
                 <Button
                   type="button"
@@ -423,7 +429,7 @@ export function ToolForm({
                   onClick={() => {
                     screenshotAction.execute({
                       url: websiteUrl,
-                      path: `tools/${tool?.slug}`,
+                      path: `tools/${slug || getRandomString(12)}`,
                     })
                   }}
                 >

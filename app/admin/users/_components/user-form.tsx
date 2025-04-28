@@ -84,7 +84,7 @@ export function UserForm({ children, className, title, user, ...props }: UserFor
         noValidate
         {...props}
       >
-        <div className="flex flex-col gap-4 sm:flex-row">
+        <div className="grid gap-4 @sm:grid-cols-2">
           <FormField
             control={form.control}
             name="name"

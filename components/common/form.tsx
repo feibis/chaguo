@@ -78,9 +78,10 @@ const FormItem = ({ direction = "column", ...props }: ComponentProps<typeof Stac
   )
 }
 
-const FormLabel = (props: ComponentProps<typeof Label>) => {
+const FormLabel = ({ className, ...props }: ComponentProps<typeof Label>) => {
   const { formItemId } = useFormField()
-  return <Label htmlFor={formItemId} {...props} />
+
+  return <Label htmlFor={formItemId} className={cx("truncate", className)} {...props} />
 }
 
 const FormControl = (props: ComponentProps<typeof Slot.Root>) => {

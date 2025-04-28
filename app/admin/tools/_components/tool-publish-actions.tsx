@@ -288,6 +288,7 @@ export const ToolPublishActions = ({
                                       <Calendar
                                         mode="single"
                                         selected={new Date(selectedDate)}
+                                        disabled={{ before: new Date() }}
                                         onSelect={date => {
                                           date && setSelectedDate(formatDate(date, "yyyy-MM-dd"))
                                           setIsScheduleOpen(false)
