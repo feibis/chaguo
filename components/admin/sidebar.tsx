@@ -10,6 +10,7 @@ import {
   GlobeIcon,
   LayoutDashboardIcon,
   LogOutIcon,
+  TagIcon,
   UsersIcon,
 } from "lucide-react"
 import { useRouter } from "next/navigation"
@@ -33,6 +34,7 @@ export const Sidebar = () => {
       ["mod+K", () => setIsCommandOpen(prev => !prev)],
       ["mod+1", () => handleRedirect("/admin/tools/new")],
       ["mod+2", () => handleRedirect("/admin/categories/new")],
+      ["mod+3", () => handleRedirect("/admin/tags/new")],
     ],
     [],
     true,
@@ -82,6 +84,11 @@ export const Sidebar = () => {
             title: "Categories",
             href: "/admin/categories",
             prefix: <GalleryHorizontalEndIcon />,
+          },
+          {
+            title: "Tags",
+            href: "/admin/tags",
+            prefix: <TagIcon />,
           },
           {
             title: "Users",

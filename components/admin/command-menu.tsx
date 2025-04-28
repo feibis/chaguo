@@ -1,5 +1,5 @@
 import { useDebouncedState } from "@mantine/hooks"
-import type { Category, Tool } from "@prisma/client"
+import type { Category, Tag, Tool } from "@prisma/client"
 import { LoaderIcon } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
@@ -18,6 +18,7 @@ import {
 type SearchResult = {
   tools: Tool[]
   categories: Category[]
+  tags: Tag[]
 }
 
 type CommandMenuProps = {
@@ -95,6 +96,11 @@ export const CommandMenu = ({ isOpen, onOpenChange }: CommandMenuProps) => {
             New Category
             <CommandShortcut meta>2</CommandShortcut>
           </CommandItem>
+
+          <CommandItem onSelect={() => handleSelect("/admin/tags/new")}>
+            New Tag
+            <CommandShortcut meta>3</CommandShortcut>
+          </CommandItem>
         </CommandGroup>
 
         {!!searchResults?.tools.length && (
@@ -115,6 +121,16 @@ export const CommandMenu = ({ isOpen, onOpenChange }: CommandMenuProps) => {
                 onSelect={() => handleSelect(`/admin/categories/${category.slug}`)}
               >
                 {category.name}
+              </CommandItem>
+            ))}
+          </CommandGroup>
+        )}
+
+        {!!searchResults?.tags.length && (
+          <CommandGroup heading="Tags">
+            {searchResults.tags.map(tag => (
+              <CommandItem key={tag.id} onSelect={() => handleSelect(`/admin/tags/${tag.slug}`)}>
+                {tag.name}
               </CommandItem>
             ))}
           </CommandGroup>
