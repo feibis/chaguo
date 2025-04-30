@@ -5,26 +5,29 @@ import { cx } from "~/utils/cva"
 const Table = ({ className, ...props }: ComponentProps<"table">) => {
   return (
     <table
-      className={cx("w-full text-sm grid grid-cols-(--table-columns) overflow-auto", className)}
+      className={cx("grid grid-cols-(--table-columns) divide-y text-sm overflow-auto", className)}
       {...props}
     />
   )
 }
 
 const TableHeader = ({ className, ...props }: ComponentProps<"thead">) => {
-  return <thead className={cx("contents", className)} {...props} />
+  return (
+    <thead className={cx("grid grid-cols-subgrid col-span-full divide-y", className)} {...props} />
+  )
 }
 
 const TableBody = ({ className, ...props }: ComponentProps<"tbody">) => {
-  return <tbody className={cx("contents", className)} {...props} />
+  return (
+    <tbody className={cx("grid grid-cols-subgrid col-span-full divide-y", className)} {...props} />
+  )
 }
 
 const TableRow = ({ className, ...props }: ComponentProps<"tr">) => {
   return (
     <tr
       className={cx(
-        "relative grid grid-cols-subgrid col-span-full items-center h-9 border-t",
-        "[thead>&:first-child,tbody:first-child>&:first-child]:border-t-0 [tbody>&:not([aria-disabled])]:hover:bg-accent data-[state=selected]:bg-accent",
+        "relative grid grid-cols-subgrid col-span-full items-center h-9 [tbody>&:not([aria-disabled])]:hover:bg-accent data-[state=selected]:bg-accent",
         className,
       )}
       {...props}
@@ -33,15 +36,7 @@ const TableRow = ({ className, ...props }: ComponentProps<"tr">) => {
 }
 
 const TableHead = ({ className, ...props }: ComponentProps<"th">) => {
-  return (
-    <th
-      className={cx(
-        "px-2 text-left font-medium text-muted-foreground first:not-[&:has([type=checkbox])]:pl-4",
-        className,
-      )}
-      {...props}
-    />
-  )
+  return <th className={cx("px-2 first:not-[&:has([type=checkbox])]:pl-4", className)} {...props} />
 }
 
 const TableCell = ({ className, ...props }: ComponentProps<"td">) => {
