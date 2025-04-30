@@ -36,6 +36,7 @@ export const DataTableLink = ({
             className="inline-block align-text-bottom mr-2 size-4 rounded"
           />
         )}
+
         {title}
       </Link>
 

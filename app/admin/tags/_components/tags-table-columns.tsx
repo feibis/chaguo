@@ -13,6 +13,8 @@ export const getColumns = (): ColumnDef<Tag>[] => {
   return [
     {
       id: "select",
+      enableSorting: false,
+      enableHiding: false,
       header: ({ table }) => (
         <RowCheckbox
           checked={table.getIsAllPageRowsSelected()}
@@ -33,12 +35,11 @@ export const getColumns = (): ColumnDef<Tag>[] => {
           aria-label="Select row"
         />
       ),
-      size: 0,
-      enableSorting: false,
-      enableHiding: false,
     },
     {
       accessorKey: "name",
+      enableHiding: false,
+      size: 160,
       header: ({ column }) => <DataTableColumnHeader column={column} title="Name" />,
       cell: ({ row }) => (
         <DataTableLink href={`/admin/tags/${row.original.slug}`} title={row.original.name} />
@@ -48,12 +49,10 @@ export const getColumns = (): ColumnDef<Tag>[] => {
       accessorKey: "createdAt",
       header: ({ column }) => <DataTableColumnHeader column={column} title="Created At" />,
       cell: ({ cell }) => <Note>{formatDate(cell.getValue() as Date)}</Note>,
-      size: 0,
     },
     {
       id: "actions",
       cell: ({ row }) => <TagActions tag={row.original} className="float-right" />,
-      size: 0,
     },
   ]
 }

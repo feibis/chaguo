@@ -41,6 +41,7 @@ export const DashboardTable = ({ toolsPromise }: DashboardTableProps) => {
       {
         accessorKey: "name",
         enableHiding: false,
+        size: 160,
         header: ({ column }) => <DataTableColumnHeader column={column} title="Name" />,
         cell: ({ row }) => {
           const { name, slug, status, faviconUrl, ownerId } = row.original
