@@ -5,7 +5,7 @@ import { db } from "~/services/db"
 import type { ReportsTableSchema } from "./schema"
 
 export const findReports = async (search: ReportsTableSchema) => {
-  const { message, page, perPage, sort, from, to, operator } = search
+  const { message, page, perPage, sort, from, to, operator, type } = search
 
   // Offset to paginate the results
   const offset = (page - 1) * perPage
@@ -20,6 +20,9 @@ export const findReports = async (search: ReportsTableSchema) => {
   const expressions: (Prisma.ReportWhereInput | undefined)[] = [
     // Filter by message
     message ? { message: { contains: message, mode: "insensitive" } } : undefined,
+
+    // Filter by type
+    type.length > 0 ? { type: { in: type } } : undefined,
 
     // Filter by createdAt
     fromDate || toDate ? { createdAt: { gte: fromDate, lte: toDate } } : undefined,

@@ -1,6 +1,6 @@
 "use client"
 
-import type { Report } from "@prisma/client"
+import { type Report, ReportType } from "@prisma/client"
 import { useQueryStates } from "nuqs"
 import { use, useMemo } from "react"
 import { DateRangePicker } from "~/components/admin/date-range-picker"
@@ -32,6 +32,14 @@ export function ReportsTable({ reportsPromise }: ReportsTableProps) {
       id: "message",
       label: "Message",
       placeholder: "Search by message...",
+    },
+    {
+      id: "type",
+      label: "Type",
+      options: Object.values(ReportType).map(type => ({
+        label: type,
+        value: type,
+      })),
     },
   ]
 

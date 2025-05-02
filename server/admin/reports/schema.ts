@@ -1,6 +1,7 @@
 import { type Report, ReportType } from "@prisma/client"
 import {
   createSearchParamsCache,
+  parseAsArrayOf,
   parseAsInteger,
   parseAsString,
   parseAsStringEnum,
@@ -16,6 +17,7 @@ export const reportsTableParamsSchema = {
   from: parseAsString.withDefault(""),
   to: parseAsString.withDefault(""),
   operator: parseAsStringEnum(["and", "or"]).withDefault("and"),
+  type: parseAsArrayOf(z.nativeEnum(ReportType)).withDefault([]),
 }
 
 export const reportsTableParamsCache = createSearchParamsCache(reportsTableParamsSchema)
