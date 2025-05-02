@@ -11,6 +11,7 @@ import {
   LayoutDashboardIcon,
   LogOutIcon,
   TagIcon,
+  TriangleAlertIcon,
   UsersIcon,
 } from "lucide-react"
 import { useRouter } from "next/navigation"
@@ -94,6 +95,11 @@ export const Sidebar = () => {
             title: "Users",
             href: "/admin/users",
             prefix: <UsersIcon />,
+          },
+          {
+            title: "Reports",
+            href: "/admin/reports",
+            prefix: <TriangleAlertIcon />,
           },
 
           undefined, // Separator

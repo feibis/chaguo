@@ -3,7 +3,7 @@
 import { formatDate } from "@curiousleaf/utils"
 import type { User } from "@prisma/client"
 import type { ColumnDef } from "@tanstack/react-table"
-import { BanIcon, ShieldIcon } from "lucide-react"
+import type { ComponentProps } from "react"
 import { UserActions } from "~/app/admin/users/_components/user-actions"
 import { RowCheckbox } from "~/components/admin/row-checkbox"
 import { Badge } from "~/components/common/badge"
@@ -12,6 +12,17 @@ import { DataTableColumnHeader } from "~/components/data-table/data-table-column
 import { DataTableLink } from "~/components/data-table/data-table-link"
 
 export const getColumns = (): ColumnDef<User>[] => {
+  const roleBadges: Record<"admin" | "user", ComponentProps<typeof Badge>> = {
+    admin: {
+      variant: "info",
+      className: "capitalize",
+    },
+    user: {
+      variant: "outline",
+      className: "capitalize",
+    },
+  }
+
   return [
     {
       id: "select",
@@ -45,26 +56,35 @@ export const getColumns = (): ColumnDef<User>[] => {
       size: 160,
       header: ({ column }) => <DataTableColumnHeader column={column} title="Name" />,
       cell: ({ row }) => (
-        <DataTableLink href={`/admin/users/${row.original.id}`} title={row.original.name}>
-          {row.original.banned && (
-            <Badge size="sm" variant="outline" prefix={<BanIcon />} className="text-red-500">
-              Banned
-            </Badge>
-          )}
-
-          {row.original.role === "admin" && (
-            <Badge size="sm" variant="outline" prefix={<ShieldIcon />} className="text-blue-500">
-              Admin
-            </Badge>
-          )}
-        </DataTableLink>
+        <DataTableLink
+          href={`/admin/users/${row.original.id}`}
+          title={row.original.name || row.original.email}
+        />
       ),
     },
     {
       accessorKey: "email",
+      enableSorting: false,
       header: ({ column }) => <DataTableColumnHeader column={column} title="Email" />,
       cell: ({ row }) => <Note>{row.getValue("email")}</Note>,
-      enableSorting: false,
+    },
+    {
+      accessorKey: "role",
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Role" />,
+      cell: ({ row }) => {
+        const role = row.getValue<"admin" | "user">("role")
+        const isBanned = row.original.banned
+
+        if (isBanned) {
+          return (
+            <Badge size="sm" variant="outline" className="text-red-500">
+              Banned
+            </Badge>
+          )
+        }
+
+        return <Badge {...roleBadges[role]}>{role}</Badge>
+      },
     },
     {
       accessorKey: "createdAt",
