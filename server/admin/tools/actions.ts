@@ -16,6 +16,7 @@ export const upsertTool = adminProcedure
   .input(toolSchema)
   .handler(async ({ input: { id, categories, notifySubmitter, ...input } }) => {
     const categoryIds = categories?.map(id => ({ id }))
+    const existingTool = await db.tool.findUnique({ where: { id } })
 
     const tool = id
       ? // If the tool exists, update it
@@ -45,7 +46,7 @@ export const upsertTool = adminProcedure
       revalidateTag("schedule")
     }
 
-    if (notifySubmitter) {
+    if (notifySubmitter && (!existingTool || existingTool.status !== tool.status)) {
       // Notify the submitter of the tool published
       after(async () => await notifySubmitterOfToolPublished(tool))
 
