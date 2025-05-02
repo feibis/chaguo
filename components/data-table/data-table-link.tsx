@@ -6,6 +6,7 @@ import { cx } from "~/utils/cva"
 type DataTableLinkProps = ComponentProps<typeof Link> & {
   image?: string | null
   title: string
+  isOverlay?: boolean
 }
 
 export const DataTableLink = ({
@@ -13,18 +14,20 @@ export const DataTableLink = ({
   className,
   image,
   title,
+  isOverlay = true,
   ...props
 }: DataTableLinkProps) => {
   return (
     <Stack size="sm" wrap={false}>
       <Link
         className={cx(
-          "block max-w-40 truncate font-medium underline underline-offset-4 decoration-foreground/10 hover:decoration-foreground/35",
+          "block truncate font-medium underline decoration-foreground/10 hover:decoration-foreground/35",
+          !isOverlay && "relative z-10",
           className,
         )}
         {...props}
       >
-        <span className="absolute inset-0" />
+        {isOverlay && <span className="absolute inset-0" />}
 
         {image && (
           <img

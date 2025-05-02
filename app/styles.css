@@ -113,10 +113,6 @@
     }
   }
 
-  * {
-    @apply underline-offset-2;
-  }
-
   hr {
     @apply border-foreground;
     @apply opacity-10;
@@ -134,6 +130,7 @@
     @apply ease-out;
     @apply duration-100;
     @apply not-disabled:cursor-pointer;
+    @apply underline-offset-[0.25em];
   }
 
   svg.lucide:not([class*="stroke"]) {
