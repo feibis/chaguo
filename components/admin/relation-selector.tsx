@@ -24,27 +24,32 @@ type Relation = {
   name: string
 }
 
-type RelationSelectorProps = {
-  promise: Promise<Relation[]>
+type RelationSelectorProps<T> = {
+  promise: Promise<T[]>
   selectedIds: string[]
   prompt?: string
   maxSuggestions?: number
+  mapFunction?: (relation: T) => Relation
+  sortFunction?: (a: T, b: T) => number
   onChange: (selectedIds: string[]) => void
 }
 
-export const RelationSelector = ({
+export const RelationSelector = <T extends Relation>({
   promise,
   selectedIds,
   prompt,
   maxSuggestions = 5,
+  mapFunction,
+  sortFunction,
   onChange,
-}: RelationSelectorProps) => {
+}: RelationSelectorProps<T>) => {
   const relations = use(promise)
-  const [suggestedRelations, setSuggestedRelations] = useState<Relation[]>([])
+  const [suggestedRelations, setSuggestedRelations] = useState<T[]>([])
   const selectedRelations = relations?.filter(({ id }) => selectedIds.includes(id))
 
   const { complete } = useCompletion({
     api: "/api/ai/completion",
+    experimental_throttle: 1000,
 
     onFinish: (_, completion) => {
       if (completion) {
@@ -74,6 +79,17 @@ export const RelationSelector = ({
     }
   }, [prompt, selectedIds])
 
+  const handleFilter = (value: string, search: string) => {
+    const normalizedValue = value.toLowerCase()
+    const normalizedSearch = search.toLowerCase()
+    return normalizedValue.includes(normalizedSearch) ? 1 : 0
+  }
+
+  const getDisplayRelations = (relations: T[], sort = false): Relation[] => {
+    const sortedRelations = sort && sortFunction ? [...relations].sort(sortFunction) : relations
+    return sortedRelations.map(relation => (mapFunction ? mapFunction(relation) : relation))
+  }
+
   return (
     <Stack direction="column" className="w-full">
       <Popover>
@@ -96,7 +112,7 @@ export const RelationSelector = ({
                 <span className="font-normal text-muted-foreground">Select</span>
               )}
 
-              {selectedRelations.map(relation => (
+              {getDisplayRelations(selectedRelations).map(relation => (
                 <Badge key={relation.id}>{relation.name}</Badge>
               ))}
             </Stack>
@@ -104,13 +120,13 @@ export const RelationSelector = ({
         </PopoverTrigger>
 
         <PopoverContent className="p-0" align="start">
-          <Command>
+          <Command filter={handleFilter}>
             <CommandInput placeholder="Search..." />
 
             <CommandList className="min-w-72 w-(--radix-popper-anchor-width)">
               <CommandEmpty>No results found.</CommandEmpty>
               <CommandGroup>
-                {relations.map(relation => {
+                {getDisplayRelations(relations, true).map(relation => {
                   const isSelected = selectedIds.includes(relation.id)
                   const isSuggested = suggestedRelations.find(r => r.id === relation.id)
 
@@ -167,7 +183,7 @@ export const RelationSelector = ({
             </Tooltip>
 
             <Stack size="xs" className="flex-1">
-              {suggestedRelations.map(relation => (
+              {getDisplayRelations(suggestedRelations).map(relation => (
                 <Badge key={relation.id} size="sm" variant="warning" asChild>
                   <button
                     type="button"
