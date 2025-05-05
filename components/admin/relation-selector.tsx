@@ -1,7 +1,7 @@
 import { useCompletion } from "@ai-sdk/react"
 import { isTruthy } from "@curiousleaf/utils"
 import { MousePointerClickIcon, SparklesIcon } from "lucide-react"
-import { use, useEffect, useState } from "react"
+import { type ReactNode, use, useEffect, useState } from "react"
 import { AnimatedContainer } from "~/components/common/animated-container"
 import { Badge } from "~/components/common/badge"
 import { Button } from "~/components/common/button"
@@ -21,7 +21,7 @@ import { cx } from "~/utils/cva"
 
 type Relation = {
   id: string
-  name: string
+  name: ReactNode
 }
 
 type RelationSelectorProps<T> = {
