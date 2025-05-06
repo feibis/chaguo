@@ -43,17 +43,17 @@ export function ToolsTable({ toolsPromise }: ToolsTableProps) {
         {
           label: "Published",
           value: ToolStatus.Published,
-          icon: <CircleDotIcon className="text-green-500/75!" />,
+          icon: <CircleDotIcon className="text-green-500" />,
         },
         {
           label: "Scheduled",
           value: ToolStatus.Scheduled,
-          icon: <CircleDotDashedIcon className="text-blue-500/75!" />,
+          icon: <CircleDotDashedIcon className="text-blue-500" />,
         },
         {
           label: "Draft",
           value: ToolStatus.Draft,
-          icon: <CircleDashedIcon className="text-orange-500/75!" />,
+          icon: <CircleDashedIcon className="text-gray-500" />,
         },
       ],
     },
