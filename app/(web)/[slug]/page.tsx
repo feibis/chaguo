@@ -1,4 +1,5 @@
-import { ArrowUpRightIcon, HashIcon } from "lucide-react"
+import { formatDate } from "@curiousleaf/utils"
+import { ArrowUpRightIcon, ClockIcon, HashIcon } from "lucide-react"
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import { Suspense, cache } from "react"
@@ -6,7 +7,10 @@ import { FeaturedTools } from "~/app/(web)/[slug]/featured-tools"
 import { RelatedTools } from "~/app/(web)/[slug]/related-tools"
 import { Box } from "~/components/common/box"
 import { Button } from "~/components/common/button"
+import { Card } from "~/components/common/card"
 import { H2, H5 } from "~/components/common/heading"
+import { Link } from "~/components/common/link"
+import { Note } from "~/components/common/note"
 import { Stack } from "~/components/common/stack"
 import { AdCard, AdCardSkeleton } from "~/components/web/ads/ad-card"
 import { ExternalLink } from "~/components/web/external-link"
@@ -21,6 +25,7 @@ import { Section } from "~/components/web/ui/section"
 import { Tag } from "~/components/web/ui/tag"
 import { VerifiedBadge } from "~/components/web/verified-badge"
 import { metadataConfig } from "~/config/metadata"
+import { isToolPublished } from "~/lib/tools"
 import type { ToolOne } from "~/server/web/tools/payloads"
 import { findTool, findToolSlugs } from "~/server/web/tools/queries"
 
@@ -168,10 +173,35 @@ export default async function ToolPage(props: PageProps) {
         </Section.Content>
 
         <Section.Sidebar className="max-md:contents">
+          {!isToolPublished(tool) && (
+            <Card
+              hover={false}
+              focus={false}
+              className="bg-yellow-500/10 border-foreground/10 max-md:order-first"
+            >
+              <H5>
+                This is a preview only.{" "}
+                {tool.publishedAt &&
+                  `${tool.name} will be published on ${formatDate(tool.publishedAt)}`}
+              </H5>
+
+              <Note className="-mt-2">
+                {tool.name} is not yet published and is only visible on this page. If you want to
+                speed up the process, you can expedite the review below.
+              </Note>
+
+              <Button size="md" variant="fancy" prefix={<ClockIcon />} asChild>
+                <Link href={`/submit/${tool.slug}`}>Publish within 24h</Link>
+              </Button>
+            </Card>
+          )}
+
           {/* Advertisement */}
-          <Suspense fallback={<AdCardSkeleton className="max-md:order-3" />}>
-            <AdCard type="ToolPage" className="max-md:order-3" />
-          </Suspense>
+          {isToolPublished(tool) && (
+            <Suspense fallback={<AdCardSkeleton className="max-md:order-3" />}>
+              <AdCard type="ToolPage" className="max-md:order-3" />
+            </Suspense>
+          )}
 
           {/* Featured */}
           <Suspense>

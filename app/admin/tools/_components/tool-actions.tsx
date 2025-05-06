@@ -15,7 +15,6 @@ import {
   DropdownMenuTrigger,
 } from "~/components/common/dropdown-menu"
 import { Link } from "~/components/common/link"
-import { isToolVisible } from "~/lib/tools"
 import { cx } from "~/utils/cva"
 
 type ToolActionsProps = ComponentProps<typeof Button> & {
@@ -47,13 +46,11 @@ export const ToolActions = ({ className, tool, ...props }: ToolActionsProps) => 
           </DropdownMenuItem>
         )}
 
-        {isToolVisible(tool) && (
-          <DropdownMenuItem asChild>
-            <Link href={`/${tool.slug}`} target="_blank">
-              View
-            </Link>
-          </DropdownMenuItem>
-        )}
+        <DropdownMenuItem asChild>
+          <Link href={`/${tool.slug}`} target="_blank">
+            View
+          </Link>
+        </DropdownMenuItem>
 
         {isValidUrl(tool.websiteUrl) && (
           <DropdownMenuItem asChild>

@@ -1,4 +1,3 @@
-import { formatDateTime } from "@curiousleaf/utils"
 import { ToolStatus } from "@prisma/client"
 import { formatDate } from "date-fns"
 import { BadgeCheckIcon, CalendarIcon } from "lucide-react"
@@ -16,8 +15,6 @@ import { Note } from "~/components/common/note"
 import { Popover, PopoverContent, PopoverTrigger } from "~/components/common/popover"
 import { RadioGroup, RadioGroupItem } from "~/components/common/radio-group"
 import { Stack } from "~/components/common/stack"
-import { ExternalLink } from "~/components/web/external-link"
-import { siteConfig } from "~/config/site"
 import type { findToolBySlug } from "~/server/admin/tools/queries"
 import type { ToolSchema } from "~/server/admin/tools/schema"
 import { cx } from "~/utils/cva"
@@ -52,9 +49,8 @@ export const ToolPublishActions = ({
   children,
   ...props
 }: ToolPublishActionsProps) => {
-  const { control, watch, resetField } = useFormContext<ToolSchema>()
-  const formValues = watch(["slug", "status", "submitterEmail", "publishedAt"])
-  const [slug, status, submitterEmail, publishedAt] = formValues
+  const { control, watch } = useFormContext<ToolSchema>()
+  const [status, submitterEmail, publishedAt] = watch(["status", "submitterEmail", "publishedAt"])
   const publishedAtDate = new Date(publishedAt ?? new Date())
 
   const [isOpen, setIsOpen] = useState(false)
@@ -124,16 +120,6 @@ export const ToolPublishActions = ({
         prefix: <CalendarIcon />,
         popover: {
           title: "Update tool status",
-          description: (
-            <>
-              Preview:{" "}
-              <ExternalLink href={`/${slug}`} className="text-primary underline">
-                {siteConfig.url}/{slug}
-              </ExternalLink>
-              <br />
-              Will be published on <strong>{formatDateTime(publishedAt ?? new Date())}</strong>
-            </>
-          ),
           options: [
             {
               status: ToolStatus.Draft,
@@ -180,14 +166,6 @@ export const ToolPublishActions = ({
         prefix: <BadgeCheckIcon />,
         popover: {
           title: "Update tool status",
-          description: (
-            <>
-              View:{" "}
-              <ExternalLink href={`/${slug}`} className="text-primary underline">
-                {siteConfig.url}/{slug}
-              </ExternalLink>
-            </>
-          ),
           options: [
             {
               status: ToolStatus.Draft,
