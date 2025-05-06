@@ -27,7 +27,7 @@ const ToolCard = ({ className, tool, isRelated, ...props }: ToolCardProps) => {
   return (
     <Card asChild {...props}>
       <Link href={`/${tool.slug}`} className="group">
-        <CardHeader>
+        <CardHeader wrap={false}>
           <Favicon src={tool.faviconUrl} title={tool.name} />
 
           <H4 as="h3" className="truncate">
