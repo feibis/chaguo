@@ -1,4 +1,7 @@
 export const submissionsConfig = {
+  // Number of submissions per week (to calculate the submission queue length)
   postingRate: 3,
-  expediteThresholdDays: 7, // Minimum days into the future a post must be scheduled to show expedite nudges
+
+  // Minimum days into the future a post must be scheduled to show expedite nudges
+  expediteThreshold: 7,
 }

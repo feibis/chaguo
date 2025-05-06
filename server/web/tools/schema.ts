@@ -1,10 +1,11 @@
 import { createSearchParamsCache, parseAsInteger, parseAsString } from "nuqs/server"
+import { config } from "~/config"
 
 export const toolsFilterParamsSchema = {
   q: parseAsString.withDefault(""),
   sort: parseAsString.withDefault(""),
   page: parseAsInteger.withDefault(1),
-  perPage: parseAsInteger.withDefault(35),
+  perPage: parseAsInteger.withDefault(config.ads.enabled ? 5 : 6),
   category: parseAsString.withDefault(""),
 }
 

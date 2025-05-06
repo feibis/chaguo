@@ -10,8 +10,13 @@ export type AdSpot = {
 }
 
 export const adsConfig = {
+  // Determines if ads are enabled
+  enabled: true,
+
+  // Maximum discount percentage for ads
   maxDiscount: 30,
 
+  // Ad spots available for purchase
   adSpots: [
     {
       label: "Listing Ad",
@@ -29,6 +34,7 @@ export const adsConfig = {
     },
   ] satisfies AdSpot[],
 
+  // Default ad configuration
   defaultAd: {
     type: "All",
     websiteUrl: "/advertise",

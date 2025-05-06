@@ -26,6 +26,10 @@ type AdCardProps = CardProps & {
 }
 
 const AdCard = async ({ className, type, ...props }: AdCardProps) => {
+  if (!config.ads.enabled) {
+    return null
+  }
+
   const ad = (await findAd({ where: { type } })) ?? config.ads.defaultAd
   const isDefault = !ad.websiteUrl.startsWith("http")
 
@@ -57,8 +61,8 @@ const AdCard = async ({ className, type, ...props }: AdCardProps) => {
           <span>{isDefault ? "Advertise" : `Visit ${ad.name}`}</span>
         </Button>
 
-        <div className="absolute inset-0 overflow-clip">
-          <Slot.Root className="absolute -bottom-2/5 -right-1/4 -z-10 size-60 opacity-[3.5%] rotate-12 pointer-events-none transition group-hover/button:rotate-[17deg]">
+        <div className="absolute inset-0 overflow-clip pointer-events-none">
+          <Slot.Root className="absolute -bottom-2/5 -right-1/4 -z-10 size-60 opacity-[3.5%] rotate-12 transition group-hover/button:rotate-[17deg]">
             {isDefault ? <LogoSymbol /> : <FaviconImage src={ad.faviconUrl} title={ad.name} />}
           </Slot.Root>
         </div>

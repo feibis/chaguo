@@ -19,7 +19,7 @@ export const isToolPublished = (tool: Pick<Tool, "status">) => {
  * @returns Whether the tool is within the expedite threshold.
  */
 export const isToolWithinExpediteThreshold = (tool: Pick<Tool, "publishedAt">) => {
-  const threshold = config.submissions.expediteThresholdDays
+  const threshold = config.submissions.expediteThreshold
 
   return tool.publishedAt && differenceInDays(tool.publishedAt, new Date()) < threshold
 }

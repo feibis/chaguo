@@ -4,10 +4,15 @@ import { Box } from "~/components/common/box"
 import { Button } from "~/components/common/button"
 import { ExternalLink } from "~/components/web/external-link"
 import { Container } from "~/components/web/ui/container"
+import { config } from "~/config"
 import { findAd } from "~/server/web/ads/queries"
 import { cx } from "~/utils/cva"
 
 export const AdBanner = async ({ className, ...props }: ComponentProps<typeof Container>) => {
+  if (!config.ads.enabled) {
+    return null
+  }
+
   const ad = await findAd({ where: { type: "Banner" } })
 
   if (!ad) {
