@@ -19,48 +19,49 @@ type ToolCardProps = ComponentProps<typeof Card> & {
   isRelated?: boolean
 }
 
-const ToolCard = ({ className, tool, isRelated, ...props }: ToolCardProps) => {
+const ToolCard = ({ tool, isRelated, ...props }: ToolCardProps) => {
   const maxCategories = 2
   const visibleCategories = tool.categories.slice(0, maxCategories)
   const hiddenCount = tool.categories.length - maxCategories
 
   return (
-    <Card asChild {...props}>
-      <Link href={`/${tool.slug}`} className="group">
-        <CardHeader wrap={false}>
-          <Favicon src={tool.faviconUrl} title={tool.name} />
+    <Card {...props}>
+      <CardHeader wrap={false}>
+        <Favicon src={tool.faviconUrl} title={tool.name} />
 
-          <H4 as="h3" className="truncate">
+        <H4 as="h3" className="truncate">
+          <Link href={`/${tool.slug}`}>
+            <span className="absolute inset-0 z-10" />
             {tool.name}
-          </H4>
+          </Link>
+        </H4>
 
-          {tool.owner && <VerifiedBadge size="md" className="-ml-1.5" />}
-        </CardHeader>
+        {tool.owner && <VerifiedBadge size="md" className="-ml-1.5" />}
+      </CardHeader>
 
-        <div className="relative size-full flex flex-col">
-          <Stack size="lg" direction="column" className="flex-1 duration-200 group-hover:opacity-0">
-            {tool.tagline && <CardDescription className="min-h-10">{tool.tagline}</CardDescription>}
+      <div className="relative size-full flex flex-col">
+        <Stack size="lg" direction="column" className="flex-1 duration-200 group-hover:opacity-0">
+          {tool.tagline && <CardDescription className="min-h-10">{tool.tagline}</CardDescription>}
 
-            {!!visibleCategories.length && (
-              <Stack className="mt-auto gap-1">
-                {visibleCategories.map(category => (
-                  <Badge key={category.slug} variant="outline">
-                    {category.name}
-                  </Badge>
-                ))}
+          {!!visibleCategories.length && (
+            <Stack className="mt-auto gap-1">
+              {visibleCategories.map(category => (
+                <Badge key={category.slug} variant="outline">
+                  {category.name}
+                </Badge>
+              ))}
 
-                {hiddenCount > 0 && <Badge variant="outline">+{hiddenCount} more</Badge>}
-              </Stack>
-            )}
-          </Stack>
-
-          {tool.description && (
-            <div className="absolute inset-0 opacity-0 duration-200 group-hover:opacity-100">
-              <CardDescription className="line-clamp-3">{tool.description}</CardDescription>
-            </div>
+              {hiddenCount > 0 && <Badge variant="outline">+{hiddenCount} more</Badge>}
+            </Stack>
           )}
-        </div>
-      </Link>
+        </Stack>
+
+        {tool.description && (
+          <div className="absolute inset-0 opacity-0 duration-200 group-hover:opacity-100">
+            <CardDescription className="line-clamp-3">{tool.description}</CardDescription>
+          </div>
+        )}
+      </div>
     </Card>
   )
 }
