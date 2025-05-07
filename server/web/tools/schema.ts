@@ -5,7 +5,7 @@ export const toolsFilterParamsSchema = {
   q: parseAsString.withDefault(""),
   sort: parseAsString.withDefault(""),
   page: parseAsInteger.withDefault(1),
-  perPage: parseAsInteger.withDefault(config.ads.enabled ? 5 : 6),
+  perPage: parseAsInteger.withDefault(config.ads.enabled ? 35 : 36),
   category: parseAsString.withDefault(""),
 }
 
