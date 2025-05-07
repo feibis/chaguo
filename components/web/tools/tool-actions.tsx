@@ -24,7 +24,7 @@ export const ToolActions = ({ tool, children, className, ...props }: ToolActions
 
   return (
     <Stack size="sm" wrap={false} className={cx("justify-end", className)} {...props}>
-      {!tool.isFeatured && tool.owner && tool.owner.id === session?.user.id && (
+      {!tool.isFeatured && tool.ownerId && tool.ownerId === session?.user.id && (
         <Button
           size="md"
           variant="secondary"
@@ -36,7 +36,7 @@ export const ToolActions = ({ tool, children, className, ...props }: ToolActions
         </Button>
       )}
 
-      {!tool.owner && (
+      {!tool.ownerId && (
         <Button
           size="md"
           variant="secondary"
@@ -62,7 +62,7 @@ export const ToolActions = ({ tool, children, className, ...props }: ToolActions
 
       <ToolReportDialog tool={tool} isOpen={isReportOpen} setIsOpen={setIsReportOpen} />
 
-      {!tool.owner && (
+      {!tool.ownerId && (
         <ToolClaimDialog tool={tool} isOpen={isClaimOpen} setIsOpen={setIsClaimOpen} />
       )}
     </Stack>

@@ -36,7 +36,7 @@ const ToolCard = ({ tool, isRelated, ...props }: ToolCardProps) => {
           </Link>
         </H4>
 
-        {tool.owner && <VerifiedBadge size="md" className="-ml-1.5" />}
+        {tool.ownerId && <VerifiedBadge size="md" className="-ml-1.5" />}
       </CardHeader>
 
       <div className="relative size-full flex flex-col">

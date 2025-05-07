@@ -29,7 +29,7 @@ export const toolOnePayload = Prisma.validator<Prisma.ToolSelect>()({
   status: true,
   publishedAt: true,
   updatedAt: true,
-  owner: toolOwnerPayload,
+  ownerId: true,
   categories: toolCategoriesPayload,
   tags: toolTagsPayload,
 })
@@ -43,7 +43,7 @@ export const toolManyPayload = Prisma.validator<Prisma.ToolSelect>()({
   faviconUrl: true,
   publishedAt: true,
   updatedAt: true,
-  owner: toolOwnerPayload,
+  ownerId: true,
   categories: toolCategoriesPayload,
 })
 

@@ -85,7 +85,7 @@ export default async function ToolPage(props: PageProps) {
                     {tool.name}
                   </H2>
 
-                  {tool.owner && <VerifiedBadge size="lg" />}
+                  {tool.ownerId && <VerifiedBadge size="lg" />}
                 </Stack>
 
                 <ToolActions tool={tool} />
