@@ -21,7 +21,6 @@ import { DataTable } from "~/components/data-table/data-table"
 import { DataTableColumnHeader } from "~/components/data-table/data-table-column-header"
 import { DataTableLink } from "~/components/data-table/data-table-link"
 import { DataTableToolbar } from "~/components/data-table/data-table-toolbar"
-import { VerifiedBadge } from "~/components/web/verified-badge"
 import { useDataTable } from "~/hooks/use-data-table"
 import type { findTools } from "~/server/admin/tools/queries"
 import { toolsTableParamsSchema } from "~/server/admin/tools/schema"
@@ -44,17 +43,9 @@ export const DashboardTable = ({ toolsPromise }: DashboardTableProps) => {
         size: 160,
         header: ({ column }) => <DataTableColumnHeader column={column} title="Name" />,
         cell: ({ row }) => {
-          const { name, slug, status, faviconUrl, ownerId } = row.original
+          const { name, slug, faviconUrl } = row.original
 
-          if (status === ToolStatus.Draft) {
-            return <Note className="font-medium">{name}</Note>
-          }
-
-          return (
-            <DataTableLink href={`/${slug}`} image={faviconUrl} title={name}>
-              {ownerId && <VerifiedBadge size="sm" />}
-            </DataTableLink>
-          )
+          return <DataTableLink href={`/${slug}`} image={faviconUrl} title={name} />
         },
       },
       {

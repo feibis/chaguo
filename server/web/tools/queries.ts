@@ -134,7 +134,7 @@ export const findTool = async ({ where, ...args }: Prisma.ToolFindFirstArgs = {}
 
   return db.tool.findFirst({
     ...args,
-    where: { status: { not: ToolStatus.Draft }, ...where },
+    where: { ...where },
     select: toolOnePayload,
   })
 }
