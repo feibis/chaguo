@@ -12,7 +12,7 @@ type PageProps = {
   searchParams: Promise<SearchParams>
 }
 
-export default function Home({ searchParams }: PageProps) {
+export default function Home(props: PageProps) {
   return (
     <>
       <section className="flex flex-col gap-y-6 w-full mb-6">
@@ -38,7 +38,7 @@ export default function Home({ searchParams }: PageProps) {
       </section>
 
       <Suspense fallback={<ToolListingSkeleton />}>
-        <ToolQuery searchParams={searchParams} />
+        <ToolQuery searchParams={props.searchParams} options={{ enableFilters: true }} />
       </Suspense>
     </>
   )

@@ -61,11 +61,11 @@ const SelectScrollDownButton = ({
 }
 
 const selectScrollButtonVariants = cva({
-  base: "absolute inset-x-0 z-10 animate-in fade-in-0 duration-300",
+  base: "absolute inset-x-0 z-10 from-accent via-accent/80 to-transparent animate-in fade-in-0 duration-300",
   variants: {
     position: {
-      top: "top-0 bg-linear-to-b from-background to-transparent",
-      bottom: "bottom-0 bg-linear-to-t from-background to-transparent",
+      top: "top-0 bg-linear-to-b ",
+      bottom: "bottom-0 bg-linear-to-t",
     },
   },
 })

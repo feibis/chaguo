@@ -76,7 +76,7 @@ export default async function TagPage(props: PageProps) {
         <ToolQuery
           searchParams={props.searchParams}
           where={{ tags: { some: { slug: tag.slug } } }}
-          placeholder={`Search in "${tag.name}"`}
+          search={{ placeholder: `Search in "${tag.name}"...` }}
         />
       </Suspense>
     </>

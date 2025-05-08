@@ -1,0 +1,49 @@
+"use client"
+
+import plur from "plur"
+import { type ComponentProps, useEffect } from "react"
+import { useServerAction } from "zsa-react"
+import { findFilterOptions } from "~/actions/filters"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "~/components/common/select"
+import { searchConfig } from "~/config/search"
+import { useFilters } from "~/contexts/filter-context"
+
+export const ToolFilters = ({ ...props }: ComponentProps<typeof Select>) => {
+  const { filters, updateFilters } = useFilters()
+  const { execute, data } = useServerAction(findFilterOptions)
+
+  useEffect(() => {
+    execute()
+  }, [execute])
+
+  return (
+    <>
+      {searchConfig.filters.map(type => (
+        <Select
+          key={type}
+          value={filters[type]}
+          onValueChange={value => updateFilters({ [type]: value })}
+          {...props}
+        >
+          <SelectTrigger size="lg" className="w-auto min-w-40 max-sm:flex-1">
+            <SelectValue placeholder={`All ${plur(type)}`} />
+          </SelectTrigger>
+
+          <SelectContent align="end">
+            {data?.[type].map(({ slug, name }) => (
+              <SelectItem key={slug} value={slug}>
+                {name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      ))}
+    </>
+  )
+}

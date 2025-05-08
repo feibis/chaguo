@@ -79,7 +79,7 @@ export default async function CategoryPage(props: PageProps) {
         <ToolQuery
           searchParams={props.searchParams}
           where={{ categories: { some: { slug: category.slug } } }}
-          placeholder={`Search ${String(title).toLowerCase()}...`}
+          search={{ placeholder: `Search ${String(title).toLowerCase()}...` }}
         />
       </Suspense>
     </>
