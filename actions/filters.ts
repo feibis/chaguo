@@ -30,5 +30,5 @@ export const findFilterOptions = createServerAction().handler(async () => {
     },
   ]
 
-  return filterOptions
+  return filterOptions.filter(({ options }) => options.length)
 })
