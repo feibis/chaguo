@@ -1,4 +1,3 @@
-import { GitForkIcon, StarIcon, TimerIcon } from "lucide-react"
 import type { ComponentProps } from "react"
 import { Badge } from "~/components/common/badge"
 import { Card, CardDescription, CardHeader } from "~/components/common/card"
@@ -67,12 +66,6 @@ const ToolCard = ({ tool, isRelated, ...props }: ToolCardProps) => {
 }
 
 const ToolCardSkeleton = () => {
-  const insights = [
-    { label: "Stars", value: <Skeleton className="h-4 w-16" />, icon: <StarIcon /> },
-    { label: "Forks", value: <Skeleton className="h-4 w-14" />, icon: <GitForkIcon /> },
-    { label: "Last commit", value: <Skeleton className="h-4 w-20" />, icon: <TimerIcon /> },
-  ]
-
   return (
     <Card hover={false} className="items-stretch select-none">
       <CardHeader>
