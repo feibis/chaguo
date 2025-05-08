@@ -11,7 +11,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/common/select"
-import { searchConfig } from "~/config/search"
 import { useFilters } from "~/contexts/filter-context"
 
 export const ToolFilters = ({ ...props }: ComponentProps<typeof Select>) => {
@@ -24,7 +23,7 @@ export const ToolFilters = ({ ...props }: ComponentProps<typeof Select>) => {
 
   return (
     <>
-      {searchConfig.filters.map(type => (
+      {data?.map(({ type, options }) => (
         <Select
           key={type}
           value={filters[type]}
@@ -36,7 +35,7 @@ export const ToolFilters = ({ ...props }: ComponentProps<typeof Select>) => {
           </SelectTrigger>
 
           <SelectContent align="end">
-            {data?.[type].map(({ slug, name }) => (
+            {options.map(({ slug, name }) => (
               <SelectItem key={slug} value={slug}>
                 {name}
               </SelectItem>
