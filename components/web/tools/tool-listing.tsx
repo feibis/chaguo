@@ -2,16 +2,14 @@ import { Input } from "~/components/common/input"
 import { Pagination } from "~/components/web/pagination"
 import { ToolList, type ToolListProps } from "~/components/web/tools/tool-list"
 import { ToolListSkeleton } from "~/components/web/tools/tool-list"
-import { ToolSearch } from "~/components/web/tools/tool-search"
+import { ToolSearch, type ToolSearchProps } from "~/components/web/tools/tool-search"
 import { FiltersProvider } from "~/contexts/filter-context"
-import type { CategoryMany } from "~/server/web/categories/payloads"
 
-type ToolListingProps = ToolListProps & {
-  perPage: number
-  totalCount: number
-  placeholder?: string
-  categories?: CategoryMany[]
-}
+type ToolListingProps = ToolListProps &
+  ToolSearchProps & {
+    perPage: number
+    totalCount: number
+  }
 
 const ToolListing = ({
   perPage,

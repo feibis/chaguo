@@ -47,7 +47,7 @@ export const Pagination = ({
         prefix={<MoveLeftIcon />}
         rel="prev"
       >
-        prev
+        Prev
       </PaginationLink>
 
       <Note className="md:hidden">
@@ -80,7 +80,7 @@ export const Pagination = ({
         suffix={<MoveRightIcon />}
         rel="prev"
       >
-        next
+        Next
       </PaginationLink>
     </nav>
   )
