@@ -62,7 +62,7 @@ const AdCard = async ({ className, type, ...props }: AdCardProps) => {
         </Button>
 
         <div className="absolute inset-0 overflow-clip pointer-events-none">
-          <Slot.Root className="absolute -bottom-2/5 -right-1/4 -z-10 size-60 opacity-[3.5%] rotate-12 transition group-hover/button:rotate-[17deg]">
+          <Slot.Root className="absolute -bottom-2/5 -right-1/4 -z-10 size-60 opacity-3.5 rotate-12 transition group-hover/button:rotate-17">
             {isDefault ? <LogoSymbol /> : <FaviconImage src={ad.faviconUrl} title={ad.name} />}
           </Slot.Root>
         </div>
