@@ -8,7 +8,7 @@ import {
   TagIcon,
 } from "lucide-react"
 import { usePathname } from "next/navigation"
-import { type ComponentProps, Suspense, useEffect, useState } from "react"
+import { type ComponentProps, useEffect, useState } from "react"
 import { Button } from "~/components/common/button"
 import {
   DropdownMenu,
@@ -18,15 +18,16 @@ import {
 } from "~/components/common/dropdown-menu"
 import { Link } from "~/components/common/link"
 import { Stack } from "~/components/common/stack"
-import { SearchForm } from "~/components/web/search-form"
 import { Container } from "~/components/web/ui/container"
 import { Hamburger } from "~/components/web/ui/hamburger"
 import { Logo } from "~/components/web/ui/logo"
 import { NavLink, navLinkVariants } from "~/components/web/ui/nav-link"
+import { useSearch } from "~/contexts/search-context"
 import { cx } from "~/utils/cva"
 
 export const Header = ({ children, className, ...props }: ComponentProps<typeof Container>) => {
   const pathname = usePathname()
+  const search = useSearch()
   const [isNavOpen, setNavOpen] = useState(false)
 
   // Close the mobile navigation when the user presses the "Escape" key
@@ -101,9 +102,9 @@ export const Header = ({ children, className, ...props }: ComponentProps<typeof 
         </nav>
 
         <Stack size="sm" wrap={false} className="flex-1 justify-end">
-          <Suspense fallback={<SearchIcon className="size-4" />}>
-            <SearchForm />
-          </Suspense>
+          <Button size="sm" variant="ghost" className="p-1" onClick={search.open}>
+            <SearchIcon className="size-4" />
+          </Button>
 
           <Button size="sm" variant="secondary" asChild>
             <Link href="/submit">Submit</Link>

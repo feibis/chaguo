@@ -5,7 +5,6 @@ import { SearchIcon } from "lucide-react"
 import type { ComponentProps } from "react"
 import { Dialog, DialogContent, DialogTitle } from "~/components/common/dialog"
 import { Kbd } from "~/components/common/kbd"
-import { ScrollArea } from "~/components/common/scroll-area"
 import { cx } from "~/utils/cva"
 
 const Command = ({ className, ...props }: ComponentProps<typeof CommandPrimitive>) => {
@@ -35,7 +34,7 @@ const CommandDialog = ({ children, ...props }: ComponentProps<typeof Dialog>) =>
 
 const CommandInput = ({ className, ...props }: ComponentProps<typeof CommandPrimitive.Input>) => {
   return (
-    <div className="flex items-center gap-2 border-b px-3" cmdk-input-wrapper="">
+    <div className="flex items-center gap-2 px-3 -mb-px border-b" cmdk-input-wrapper="">
       <SearchIcon className="size-4 shrink-0 opacity-50" />
       <CommandPrimitive.Input
         className={cx(
@@ -50,9 +49,10 @@ const CommandInput = ({ className, ...props }: ComponentProps<typeof CommandPrim
 
 const CommandList = ({ className, ...props }: ComponentProps<typeof CommandPrimitive.List>) => {
   return (
-    <ScrollArea>
-      <CommandPrimitive.List className={cx("max-h-72", className)} {...props} />
-    </ScrollArea>
+    <CommandPrimitive.List
+      className={cx("max-h-96 overflow-y-auto overscroll-contain", className)}
+      {...props}
+    />
   )
 }
 

@@ -1,0 +1,219 @@
+"use client"
+
+import { getUrlHostname } from "@curiousleaf/utils"
+import { type HotkeyItem, useDebouncedState, useHotkeys } from "@mantine/hooks"
+import type { Category, Tag, Tool } from "@prisma/client"
+import { LoaderIcon } from "lucide-react"
+import { usePathname, useRouter } from "next/navigation"
+import { type ReactNode, useEffect, useState } from "react"
+import { useServerAction } from "zsa-react"
+import { searchItems } from "~/actions/search"
+import {
+  CommandDialog,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+  CommandShortcut,
+} from "~/components/common/command"
+import { useSearch } from "~/contexts/search-context"
+
+type SearchResult = {
+  tools: Tool[]
+  categories: Category[]
+  tags: Tag[]
+}
+
+type SearchResultsProps<T> = {
+  name: string
+  items: T[] | undefined
+  onItemSelect: (url: string) => void
+  getHref: (item: T) => string
+  renderItemDisplay: (item: T) => ReactNode
+}
+
+type CommandSection = {
+  name: string
+  items: {
+    label: string
+    path: string
+    shortcut?: boolean
+  }[]
+}
+
+const SearchResults = <T extends { slug: string; name: string }>({
+  name,
+  items,
+  onItemSelect,
+  getHref,
+  renderItemDisplay,
+}: SearchResultsProps<T>) => {
+  if (!items?.length) return null
+
+  return (
+    <CommandGroup heading={name}>
+      {items.map(item => (
+        <CommandItem
+          key={item.slug}
+          value={`${name.toLowerCase()}:${item.slug}`}
+          onSelect={() => onItemSelect(getHref(item))}
+        >
+          {renderItemDisplay(item)}
+        </CommandItem>
+      ))}
+    </CommandGroup>
+  )
+}
+
+export const Search = () => {
+  const router = useRouter()
+  const pathname = usePathname()
+  const search = useSearch()
+  const [results, setResults] = useState<SearchResult | null>(null)
+  const [query, setQuery] = useDebouncedState("", 100)
+  const isAdmin = pathname.startsWith("/admin")
+
+  const clearSearch = () => {
+    setTimeout(() => {
+      setResults(null)
+      setQuery("")
+    }, 250)
+  }
+
+  const handleOpenChange = (open: boolean) => {
+    open ? search.open() : search.close()
+    if (!open) clearSearch()
+  }
+
+  const navigateTo = (path: string) => {
+    router.push(path)
+    handleOpenChange(false)
+  }
+
+  const commandSections: CommandSection[] = []
+  const hotkeys: HotkeyItem[] = [["mod+K", () => search.open()]]
+
+  // Admin command sections & hotkeys
+  if (isAdmin) {
+    commandSections.push({
+      name: "Create",
+      items: [
+        {
+          label: "New Tool",
+          path: "/admin/tools/new",
+          shortcut: true,
+        },
+        {
+          label: "New Category",
+          path: "/admin/categories/new",
+          shortcut: true,
+        },
+        {
+          label: "New Tag",
+          path: "/admin/tags/new",
+          shortcut: true,
+        },
+      ],
+    })
+
+    for (const [i, { path, shortcut }] of commandSections[0].items.entries()) {
+      shortcut && hotkeys.push([`mod+${i + 1}`, () => navigateTo(path)])
+    }
+
+    // User command sections & hotkeys
+  } else {
+    commandSections.push({
+      name: "Browse",
+      items: [
+        { label: "Tools", path: "/" },
+        { label: "Categories", path: "/categories" },
+        { label: "Tags", path: "/tags" },
+      ],
+    })
+
+    hotkeys.push(["/", () => search.open()])
+  }
+
+  useHotkeys(hotkeys, [], true)
+
+  const { execute, isPending } = useServerAction(searchItems, {
+    onSuccess: ({ data }) => {
+      setResults(data)
+    },
+
+    onError: ({ err }) => {
+      console.error(err)
+      setResults(null)
+    },
+  })
+
+  useEffect(() => {
+    const performSearch = async () => {
+      if (query.length > 1) {
+        execute({ query })
+      } else {
+        setResults(null)
+      }
+    }
+
+    performSearch()
+  }, [query, execute])
+
+  return (
+    <CommandDialog open={search.isOpen} onOpenChange={handleOpenChange}>
+      <CommandInput placeholder="Type to search..." onValueChange={setQuery} />
+
+      {isPending && (
+        <div className="absolute top-4 left-3 bg-background text-muted-foreground">
+          <LoaderIcon className="size-4 animate-spin" />
+        </div>
+      )}
+
+      <CommandList>
+        {query.length > 1 && <CommandEmpty>No results found.</CommandEmpty>}
+
+        {commandSections.map(({ name, items }) => (
+          <CommandGroup key={name} heading={name}>
+            {items.map(({ path, label, shortcut }, i) => (
+              <CommandItem key={path} onSelect={() => navigateTo(path)}>
+                {label}
+                {shortcut && <CommandShortcut meta>{i + 1}</CommandShortcut>}
+              </CommandItem>
+            ))}
+          </CommandGroup>
+        ))}
+
+        <SearchResults
+          name="Tools"
+          items={results?.tools}
+          onItemSelect={navigateTo}
+          getHref={({ slug }) => `${isAdmin ? "/admin/tools" : ""}/${slug}`}
+          renderItemDisplay={({ name, faviconUrl, websiteUrl }) => (
+            <>
+              {faviconUrl && <img src={faviconUrl} alt="" width={16} height={16} />}
+              <span className="flex-1 truncate">{name}</span>
+              <span className="opacity-50">{getUrlHostname(websiteUrl)}</span>
+            </>
+          )}
+        />
+
+        <SearchResults
+          name="Categories"
+          items={results?.categories}
+          onItemSelect={navigateTo}
+          getHref={({ slug }) => `${isAdmin ? "/admin" : ""}/categories/${slug}`}
+          renderItemDisplay={({ name }) => name}
+        />
+
+        <SearchResults
+          name="Tags"
+          items={results?.tags}
+          onItemSelect={navigateTo}
+          getHref={({ slug }) => `${isAdmin ? "/admin" : ""}/tags/${slug}`}
+          renderItemDisplay={({ name }) => name}
+        />
+      </CommandList>
+    </CommandDialog>
+  )
+}

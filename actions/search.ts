@@ -1,11 +1,10 @@
 "use server"
 
 import { z } from "zod"
-import { adminProcedure } from "~/lib/safe-actions"
+import { createServerAction } from "zsa"
 import { db } from "~/services/db"
 
-export const searchItems = adminProcedure
-  .createServerAction()
+export const searchItems = createServerAction()
   .input(z.object({ query: z.string() }))
   .handler(async ({ input: { query } }) => {
     const start = performance.now()
@@ -28,7 +27,7 @@ export const searchItems = adminProcedure
       }),
     ])
 
-    console.log(`Admin search: ${Math.round(performance.now() - start)}ms`)
+    console.log(`Search: ${Math.round(performance.now() - start)}ms`)
 
     return { tools, categories, tags }
   })

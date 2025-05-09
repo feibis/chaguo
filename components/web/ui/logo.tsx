@@ -7,7 +7,7 @@ import { cx } from "~/utils/cva"
 
 export const Logo = ({ className, ...props }: ComponentProps<typeof Stack>) => {
   return (
-    <Stack size="sm" className={cx("group/logo text-foreground", className)} asChild {...props}>
+    <Stack size="sm" className={cx("group/logo", className)} wrap={false} asChild {...props}>
       <Link href="/">
         <LogoSymbol />
         <span className="font-medium text-sm">{config.site.name}</span>

@@ -12,7 +12,7 @@ export const VerifiedBadge = ({ className, size = "md", ...props }: VerifiedBadg
     <Tooltip tooltip="Verified">
       <BadgeCheckIcon
         className={cx(
-          "-ml-1 fill-blue-500 stroke-background",
+          "relative z-10 -ml-1 shrink-0 fill-blue-500 stroke-background",
           size === "sm" && "-mb-[0.15em] size-4",
           size === "md" && "-mb-[0.2em] size-5",
           size === "lg" && "-mb-[0.25em] size-6",

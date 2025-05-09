@@ -1,12 +1,14 @@
 import type { Metadata, Viewport } from "next"
 import { NuqsAdapter } from "nuqs/adapters/next/app"
 import type { PropsWithChildren } from "react"
+import { Search } from "~/components/common/search"
 import { Toaster } from "~/components/common/toaster"
+import { TooltipProvider } from "~/components/common/tooltip"
 import { config } from "~/config"
+import { SearchProvider } from "~/contexts/search-context"
 import { geist } from "~/lib/fonts"
 
 import "./styles.css"
-import { TooltipProvider } from "~/components/common/tooltip"
 
 export const metadata: Metadata = {
   metadataBase: new URL(config.site.url),
@@ -34,10 +36,14 @@ export default function RootLayout({ children }: PropsWithChildren) {
     <html lang="en" className={`${geist.variable} scroll-smooth`} suppressHydrationWarning>
       <body className="min-h-dvh flex flex-col bg-background text-foreground font-sans">
         <NuqsAdapter>
-          <TooltipProvider delayDuration={250}>{children}</TooltipProvider>
+          <TooltipProvider delayDuration={250}>
+            <SearchProvider>
+              {children}
+              <Toaster />
+              <Search />
+            </SearchProvider>
+          </TooltipProvider>
         </NuqsAdapter>
-
-        <Toaster />
       </body>
     </html>
   )
