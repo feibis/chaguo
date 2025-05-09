@@ -74,6 +74,7 @@ export const Search = () => {
   const [results, setResults] = useState<SearchResult | null>(null)
   const [query, setQuery] = useDebouncedState("", 100)
   const isAdmin = pathname.startsWith("/admin")
+  const hasQuery = !!query.length
 
   const clearSearch = () => {
     setTimeout(() => {
@@ -149,7 +150,7 @@ export const Search = () => {
 
   useEffect(() => {
     const performSearch = async () => {
-      if (query.length > 1) {
+      if (hasQuery) {
         execute({ query })
       } else {
         setResults(null)
@@ -160,7 +161,7 @@ export const Search = () => {
   }, [query, execute])
 
   return (
-    <CommandDialog open={search.isOpen} onOpenChange={handleOpenChange}>
+    <CommandDialog open={search.isOpen} onOpenChange={handleOpenChange} shouldFilter={false}>
       <CommandInput
         placeholder="Type to search..."
         onValueChange={setQuery}
@@ -169,19 +170,20 @@ export const Search = () => {
         suffix={<Kbd meta>K</Kbd>}
       />
 
-      <CommandList>
-        {query.length > 1 && <CommandEmpty>No results found.</CommandEmpty>}
+      {hasQuery && <CommandEmpty>No results found.</CommandEmpty>}
 
-        {commandSections.map(({ name, items }) => (
-          <CommandGroup key={name} heading={name}>
-            {items.map(({ path, label, shortcut }, i) => (
-              <CommandItem key={path} onSelect={() => navigateTo(path)}>
-                {label}
-                {shortcut && <CommandShortcut meta>{i + 1}</CommandShortcut>}
-              </CommandItem>
-            ))}
-          </CommandGroup>
-        ))}
+      <CommandList>
+        {!hasQuery &&
+          commandSections.map(({ name, items }) => (
+            <CommandGroup key={name} heading={name}>
+              {items.map(({ path, label, shortcut }, i) => (
+                <CommandItem key={path} onSelect={() => navigateTo(path)}>
+                  {label}
+                  {shortcut && <CommandShortcut meta>{i + 1}</CommandShortcut>}
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          ))}
 
         <SearchResults
           name="Tools"

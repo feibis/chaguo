@@ -22,14 +22,19 @@ const Command = ({ className, ...props }: ComponentProps<typeof CommandPrimitive
   )
 }
 
-const CommandDialog = ({ children, ...props }: ComponentProps<typeof Dialog>) => {
+type CommandDialogProps = Pick<ComponentProps<typeof Dialog>, "open" | "onOpenChange"> &
+  ComponentProps<typeof Command>
+
+const CommandDialog = ({ open, onOpenChange, ...props }: CommandDialogProps) => {
   return (
-    <Dialog {...props}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTitle className="sr-only">Command Menu</DialogTitle>
+
       <DialogContent className="overflow-hidden p-0! max-w-sm rounded-md">
-        <Command className="[&_[cmdk-group]]:p-2 [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground/75 [&_[cmdk-input]]:h-12">
-          {children}
-        </Command>
+        <Command
+          className="[&_[cmdk-group]]:p-2 [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground/75 [&_[cmdk-input]]:h-12"
+          {...props}
+        />
       </DialogContent>
     </Dialog>
   )
@@ -43,7 +48,9 @@ type CommandInputProps = Omit<ComponentProps<typeof CommandPrimitive.Input>, "pr
 const CommandInput = ({ className, prefix, suffix, ...props }: CommandInputProps) => {
   return (
     <Stack className={cx("px-3 -mb-px border-b", className)}>
-      <Slot.Root className="size-4 shrink-0 opacity-50">{prefix || <SearchIcon />}</Slot.Root>
+      <Slot.Root className="size-4 shrink-0">
+        {prefix || <SearchIcon className="opacity-50" />}
+      </Slot.Root>
 
       <CommandPrimitive.Input
         className={cx(inputVariants(), "px-0 flex-1 truncate text-sm outline-none")}
