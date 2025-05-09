@@ -17,6 +17,7 @@ import {
   CommandList,
   CommandShortcut,
 } from "~/components/common/command"
+import { Kbd } from "~/components/common/kbd"
 import { useSearch } from "~/contexts/search-context"
 
 type SearchResult = {
@@ -131,8 +132,6 @@ export const Search = () => {
         { label: "Tags", path: "/tags" },
       ],
     })
-
-    hotkeys.push(["/", () => search.open()])
   }
 
   useHotkeys(hotkeys, [], true)
@@ -162,13 +161,13 @@ export const Search = () => {
 
   return (
     <CommandDialog open={search.isOpen} onOpenChange={handleOpenChange}>
-      <CommandInput placeholder="Type to search..." onValueChange={setQuery} />
-
-      {isPending && (
-        <div className="absolute top-4 left-3 bg-background text-muted-foreground">
-          <LoaderIcon className="size-4 animate-spin" />
-        </div>
-      )}
+      <CommandInput
+        placeholder="Type to search..."
+        onValueChange={setQuery}
+        className="pr-10"
+        prefix={isPending && <LoaderIcon className="animate-spin" />}
+        suffix={<Kbd meta>K</Kbd>}
+      />
 
       <CommandList>
         {query.length > 1 && <CommandEmpty>No results found.</CommandEmpty>}

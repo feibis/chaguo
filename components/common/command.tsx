@@ -2,9 +2,12 @@
 
 import { Command as CommandPrimitive } from "cmdk"
 import { SearchIcon } from "lucide-react"
-import type { ComponentProps } from "react"
+import { Slot } from "radix-ui"
+import type { ComponentProps, ReactNode } from "react"
 import { Dialog, DialogContent, DialogTitle } from "~/components/common/dialog"
+import { inputVariants } from "~/components/common/input"
 import { Kbd } from "~/components/common/kbd"
+import { Stack } from "~/components/common/stack"
 import { cx } from "~/utils/cva"
 
 const Command = ({ className, ...props }: ComponentProps<typeof CommandPrimitive>) => {
@@ -32,18 +35,23 @@ const CommandDialog = ({ children, ...props }: ComponentProps<typeof Dialog>) =>
   )
 }
 
-const CommandInput = ({ className, ...props }: ComponentProps<typeof CommandPrimitive.Input>) => {
+type CommandInputProps = Omit<ComponentProps<typeof CommandPrimitive.Input>, "prefix"> & {
+  prefix?: ReactNode
+  suffix?: ReactNode
+}
+
+const CommandInput = ({ className, prefix, suffix, ...props }: CommandInputProps) => {
   return (
-    <div className="flex items-center gap-2 px-3 -mb-px border-b" cmdk-input-wrapper="">
-      <SearchIcon className="size-4 shrink-0 opacity-50" />
+    <Stack className={cx("px-3 -mb-px border-b", className)}>
+      <Slot.Root className="size-4 shrink-0 opacity-50">{prefix || <SearchIcon />}</Slot.Root>
+
       <CommandPrimitive.Input
-        className={cx(
-          "flex h-10 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50",
-          className,
-        )}
+        className={cx(inputVariants(), "px-0 flex-1 truncate text-sm outline-none")}
         {...props}
       />
-    </div>
+
+      <Slot.Root className="shrink-0">{suffix}</Slot.Root>
+    </Stack>
   )
 }
 
