@@ -13,17 +13,16 @@ export const searchItems = createServerAction()
       db.tool.findMany({
         where: { name: { contains: query, mode: "insensitive" } },
         orderBy: { name: "asc" },
-        take: 5,
       }),
+
       db.category.findMany({
         where: { name: { contains: query, mode: "insensitive" } },
         orderBy: { name: "asc" },
-        take: 5,
       }),
+
       db.tag.findMany({
         where: { name: { contains: query, mode: "insensitive" } },
         orderBy: { name: "asc" },
-        take: 5,
       }),
     ])
 
