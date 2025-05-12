@@ -72,7 +72,7 @@ export const Search = () => {
   const pathname = usePathname()
   const search = useSearch()
   const [results, setResults] = useState<SearchResult | null>(null)
-  const [query, setQuery] = useDebouncedState("", 100)
+  const [query, setQuery] = useDebouncedState("", 250)
   const isAdmin = pathname.startsWith("/admin")
   const hasQuery = !!query.length
 
