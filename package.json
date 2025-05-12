@@ -46,7 +46,7 @@
     "cva": "beta",
     "date-fns": "^4.1.0",
     "lucide-react": "^0.475.0",
-    "motion": "^12.10.5",
+    "motion": "^12.10.6",
     "next": "^15.4.0-canary.29",
     "nuqs": "^2.4.3",
     "plur": "^5.1.0",
