@@ -2,10 +2,11 @@
 
 import { getUrlHostname } from "@curiousleaf/utils"
 import { type HotkeyItem, useDebouncedState, useHotkeys } from "@mantine/hooks"
-import type { Category, Tag, Tool } from "@prisma/client"
 import { LoaderIcon } from "lucide-react"
 import { usePathname, useRouter } from "next/navigation"
-import { type ReactNode, useEffect, useState } from "react"
+import posthog from "posthog-js"
+import { type ReactNode, useEffect, useRef, useState } from "react"
+import type { inferServerActionReturnData } from "zsa"
 import { useServerAction } from "zsa-react"
 import { searchItems } from "~/actions/search"
 import {
@@ -20,27 +21,12 @@ import {
 import { Kbd } from "~/components/common/kbd"
 import { useSearch } from "~/contexts/search-context"
 
-type SearchResult = {
-  tools: Tool[]
-  categories: Category[]
-  tags: Tag[]
-}
-
 type SearchResultsProps<T> = {
   name: string
   items: T[] | undefined
   onItemSelect: (url: string) => void
   getHref: (item: T) => string
   renderItemDisplay: (item: T) => ReactNode
-}
-
-type CommandSection = {
-  name: string
-  items: {
-    label: string
-    path: string
-    shortcut?: boolean
-  }[]
 }
 
 const SearchResults = <T extends { slug: string; name: string }>({
@@ -67,18 +53,28 @@ const SearchResults = <T extends { slug: string; name: string }>({
   )
 }
 
+type CommandSection = {
+  name: string
+  items: {
+    label: string
+    path: string
+    shortcut?: boolean
+  }[]
+}
+
 export const Search = () => {
   const router = useRouter()
   const pathname = usePathname()
   const search = useSearch()
-  const [results, setResults] = useState<SearchResult | null>(null)
+  const [results, setResults] = useState<inferServerActionReturnData<typeof searchItems>>()
   const [query, setQuery] = useDebouncedState("", 250)
+  const listRef = useRef<HTMLDivElement>(null)
   const isAdmin = pathname.startsWith("/admin")
   const hasQuery = !!query.length
 
   const clearSearch = () => {
     setTimeout(() => {
-      setResults(null)
+      setResults(undefined)
       setQuery("")
     }, 250)
   }
@@ -126,7 +122,7 @@ export const Search = () => {
     // User command sections & hotkeys
   } else {
     commandSections.push({
-      name: "Browse",
+      name: "Quick Links",
       items: [
         { label: "Tools", path: "/" },
         { label: "Categories", path: "/categories" },
@@ -140,11 +136,12 @@ export const Search = () => {
   const { execute, isPending } = useServerAction(searchItems, {
     onSuccess: ({ data }) => {
       setResults(data)
+      listRef.current?.scrollTo({ top: 0, behavior: "smooth" })
     },
 
     onError: ({ err }) => {
       console.error(err)
-      setResults(null)
+      setResults(undefined)
     },
   })
 
@@ -152,8 +149,9 @@ export const Search = () => {
     const performSearch = async () => {
       if (hasQuery) {
         execute({ query })
+        posthog.capture("search", { query })
       } else {
-        setResults(null)
+        setResults(undefined)
       }
     }
 
@@ -170,9 +168,9 @@ export const Search = () => {
         suffix={<Kbd meta>K</Kbd>}
       />
 
-      {hasQuery && <CommandEmpty>No results found.</CommandEmpty>}
+      {hasQuery && !isPending && <CommandEmpty>No results found.</CommandEmpty>}
 
-      <CommandList>
+      <CommandList ref={listRef}>
         {!hasQuery &&
           commandSections.map(({ name, items }) => (
             <CommandGroup key={name} heading={name}>
