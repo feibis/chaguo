@@ -17,20 +17,20 @@ import { cx } from "~/utils/cva"
 type ButtonProps = ComponentProps<typeof Button>
 type InputProps = ComponentProps<typeof Input>
 
-type NewsletterFormProps = ComponentProps<"form"> & {
+type CTAFormProps = ComponentProps<"form"> & {
   placeholder?: string
   size?: InputProps["size"]
   buttonProps?: ButtonProps
 }
 
-export const NewsletterForm = ({
+export const CTAForm = ({
   children,
   className,
   placeholder = "Enter your email",
   size = "md",
   buttonProps = { size: "sm", children: "Subscribe" },
   ...props
-}: NewsletterFormProps) => {
+}: CTAFormProps) => {
   const form = useForm<NewsletterSchema>({
     resolver: zodResolver(newsletterSchema),
     defaultValues: { captcha: "", value: "" },

@@ -8,24 +8,21 @@ import { BrandGitHubIcon } from "~/components/common/icons/brand-github"
 import { Note } from "~/components/common/note"
 import { Stack } from "~/components/common/stack"
 import { Tooltip } from "~/components/common/tooltip"
+import { CTAForm } from "~/components/web/cta-form"
 import { ExternalLink } from "~/components/web/external-link"
-import { NewsletterForm } from "~/components/web/newsletter-form"
 import { NavLink } from "~/components/web/ui/nav-link"
 import { config } from "~/config"
 import { cx } from "~/utils/cva"
 
 type FooterProps = ComponentProps<"div"> & {
-  hideNewsletter?: boolean
+  hideCTA?: boolean
 }
 
-export const Footer = ({ children, className, hideNewsletter, ...props }: FooterProps) => {
+export const Footer = ({ children, className, hideCTA, ...props }: FooterProps) => {
   return (
     <footer className="flex flex-col gap-y-8 mt-auto pt-8 border-t border-foreground/10 md:pt-10 lg:pt-12">
       <div
-        className={cx(
-          "grid grid-cols-3 gap-y-8 gap-x-4 md:gap-x-6 md:grid-cols-16",
-          className,
-        )}
+        className={cx("grid grid-cols-3 gap-y-8 gap-x-4 md:gap-x-6 md:grid-cols-16", className)}
         {...props}
       >
         <Stack
@@ -42,7 +39,7 @@ export const Footer = ({ children, className, hideNewsletter, ...props }: Footer
               inbox.
             </Note>
 
-            <NewsletterForm />
+            <CTAForm />
           </Stack>
 
           <Stack className="text-sm/normal">

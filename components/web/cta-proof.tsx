@@ -3,7 +3,7 @@ import Image from "next/image"
 import type { ComponentProps } from "react"
 import { cx } from "~/utils/cva"
 
-export const NewsletterProof = ({ className, ...props }: ComponentProps<"div">) => {
+export const CTAProof = ({ className, ...props }: ComponentProps<"div">) => {
   return (
     <div
       className={cx(
