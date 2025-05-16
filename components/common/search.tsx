@@ -20,6 +20,7 @@ import {
 } from "~/components/common/command"
 import { Kbd } from "~/components/common/kbd"
 import { useSearch } from "~/contexts/search-context"
+import { useSession } from "~/lib/auth-client"
 
 type SearchResultsProps<T> = {
   name: string
@@ -63,13 +64,16 @@ type CommandSection = {
 }
 
 export const Search = () => {
+  const { data: session } = useSession()
   const router = useRouter()
   const pathname = usePathname()
   const search = useSearch()
   const [results, setResults] = useState<inferServerActionReturnData<typeof searchItems>>()
   const [query, setQuery] = useDebouncedState("", 250)
   const listRef = useRef<HTMLDivElement>(null)
-  const isAdmin = pathname.startsWith("/admin")
+
+  const isAdmin = session?.user.role === "admin"
+  const isAdminPath = pathname.startsWith("/admin")
   const hasQuery = !!query.length
 
   const clearSearch = () => {
@@ -187,7 +191,7 @@ export const Search = () => {
           name="Tools"
           items={results?.tools}
           onItemSelect={navigateTo}
-          getHref={({ slug }) => `${isAdmin ? "/admin/tools" : ""}/${slug}`}
+          getHref={({ slug }) => `${isAdminPath ? "/admin/tools" : ""}/${slug}`}
           renderItemDisplay={({ name, faviconUrl, websiteUrl }) => (
             <>
               {faviconUrl && <img src={faviconUrl} alt="" width={16} height={16} />}
@@ -201,7 +205,7 @@ export const Search = () => {
           name="Categories"
           items={results?.categories}
           onItemSelect={navigateTo}
-          getHref={({ slug }) => `${isAdmin ? "/admin" : ""}/categories/${slug}`}
+          getHref={({ slug }) => `${isAdminPath ? "/admin" : ""}/categories/${slug}`}
           renderItemDisplay={({ name }) => name}
         />
 
@@ -209,7 +213,7 @@ export const Search = () => {
           name="Tags"
           items={results?.tags}
           onItemSelect={navigateTo}
-          getHref={({ slug }) => `${isAdmin ? "/admin" : ""}/tags/${slug}`}
+          getHref={({ slug }) => `${isAdminPath ? "/admin" : ""}/tags/${slug}`}
           renderItemDisplay={({ name }) => name}
         />
       </CommandList>
