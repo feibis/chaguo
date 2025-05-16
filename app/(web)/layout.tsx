@@ -1,3 +1,5 @@
+import { getSessionCookie } from "better-auth/cookies"
+import { headers } from "next/headers"
 import Script from "next/script"
 import { type PropsWithChildren, Suspense } from "react"
 import Providers from "~/app/(web)/providers"
@@ -6,12 +8,12 @@ import { Bottom } from "~/components/web/bottom"
 import { Footer } from "~/components/web/footer"
 import { Header } from "~/components/web/header"
 import { Container } from "~/components/web/ui/container"
-import { UserMenu, UserMenuSkeleton } from "~/components/web/user-menu"
-import { config } from "~/config"
 import { env } from "~/env"
+import { getServerSession } from "~/lib/auth"
 
-export default function RootLayout({ children }: PropsWithChildren) {
-  const url = config.site.url
+export default async function RootLayout({ children }: PropsWithChildren) {
+  const hasSessionCookie = getSessionCookie(new Headers(await headers()))
+  const session = hasSessionCookie ? await getServerSession() : null
 
   return (
     <Providers>
@@ -20,11 +22,7 @@ export default function RootLayout({ children }: PropsWithChildren) {
           <AdBanner />
         </Suspense>
 
-        <Header>
-          <Suspense fallback={<UserMenuSkeleton />}>
-            <UserMenu />
-          </Suspense>
-        </Header>
+        <Header session={session} />
 
         <Container asChild>
           <main className="flex flex-col grow py-8 gap-8 md:gap-10 md:py-10 lg:gap-12 lg:py-12">

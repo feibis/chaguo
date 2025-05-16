@@ -22,10 +22,16 @@ import { Container } from "~/components/web/ui/container"
 import { Hamburger } from "~/components/web/ui/hamburger"
 import { Logo } from "~/components/web/ui/logo"
 import { NavLink, navLinkVariants } from "~/components/web/ui/nav-link"
+import { UserMenu } from "~/components/web/user-menu"
 import { useSearch } from "~/contexts/search-context"
+import type { auth } from "~/lib/auth"
 import { cx } from "~/utils/cva"
 
-export const Header = ({ children, className, ...props }: ComponentProps<"div">) => {
+type HeaderProps = ComponentProps<"div"> & {
+  session: typeof auth.$Infer.Session | null
+}
+
+export const Header = ({ children, className, session, ...props }: HeaderProps) => {
   const pathname = usePathname()
   const search = useSearch()
   const [isNavOpen, setNavOpen] = useState(false)
@@ -111,7 +117,7 @@ export const Header = ({ children, className, ...props }: ComponentProps<"div">)
               <Link href="/submit">Submit</Link>
             </Button>
 
-            {children}
+            <UserMenu session={session} />
           </Stack>
         </div>
 

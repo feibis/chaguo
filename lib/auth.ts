@@ -1,6 +1,8 @@
 import { betterAuth } from "better-auth"
 import { prismaAdapter } from "better-auth/adapters/prisma"
 import { admin, magicLink } from "better-auth/plugins"
+import { headers } from "next/headers"
+import { cache } from "react"
 import { config } from "~/config"
 import EmailLoginLink from "~/emails/login-link"
 import { env } from "~/env"
@@ -19,13 +21,21 @@ export const auth = betterAuth({
     },
   },
 
+  session: {
+    cookieCache: {
+      enabled: true,
+    },
+  },
+
   account: {
     accountLinking: {
       enabled: true,
     },
   },
 
-  onAPIError: { onError: error => console.error(error) },
+  onAPIError: {
+    onError: error => console.error(error),
+  },
 
   plugins: [
     magicLink({
@@ -39,4 +49,10 @@ export const auth = betterAuth({
 
     admin(),
   ],
+})
+
+export const getServerSession = cache(async () => {
+  return auth.api.getSession({
+    headers: await headers(),
+  })
 })

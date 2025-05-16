@@ -1,6 +1,7 @@
+"use client"
+
 import { getInitials } from "@curiousleaf/utils"
 import { ShieldHalfIcon, UserIcon } from "lucide-react"
-import { headers } from "next/headers"
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/common/avatar"
 import { Box } from "~/components/common/box"
 import { Button } from "~/components/common/button"
@@ -15,10 +16,16 @@ import {
 import { Link } from "~/components/common/link"
 import { NavLink } from "~/components/web/ui/nav-link"
 import { UserLogout } from "~/components/web/user-logout"
-import { auth } from "~/lib/auth"
+import type { auth } from "~/lib/auth"
+import { useSession } from "~/lib/auth-client"
 
-const UserMenu = async () => {
-  const session = await auth.api.getSession({ headers: await headers() })
+type UserMenuProps = {
+  session: typeof auth.$Infer.Session | null
+}
+
+const UserMenu = (props: UserMenuProps) => {
+  const { data } = useSession()
+  const session = data ?? props.session
 
   if (!session?.user) {
     return (
