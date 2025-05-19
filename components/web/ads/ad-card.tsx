@@ -72,6 +72,10 @@ const AdCard = async ({ className, type, ...props }: AdCardProps) => {
 }
 
 const AdCardSkeleton = ({ className }: ComponentProps<typeof Card>) => {
+  if (!config.ads.enabled) {
+    return null
+  }
+
   return (
     <Card hover={false} className={cx("items-stretch select-none", className)}>
       <CardHeader>

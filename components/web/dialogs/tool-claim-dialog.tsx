@@ -45,9 +45,6 @@ const otpSchema = z.object({
   otp: z.string().min(6, "Please enter a valid OTP code"),
 })
 
-// Cooldown period in seconds before allowing resend
-const RESEND_COOLDOWN = 60
-
 export const ToolClaimDialog = ({ tool, isOpen, setIsOpen }: ToolClaimDialogProps) => {
   const { data: session } = useSession()
   const [step, setStep] = useState<"email" | "otp">("email")
@@ -125,11 +122,7 @@ export const ToolClaimDialog = ({ tool, isOpen, setIsOpen }: ToolClaimDialogProp
   }
 
   const handleVerifyOtp = (data: z.infer<typeof otpSchema>) => {
-    verifyOtp({
-      toolSlug: tool.slug,
-      email: verificationEmail,
-      otp: data.otp,
-    })
+    verifyOtp({ toolSlug: tool.slug, otp: data.otp })
   }
 
   const handleResendOtp = () => {

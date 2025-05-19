@@ -48,7 +48,6 @@ model User {
   sessions Session[]
   tools    Tool[]
   reports  Report[]
-  claims   Claim[]
 
   // Indexes
   @@index([id])
@@ -141,7 +140,6 @@ model Tool {
   categories Category[]
   tags       Tag[]
   reports    Report[]
-  claims     Claim[]
   owner      User?      @relation(fields: [ownerId], references: [id])
   ownerId    String?
 
@@ -195,23 +193,4 @@ model Report {
 
   // Indexes
   @@index([toolId])
-}
-
-model Claim {
-  id        String   @id @default(cuid())
-  email     String
-  otp       String
-  expiresAt DateTime
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  // Relations
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId String
-  tool   Tool   @relation(fields: [toolId], references: [id], onDelete: Cascade)
-  toolId String
-
-  // Indexes
-  @@index([toolId])
-  @@index([email])
 }

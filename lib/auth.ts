@@ -1,10 +1,12 @@
+import { getRandomDigits } from "@curiousleaf/utils"
 import { betterAuth } from "better-auth"
 import { prismaAdapter } from "better-auth/adapters/prisma"
-import { admin, magicLink } from "better-auth/plugins"
+import { admin, magicLink, oneTimeToken } from "better-auth/plugins"
 import { headers } from "next/headers"
 import { cache } from "react"
 import { config } from "~/config"
-import EmailLoginLink from "~/emails/login-link"
+import { claimsConfig } from "~/config/claims"
+import EmailMagicLink from "~/emails/magic-link"
 import { env } from "~/env"
 import { sendEmail } from "~/lib/email"
 import { db } from "~/services/db"
@@ -42,9 +44,13 @@ export const auth = betterAuth({
       sendMagicLink: async ({ email, url }) => {
         const to = email
         const subject = `Your ${config.site.name} Login Link`
-
-        await sendEmail({ to, subject, react: EmailLoginLink({ to, subject, url }) })
+        await sendEmail({ to, subject, react: EmailMagicLink({ to, subject, url }) })
       },
+    }),
+
+    oneTimeToken({
+      expiresIn: claimsConfig.otpExpiration,
+      generateToken: async () => getRandomDigits(claimsConfig.otpLength),
     }),
 
     admin(),
