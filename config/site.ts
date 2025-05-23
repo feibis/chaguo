@@ -2,10 +2,10 @@ import { getUrlHostname } from "@curiousleaf/utils"
 import { env } from "~/env"
 
 export const siteConfig = {
-  name: "Dirstarter",
-  tagline: "Launch Your Directory Website and Start Making Money Today",
+  name: "Chaguo",
+  tagline: "Kenya online shops directory",
   description:
-    "The complete boilerplate for building profitable directory websites. Start generating revenue from day one with our battle-tested stack and built-in monetization features.",
+    "Chaguo is a directory of online shops in Kenya. Find the best online shops to buy from.",
   email: env.NEXT_PUBLIC_SITE_EMAIL,
   url: env.NEXT_PUBLIC_SITE_URL,
   domain: getUrlHostname(env.NEXT_PUBLIC_SITE_URL),
