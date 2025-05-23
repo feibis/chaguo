@@ -25,7 +25,7 @@ export const CTAProof = ({ className, ...props }: ComponentProps<"div">) => {
       ))}
 
       <p className="w-full text-xs text-muted-foreground">
-        Join {formatNumber(5000, "standard")}+ directory enthusiasts
+        Join {formatNumber(5000, "standard")}+ shoppers
       </p>
     </div>
   )
